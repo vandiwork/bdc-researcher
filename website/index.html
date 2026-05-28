@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BDC Researcher</title>
+<link rel="stylesheet" href="assets.css">
+</head><body><nav class="sitenav">
+<a href="index.html" class="brand">BDC Researcher</a>
+<a href="index.html" class="active">Home</a><a href="dashboards.html">Dashboards</a><a href="overlap.html">Cross-Holdings</a><a href="pairs.html">Pair Compare</a><a href="compare.html">BDC Compare</a><a href="analytics.html">Analytics</a><a href="markdelta.html">Mark Delta</a><a href="comps.html">Comps</a>
+<div class="spacer"></div>
+</nav>
+<div class="page">
+<h1>BDC Researcher</h1>
+<div class="sub">22 Business Development Companies · Mar 31, 2026 Schedule of Investments · Cross-portfolio intelligence</div>
+
+<div class="stats">
+  <div class="stat"><div class="lab">BDCs Tracked</div><div class="val">22</div></div>
+  <div class="stat"><div class="lab">Total Portfolio FV</div><div class="val">$215.4B</div></div>
+  <div class="stat"><div class="lab">Total Positions</div><div class="val">5,725</div></div>
+  <div class="stat"><div class="lab">Filing Period</div><div class="val">FY25</div></div>
+</div>
+
+<div class="grid grid-3">
+  <a class="bdccard" href="dashboards.html">
+    <div class="tkr">📊 Portfolio Dashboards</div>
+    <div class="nm">Browse each BDC's full Schedule of Investments with filtering, sector/sector-type rollups, and pricing views.</div>
+  </a>
+  <a class="bdccard" href="overlap.html">
+    <div class="tkr">🔗 Cross-Holdings</div>
+    <div class="nm">22×22 matrix of shared borrowers by fair value. Identify club deals and co-lending exposure across the sector.</div>
+  </a>
+  <a class="bdccard" href="pairs.html">
+    <div class="tkr">⇄ Pair Compare</div>
+    <div class="nm">Select any two BDCs to see every shared borrower, each lender's exposure, marks, and NAV multiple arbitrage.</div>
+  </a>
+  <a class="bdccard" href="comps.html">
+    <div class="tkr">📈 Comps Tracking</div>
+    <div class="nm">Price, MTD/YTD/LTM returns, P/GAV, P/NAV, and leverage ratios across the universe.</div>
+  </a>
+</div>
+
+<div class="card" style="margin-top:24px">
+<h2 style="margin-top:0">BDC Universe Overview</h2>
+<div class="tbl-wrap">
+<table id="bdc-tbl">
+<thead><tr>
+<th>Ticker</th>
+<th>Name</th>
+<th class="num">Portfolio FV ($M)</th>
+<th class="num">NAV ($M)</th>
+<th class="num">P/NAV</th>
+<th class="num">% Software</th>
+<th class="num">Div Yield</th>
+</tr></thead>
+<tbody id="bdc-body">
+<tr><td><a href="dashboards/arcc_dashboard.html">ARCC</a></td><td>Ares Capital Corporation</td><td class="num">29,485</td><td class="num">13,510</td><td class="num pnav-lo">0.93x</td><td class="num">23.9%</td><td class="num">10.3%</td></tr>
+<tr><td><a href="dashboards/bbdc_dashboard.html">BBDC</a></td><td>Barings BDC</td><td class="num">2,399</td><td class="num">1,324</td><td class="num pnav-lo">0.96x</td><td class="num">0.0%</td><td class="num">12.1%</td></tr>
+<tr><td><a href="dashboards/bcred_dashboard.html">BCRED</a></td><td>Blackstone Private Credit Fund</td><td class="num">82,199</td><td class="num">33,800</td><td class="num pnav-hi">1.00x</td><td class="num">25.7%</td><td class="num">&mdash;</td></tr>
+<tr><td><a href="dashboards/bcsf_dashboard.html">BCSF</a></td><td>Bain Capital Specialty Finance</td><td class="num">2,509</td><td class="num">1,182</td><td class="num pnav-hi">1.19x</td><td class="num">0.0%</td><td class="num">10.7%</td></tr>
+<tr><td><a href="dashboards/bxsl_dashboard.html">BXSL</a></td><td>Blackstone Secured Lending</td><td class="num">14,207</td><td class="num">6,249</td><td class="num pnav-lo">0.91x</td><td class="num">20.5%</td><td class="num">13.0%</td></tr>
+<tr><td><a href="dashboards/cgbd_dashboard.html">CGBD</a></td><td>Carlyle Secured Lending</td><td class="num">2,464</td><td class="num">1,070</td><td class="num pnav-lo">0.88x</td><td class="num">12.0%</td><td class="num">12.7%</td></tr>
+<tr><td><a href="dashboards/fsk_dashboard.html">FSK</a></td><td>FS KKR Capital Corp</td><td class="num">14,404</td><td class="num">6,682</td><td class="num pnav-lo">0.51x</td><td class="num">17.3%</td><td class="num">17.3%</td></tr>
+<tr><td><a href="dashboards/gbdc_dashboard.html">GBDC</a></td><td>Golub Capital BDC</td><td class="num">8,769</td><td class="num">4,395</td><td class="num pnav-lo">0.88x</td><td class="num">27.2%</td><td class="num">12.7%</td></tr>
+<tr><td><a href="dashboards/gsbd_dashboard.html">GSBD</a></td><td>Goldman Sachs BDC</td><td class="num">3,262</td><td class="num">1,676</td><td class="num pnav-lo">0.75x</td><td class="num">17.5%</td><td class="num">16.1%</td></tr>
+<tr><td><a href="dashboards/htgc_dashboard.html">HTGC</a></td><td>Hercules Capital</td><td class="num">4,477</td><td class="num">2,012</td><td class="num pnav-hi">1.24x</td><td class="num">35.9%</td><td class="num">8.9%</td></tr>
+<tr><td><a href="dashboards/main_dashboard.html">MAIN</a></td><td>Main Street Capital</td><td class="num">5,518</td><td class="num">2,819</td><td class="num pnav-hi">1.69x</td><td class="num">0.0%</td><td class="num">5.8%</td></tr>
+<tr><td><a href="dashboards/mfic_dashboard.html">MFIC</a></td><td>MidCap Financial Investment</td><td class="num">3,168</td><td class="num">1,443</td><td class="num pnav-lo">0.77x</td><td class="num">10.9%</td><td class="num">13.1%</td></tr>
+<tr><td><a href="dashboards/msdl_dashboard.html">MSDL</a></td><td>Morgan Stanley Direct Lending</td><td class="num">3,772</td><td class="num">2,172</td><td class="num pnav-lo">0.74x</td><td class="num">20.2%</td><td class="num">12.4%</td></tr>
+<tr><td><a href="dashboards/nmfc_dashboard.html">NMFC</a></td><td>New Mountain Finance</td><td class="num">2,742</td><td class="num">1,393</td><td class="num pnav-lo">0.71x</td><td class="num">25.5%</td><td class="num">16.2%</td></tr>
+<tr><td><a href="dashboards/obdc_dashboard.html">OBDC</a></td><td>Blue Owl Capital Corporation</td><td class="num">16,475</td><td class="num">7,539</td><td class="num pnav-lo">0.77x</td><td class="num">11.2%</td><td class="num">13.7%</td></tr>
+<tr><td><a href="dashboards/ocsl_dashboard.html">OCSL</a></td><td>Oaktree Specialty Lending</td><td class="num">2,838</td><td class="num">1,384</td><td class="num pnav-lo">0.75x</td><td class="num">20.1%</td><td class="num">14.7%</td></tr>
+<tr><td><a href="dashboards/psec_dashboard.html">PSEC</a></td><td>Prospect Capital</td><td class="num">6,674</td><td class="num">3,284</td><td class="num pnav-lo">0.28x</td><td class="num">1.9%</td><td class="num">17.1%</td></tr>
+<tr><td><a href="dashboards/slrc_dashboard.html">SLRC</a></td><td>SLR Investment Corp</td><td class="num">2,125</td><td class="num">1,067</td><td class="num pnav-lo">0.96x</td><td class="num">1.2%</td><td class="num">11.3%</td></tr>
+<tr><td><a href="dashboards/tcpc_dashboard.html">TCPC</a></td><td>BlackRock TCP Capital</td><td class="num">1,533</td><td class="num">813</td><td class="num pnav-lo">0.58x</td><td class="num">21.6%</td><td class="num">17.5%</td></tr>
+<tr><td><a href="dashboards/trin_dashboard.html">TRIN</a></td><td>Trinity Capital</td><td class="num">2,418</td><td class="num">1,103</td><td class="num pnav-hi">1.15x</td><td class="num">30.4%</td><td class="num">14.2%</td></tr>
+<tr><td><a href="dashboards/tslx_dashboard.html">TSLX</a></td><td>Sixth Street Specialty Lending</td><td class="num">3,347</td><td class="num">1,513</td><td class="num pnav-hi">1.10x</td><td class="num">18.3%</td><td class="num">8.3%</td></tr>
+<tr><td><a href="dashboards/whf_dashboard.html">WHF</a></td><td>WhiteHorse Finance</td><td class="num">642</td><td class="num">322</td><td class="num pnav-lo">0.65x</td><td class="num">8.3%</td><td class="num">18.3%</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<script>
+(function(){
+  const tbl = document.getElementById('bdc-tbl');
+  const tbody = document.getElementById('bdc-body');
+  let sortK = 2, sortDir = -1;
+  function doSort(){
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    rows.sort((a,b) => {
+      const av = a.cells[sortK].textContent.trim().replace(/[\$,%x—]/g,'').replace(/,/g,'');
+      const bv = b.cells[sortK].textContent.trim().replace(/[\$,%x—]/g,'').replace(/,/g,'');
+      const an = parseFloat(av), bn = parseFloat(bv);
+      if (isNaN(an) && isNaN(bn)) return sortDir * av.localeCompare(bv);
+      if (isNaN(an)) return 1;
+      if (isNaN(bn)) return -1;
+      return sortDir * (an - bn);
+    });
+    rows.forEach(r => tbody.appendChild(r));
+  }
+  doSort();
+  tbl.querySelectorAll('th').forEach((th,i) => {
+    th.style.cursor = 'pointer';
+    th.addEventListener('click', () => {
+      if (sortK === i) sortDir = -sortDir; else { sortK = i; sortDir = (i >= 2) ? -1 : 1; }
+      doSort();
+    });
+  });
+})();
+</script>
+</div><footer>Data: Mar 31 2026 SOIs from SEC EDGAR · P/NAV from April 15 2026 pricing · BDC Researcher</footer><script src="refresh-banner.js" defer></script>
+</body></html>

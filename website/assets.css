@@ -1,0 +1,73 @@
+/* shared site styles */
+:root{--bg:#fff;--surface:#f5f6f8;--surface2:#eceef2;--border:#d1d5de;--border-soft:#e4e6ed;--text:#0d0f14;--muted:#5a6172;--dim:#9ba3b5;--accent:#1a6ef5;--green:#0d9f6e;--red:#dc2626;--amber:#c47f00}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:13px;line-height:1.5}
+
+.sitenav{position:fixed;top:0;left:0;right:0;height:40px;background:#0d0f14;color:#fff;display:flex;align-items:center;gap:4px;padding:0 16px;z-index:100;font-size:13px;border-bottom:1px solid #2a2d35}
+.sitenav .brand{font-weight:600;margin-right:12px;color:#fff;text-decoration:none}
+.sitenav a{color:#c9ccd5;text-decoration:none;padding:6px 12px;border-radius:4px;font-size:12px}
+.sitenav a:hover{background:#2a2d35;color:#fff}
+.sitenav a.active{background:#1a6ef5;color:#fff}
+.sitenav .spacer{flex:1}
+.sitenav select{background:#1a1d24;color:#fff;border:1px solid #2a2d35;padding:5px 8px;border-radius:4px;font-size:12px}
+
+.page{padding:60px 24px 40px;max-width:1400px;margin:0 auto}
+h1{font-size:22px;margin-bottom:4px;color:#1f4e78;font-weight:600}
+h2{font-size:16px;margin:24px 0 10px;color:#1f4e78;font-weight:600}
+.sub{font-size:13px;color:var(--muted);margin-bottom:20px}
+.card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+
+table{width:100%;background:#fff;border-collapse:collapse;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+th{background:#1f4e78;color:#fff;padding:10px 12px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.3px;font-weight:600;cursor:pointer;user-select:none;position:sticky;top:40px;z-index:2}
+th:hover{background:#2a6ba0}
+th.num,td.num{text-align:right}
+td{padding:9px 12px;border-bottom:1px solid #eef1f5;font-size:13px}
+tr:hover{background:#f9fbfd}
+tr:last-child td{border-bottom:none}
+
+.pos{color:var(--green);font-weight:500}
+.neg{color:var(--red);font-weight:500}
+.pnav-hi{color:var(--green);font-weight:600}
+.pnav-lo{color:var(--red);font-weight:600}
+.tag{display:inline-block;padding:2px 8px;background:#eef2f7;border-radius:10px;font-size:11px;color:#445}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.stat{background:#fff;padding:14px 18px;border-radius:8px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.stat .lab{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.stat .val{font-size:20px;font-weight:600;color:#1f4e78;margin-top:4px}
+.stat .sub2{font-size:12px;color:var(--muted);margin-top:2px}
+.controls{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.ctrl select,.ctrl input{padding:8px 12px;border:1px solid #d0d7de;border-radius:6px;font-size:14px;min-width:160px;background:#fff}
+.btn{padding:8px 14px;background:#1f4e78;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px}
+.btn:hover{background:#2a6ba0}
+.grid{display:grid;gap:16px}
+.grid-3{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.bdccard{background:#fff;border:1px solid var(--border);border-radius:8px;padding:18px;text-decoration:none;color:var(--text);transition:all .15s;display:block}
+.bdccard:hover{border-color:var(--accent);box-shadow:0 3px 8px rgba(26,110,245,.12);transform:translateY(-1px)}
+.bdccard .tkr{font-size:18px;font-weight:700;color:#1f4e78;margin-bottom:2px}
+.bdccard .nm{font-size:12px;color:var(--muted);margin-bottom:10px}
+.bdccard .row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0}
+.bdccard .row .l{color:var(--muted)}
+.bdccard .row .v{font-weight:500}
+
+.matrix{font-size:11px}
+.matrix th{padding:6px 4px;font-size:10px;background:#1f4e78}
+.matrix td{padding:4px 6px;font-size:11px;text-align:right;border-right:1px solid #f0f2f5}
+.matrix .rowlbl{background:#1f4e78;color:#fff;font-weight:600;text-align:center;position:sticky;left:0;z-index:3}
+.matrix .pnav{background:#eef2f7;color:var(--muted);font-weight:600;text-align:center}
+.matrix .diag{background:#e7e6e6}
+/* Fix sticky headers inside scrollable .card container */
+.matrix th{top:0}
+.matrix thead tr:nth-child(2) td{position:sticky;top:27px;z-index:2}
+.matrix thead tr:nth-child(2) td.rowlbl{z-index:4}
+
+footer{padding:24px;color:var(--muted);font-size:12px;text-align:center;border-top:1px solid var(--border);margin-top:40px}
+
+/* matrix column width/stickiness fixes */
+.matrix th, .matrix td{white-space:nowrap;min-width:52px}
+.matrix th:nth-child(2), .matrix td.pnav{min-width:62px;padding-left:8px;padding-right:8px}
+.matrix th:first-child, .matrix td.rowlbl{min-width:70px;padding-left:10px;padding-right:10px}
+.card{overflow:visible}
+/* widen page so matrix isn't clipped at right */
+.page{max-width:1500px}

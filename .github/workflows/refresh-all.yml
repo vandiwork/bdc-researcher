@@ -1,0 +1,125 @@
+name: Refresh all data (SOI + balance sheet + market + site)
+
+# Triggers:
+#   - Manual: GitHub UI → Actions → "Refresh all data" → "Run workflow"
+#     (this is what the in-website "Refresh data" button links to)
+#   - Daily: 11:30 PM UTC = ~6:30 PM ET, after market close + most BDC filings
+#     are posted
+on:
+  workflow_dispatch:
+    inputs:
+      form:
+        description: 'Form type for SOI extraction (10-Q or 10-K)'
+        required: false
+        default: '10-Q'
+        type: choice
+        options:
+          - '10-Q'
+          - '10-K'
+  schedule:
+    # Daily at 23:30 UTC (Mon-Fri) — picks up any newly-filed 10-Qs
+    - cron: '30 23 * * 1-5'
+
+# Allow only one concurrent rebuild — newer requests cancel queued ones
+concurrency:
+  group: refresh-all
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # push regenerated data back to repo
+  pages: write
+  id-token: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Extract SOI data (XBRL)
+        run: python bot/extract_bdc_soi.py --all --form ${{ inputs.form || '10-Q' }} --out bot/out_all
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Cache SOI HTML
+        run: python bot/diag_soi_headers.py --form ${{ inputs.form || '10-Q' }}
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Enrich SOI with HTML metadata
+        run: python bot/enrich_soi.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Extract Q1 balance sheets from XBRL
+        run: python bot/extract_balance_sheet.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Pull market data from Yahoo Finance
+        run: python bot/extract_market_data.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Build per-BDC dashboards
+        run: python bot/build_dashboards.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Build cross-BDC site data
+        run: python bot/build_site_data.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Stamp build timestamp
+        run: |
+          mkdir -p website/dashboards/data
+          python -c "
+          import json, datetime
+          stamp = {
+            'last_full_refresh_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            'trigger': '${{ github.event_name }}',
+            'run_url': 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}',
+          }
+          with open('website/dashboards/data/build_info.json', 'w') as f:
+              json.dump(stamp, f, indent=2)
+          "
+
+      - name: Commit refreshed data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add website/ bot/bs_q1.json bot/market_q1.json bot/out_all/ bot/out_all_enriched/
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "data: full refresh ($(date -u +%Y-%m-%dT%H:%M))"
+            git push
+          fi
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./website
+
+  deploy:
+    needs: refresh
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

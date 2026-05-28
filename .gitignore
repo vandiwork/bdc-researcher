@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Bot intermediate artifacts (regenerated each run)
+bot/.cache/
+bot/out/
+bot/out_all_10k_backup/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local-only secrets
+.env
+.env.local
+
+# Claude Code local settings
+.claude/
+
+# Backups / scratch
+*.bak
+*.orig
+~$*
+/tmp/

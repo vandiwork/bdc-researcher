@@ -1,0 +1,6 @@
+{
+  "last_full_refresh_utc": "2026-05-28T09:52:17.232435+00:00",
+  "last_market_refresh_utc": "2026-05-28T09:52:17.232458+00:00",
+  "trigger": "local-build",
+  "note": "Initial seed \u2014 first GitHub Actions run will overwrite this."
+}

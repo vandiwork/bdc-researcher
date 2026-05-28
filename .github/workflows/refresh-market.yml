@@ -1,0 +1,93 @@
+name: Refresh market data (intraday)
+
+# Pulls only market prices from Yahoo Finance and re-renders comps.html +
+# pairs.html. Skips the slow SOI / balance-sheet extraction — these change
+# at most quarterly so daily/manual is plenty.
+#
+# Schedule: every 15 minutes during US market hours, Mon-Fri.
+# US Eastern: 9:30 AM - 4:00 PM = UTC 13:30 - 20:00 (DST). We schedule
+# 13:00-20:59 UTC to cover both DST and non-DST.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 13-20 * * 1-5'
+
+concurrency:
+  group: refresh-market
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Pull Yahoo Finance market data
+        run: python bot/extract_market_data.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Rebuild cross-BDC site data (comps + pairs)
+        run: python bot/build_site_data.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Stamp build timestamp
+        run: |
+          mkdir -p website/dashboards/data
+          python -c "
+          import json, datetime, os
+          path = 'website/dashboards/data/build_info.json'
+          info = {}
+          if os.path.exists(path):
+              info = json.load(open(path))
+          info['last_market_refresh_utc'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+          info['last_market_run_url'] = 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+          with open(path, 'w') as f:
+              json.dump(info, f, indent=2)
+          "
+
+      - name: Commit refreshed market data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add website/ bot/market_q1.json
+          if git diff --staged --quiet; then
+            echo "No price changes since last run."
+          else
+            git commit -m "market: intraday refresh ($(date -u +%H:%M))"
+            git push
+          fi
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./website
+
+  deploy:
+    needs: refresh
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,74 @@
+{
+  "ARCC": {
+    "cik": "0001287750",
+    "name": "ARES CAPITAL CORP"
+  },
+  "BBDC": {
+    "cik": "0001379785",
+    "name": "Barings BDC, Inc."
+  },
+  "BCSF": {
+    "cik": "0001655050",
+    "name": "Bain Capital Specialty Finance, Inc."
+  },
+  "BXSL": {
+    "cik": "0001736035",
+    "name": "Blackstone Secured Lending Fund"
+  },
+  "CGBD": {
+    "cik": "0001544206",
+    "name": "Carlyle Secured Lending, Inc."
+  },
+  "FSK": {
+    "cik": "0001422183",
+    "name": "FS KKR Capital Corp"
+  },
+  "GBDC": {
+    "cik": "0001476765",
+    "name": "GOLUB CAPITAL BDC, Inc."
+  },
+  "GSBD": {
+    "cik": "0001572694",
+    "name": "Goldman Sachs BDC, Inc."
+  },
+  "HTGC": {
+    "cik": "0001280784",
+    "name": "Hercules Capital, Inc."
+  },
+  "MAIN": {
+    "cik": "0001396440",
+    "name": "Main Street Capital CORP"
+  },
+  "MFIC": {
+    "cik": "0001278752",
+    "name": "MidCap Financial Investment Corp"
+  },
+  "MSDL": {
+    "cik": "0001782524",
+    "name": "Morgan Stanley Direct Lending Fund"
+  },
+  "NMFC": {
+    "cik": "0001496099",
+    "name": "New Mountain Finance Corp"
+  },
+  "OBDC": {
+    "cik": "0001655888",
+    "name": "Blue Owl Capital Corp"
+  },
+  "OCSL": {
+    "cik": "0001414932",
+    "name": "Oaktree Specialty Lending Corp"
+  },
+  "PSEC": {
+    "cik": "0001287032",
+    "name": "PROSPECT CAPITAL CORP"
+  },
+  "TCPC": {
+    "cik": "0001370755",
+    "name": "BlackRock TCP Capital Corp."
+  },
+  "TSLX": {
+    "cik": "0001508655",
+    "name": "Sixth Street Specialty Lending, Inc."
+  }
+}
