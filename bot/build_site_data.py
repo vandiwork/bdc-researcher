@@ -668,7 +668,14 @@ def update_comps(bs_data: dict, market_data: dict, all_data: dict) -> bool:
             continue
         nav_m = bs["nav"] / 1e6
         debt_m = bs["gross_debt"] / 1e6
-        gav_m = (bs["nav"] + bs.get("total_liabilities", 0)) / 1e6
+        # GAV = total assets. Prefer the filer's reported `Assets` line;
+        # fall back to NAV(common) + liabilities only if Assets is missing
+        # (note: the fallback understates GAV for filers with preferred
+        # equity, e.g. PSEC — see extract_balance_sheet.py).
+        if bs.get("total_assets"):
+            gav_m = bs["total_assets"] / 1e6
+        else:
+            gav_m = (bs["nav"] + bs.get("total_liabilities", 0)) / 1e6
         ltv = debt_m / gav_m * 100 if gav_m else None
         nps = bs.get("nav_per_share")
 

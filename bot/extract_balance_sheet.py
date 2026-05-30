@@ -71,6 +71,13 @@ def extract_bs(cik: str, period_end: str) -> dict:
     # Total liabilities
     out["total_liabilities"] = latest_value(facts, "Liabilities", period_end)
 
+    # Total assets = GAV (gross asset value). Pull the filer's reported
+    # `Assets` line directly. NOTE: do NOT reconstruct GAV as
+    # NAV(common) + liabilities — that omits any preferred-equity layer.
+    # PSEC, for instance, carries ~$1.6B of preferred stock, so
+    # common-NAV + liabilities understates its true GAV by ~25%.
+    out["total_assets"] = latest_value(facts, "Assets", period_end)
+
     # Gross debt — try a few possible concepts (filers vary)
     debt_concepts = [
         "LongTermDebt",
