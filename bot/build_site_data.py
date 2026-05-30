@@ -282,6 +282,27 @@ def inject_status(status_data: dict) -> bool:
     return True
 
 
+def inject_news() -> bool:
+    """Inject NEWS_DATA_INLINE into news.html from bot/news.json."""
+    fp = WEBSITE / "news.html"
+    news_path = SCRIPT_DIR / "news.json"
+    if not fp.exists() or not news_path.exists():
+        return False
+    try:
+        news = json.loads(news_path.read_text(encoding="utf-8"))
+    except Exception:
+        return False
+    content = fp.read_text(encoding="utf-8")
+    json_blob = json.dumps(news, separators=(",", ":"), ensure_ascii=False)
+    new_block = f"const NEWS_DATA_INLINE = {json_blob};"
+    pattern = re.compile(r"const NEWS_DATA_INLINE\s*=\s*\{.*?\};", re.S)
+    new_content, n = pattern.subn(lambda _: new_block, content, count=1)
+    if n == 0:
+        return False
+    fp.write_text(new_content, encoding="utf-8")
+    return True
+
+
 def _f(v, suffix="", spec=",.0f"):
     """Format a number for display; '—' if None."""
     if v is None:
@@ -843,6 +864,10 @@ def main() -> int:
         ok = inject_status(status)
         print(f"  status   → status.html          {'OK' if ok else 'SKIP'} "
               f"({len(status['bdcs'])} BDCs)")
+
+    # 6. news.html — BDC headlines (Bloomberg / FT / WSJ via Google News)
+    ok = inject_news()
+    print(f"  news     → news.html            {'OK' if ok else 'SKIP (no news.json)'}")
 
     # 5. Date strings across all top-level pages
     print()
