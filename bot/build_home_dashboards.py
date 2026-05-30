@@ -94,10 +94,18 @@ def build_universe_rows() -> list[dict]:
         price = mk.get(t, {}).get("price")
         div_y = mk.get(t, {}).get("div_yield_pct")
         p_nav = round(price / nps, 2) if (price and nps) else None
+        # Headline Portfolio FV = filer's reported InvestmentOwnedAtFairValue
+        # (authoritative). A couple of filers (FSK, MSDL) over-tag at the
+        # per-position level vs their own reported total; using the reported
+        # figure keeps the headline correct while per-position data stays
+        # faithful for the analytical tabs. No-op for the ~17 BDCs whose
+        # extracted sum already matches reported.
+        reported_fv = bs.get(t, {}).get("portfolio_fv")
+        fv_m = round(reported_fv / 1e6, 1) if reported_fv else fv[t]["fv_m"]
         rows.append({
             "ticker": t,
             "name": BDC_NAMES[t],
-            "fv_m": fv[t]["fv_m"],
+            "fv_m": fv_m,
             "positions": fv[t]["positions"],
             "nav_m": round(nav_m),
             "debt_m": round(debt_m),

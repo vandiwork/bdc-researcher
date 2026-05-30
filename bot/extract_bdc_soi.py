@@ -948,11 +948,11 @@ def write_summary(results: list[ExtractResult], out_dir: Path,
 # This is the BDC's own GAAP "Total Investments at Fair Value" on its balance
 # sheet. Updated 2026-05-30 from companyfacts API.
 DASHBOARD_FV_M = {
-    "ARCC": 29499.3, "BBDC": 2370.0, "BCSF": 2470.8, "BXSL": 13942.1,
-    "CGBD": 2277.1, "FSK": 12269.4, "GBDC": 8317.2, "GSBD": 3228.9,
-    "HTGC": 4722.0, "MAIN": 5674.8, "MFIC": 2971.5, "MSDL": 3668.9,
-    "NMFC": 2313.4, "OBDC": 15344.2, "OCSL": 2766.4, "PSEC": 6302.5,
-    "TCPC": 1388.7, "TSLX": 3313.4,
+    "ARCC": 29499.3, "BBDC": 2370.0, "BCRED": 80469.4, "BCSF": 2470.8,
+    "BXSL": 13942.1, "CGBD": 2277.1, "FSK": 12269.4, "GBDC": 8317.2,
+    "GSBD": 3228.9, "HTGC": 4722.0, "MAIN": 5674.8, "MFIC": 2971.5,
+    "MSDL": 3668.9, "NMFC": 2313.4, "OBDC": 15344.2, "OCSL": 2766.4,
+    "PSEC": 6302.5, "TCPC": 1388.7, "TSLX": 3313.4,
 }
 
 

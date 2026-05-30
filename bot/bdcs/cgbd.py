@@ -62,6 +62,23 @@ class Cgbd(Bdc):
         re.compile(r"\(Equity\)\s*$"),
     )
 
+    def post_filter(self, positions: list) -> list:
+        # CGBD tags affiliated-issuer positions TWICE: once in the canonical
+        # 5-part form ("Investment | Affiliated Issuer | <Type> | <Issuer> |
+        # <Sector>", cost > 0) and once in a 3-part alias form
+        # ("Investment | Affiliated Issuer | <Issuer> <N>", cost = 0) that
+        # restates the same FV. The 3-part aliases are pure duplicates —
+        # drop them. (Verified: every 3-part row has cost == 0; no genuine
+        # position uses the 3-part form.)
+        out = []
+        for p in positions:
+            n_parts = len((p.identifier or "").split("|"))
+            cost_missing = p.cost is None or p.cost == 0
+            if n_parts == 3 and cost_missing:
+                continue
+            out.append(p)
+        return out
+
     def parse_identifier(self, ident: str) -> dict:
         m = _PFX_FULL.match(ident)
         sector = None
