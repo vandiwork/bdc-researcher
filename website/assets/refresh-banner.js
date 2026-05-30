@@ -10,7 +10,7 @@
  * time. If you fork this repo, change REPO_SLUG to point at your fork.
  */
 (function () {
-  const REPO_SLUG = window.__REPO_SLUG__ || "vandi/BDC-Scalable";  // owner/repo
+  const REPO_SLUG = window.__REPO_SLUG__ || "vandiwork/bdc-researcher";  // owner/repo
   const REFRESH_WORKFLOW = "refresh-all.yml";
 
   function fmtAgo(iso) {
