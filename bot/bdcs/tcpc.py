@@ -36,8 +36,8 @@ _MATURITY_RX = re.compile(r"Maturity\s+(\d{1,2}/\d{1,2}/\d{4})", re.I)
 @register
 class Tcpc(Bdc):
     ticker = "TCPC"
-    canonical_fv_m = 1533.0
-    canonical_period = "2025-12-31"
+    canonical_fv_m = 1388.7
+    canonical_period = "2026-03-31"
 
     drop_identifier_exact = frozenset({
         "Debt", "Equity", "Warrant Investments",

@@ -17,6 +17,6 @@ from . import register
 @register
 class Gbdc(Bdc):
     ticker = "GBDC"
-    canonical_fv_m = 8769.0
-    canonical_period = "2025-09-30"
+    canonical_fv_m = 8317.2
+    canonical_period = "2026-03-31"
     keep_partial_rollup_excess = True

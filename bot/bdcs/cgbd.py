@@ -43,8 +43,8 @@ _TYPE_MAP = {
 @register
 class Cgbd(Bdc):
     ticker = "CGBD"
-    canonical_fv_m = 2464.0
-    canonical_period = "2025-12-31"
+    canonical_fv_m = 2277.1
+    canonical_period = "2026-03-31"
 
     drop_identifier_prefixes = ("Credit Fund ",)
     drop_identifier_exact = frozenset({

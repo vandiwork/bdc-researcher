@@ -41,8 +41,8 @@ _TOTAL_RX = re.compile(r"\b(?:and\s+)?Total\s+[A-Z]", re.I)
 @register
 class Htgc(Bdc):
     ticker = "HTGC"
-    canonical_fv_m = 4466.6   # un-segmented XBRL total for 2025-12-31
-    canonical_period = "2025-12-31"
+    canonical_fv_m = 4722.0   # un-segmented XBRL total for 2025-12-31
+    canonical_period = "2026-03-31"
 
     # HTGC tags issuer-level totals like "Debt Investments <Sector> and
     # Total <Issuer>, LLC" — these are roll-ups summing all tranches per

@@ -13,8 +13,8 @@ from . import register
 @register
 class Bbdc(Bdc):
     ticker = "BBDC"
-    canonical_fv_m = 2399.0
-    canonical_period = "2025-12-31"
+    canonical_fv_m = 2370.0
+    canonical_period = "2026-03-31"
 
     # BBDC tags some revolver / second-lien loans with a redundant
     # ", Funded" or " | Funded" suffix that aliases the canonical row.

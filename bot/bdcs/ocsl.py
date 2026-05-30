@@ -70,8 +70,8 @@ _OCSL_SECTORS = (
 @register
 class Ocsl(Bdc):
     ticker = "OCSL"
-    canonical_fv_m = 2838.0
-    canonical_period = "2025-09-30"   # OCSL fiscal year ends Sept 30
+    canonical_fv_m = 2766.4
+    canonical_period = "2026-03-31"   # OCSL fiscal year ends Sept 30
 
     def parse_identifier(self, ident: str) -> dict:
         out: dict = {}

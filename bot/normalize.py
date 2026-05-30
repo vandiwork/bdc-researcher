@@ -606,16 +606,82 @@ def is_black_box_entity(entity: str) -> Optional[str]:
     return None
 
 
+# Keyword → (sector, industry_group) — applied to free-text business
+# descriptions (e.g. MAIN's "Roaster, Mixer and Packager of Bulk Nuts and
+# Seeds"). Order matters: longer / more specific patterns first. Each entry
+# is checked as a case-insensitive substring or regex against the full
+# description; the first hit wins.
+_DESC_KEYWORD_RULES: tuple[tuple[re.Pattern, str, str], ...] = (
+    # Software & IT
+    (re.compile(r"\b(software|SaaS|cloud|cyber|cybersec|IT services|tech(?:nology)? (?:services|consult|solut|platform)|digital (?:platform|marketing|product|photo)|data (?:platform|analytics)|app(?:lication)? (?:dev|platform)|web (?:platform|services))\b", re.I), "Information Technology", "Software & Services"),
+    (re.compile(r"\b(semiconductor|chip(?:set)?|silicon)\b", re.I), "Information Technology", "Semiconductors & Semiconductor Equipment"),
+    (re.compile(r"\b(hardware|electronic equipment|networking equipment|computer hardware|server)\b", re.I), "Information Technology", "Technology Hardware & Equipment"),
+    # Healthcare
+    (re.compile(r"\b(pharma(?:ceutical)?|biotech(?:nology)?|drug (?:dev|develop|manufactur)|life sciences?)\b", re.I), "Health Care", "Pharmaceuticals, Biotechnology & Life Sciences"),
+    (re.compile(r"\b(hospital|clinic|medical (?:device|equipment|practice|service)|dental|veterinary|nursing|home health|hospice|behavioral health|orthop[ae]dic|dermatolog|optometr|cardiolog|oncolog|radiolog|surgery|surgical|physician|patient|health[- ]care (?:staff|service|provider|facility|technolog|equipment|suppl)|substance abuse|applied behavior analysis|ABA therapy)\b", re.I), "Health Care", "Health Care Equipment & Services"),
+    # Finance
+    (re.compile(r"\b(insurance (?:broker|agency|services|carrier)|reinsurance|underwriter|insurer|insurance$)\b", re.I), "Financials", "Insurance"),
+    (re.compile(r"\b(bank|banking|lender|lending|credit (?:provider|services|union)|fintech|payment processor|asset manager|wealth (?:manag|advis)|investment (?:bank|advisor|manag|partnership)|specialty consumer finance|loan servicer|consumer finance|business development comp|broker[- ]dealer)\b", re.I), "Financials", "Diversified Financials"),
+    # Real estate
+    (re.compile(r"\b(real estate (?:invest|trust|develop|mgmt|owner|operator|brokerage)|REIT|property (?:mgmt|develop|manag)|construction)\b", re.I), "Real Estate", "Real Estate"),
+    # Energy
+    (re.compile(r"\b(oil (?:and|&) gas|upstream|midstream|downstream|petroleum|refining|oilfield|fracking|drilling (?:services)?|coal|natural gas|liquefied natural gas|LNG)\b", re.I), "Energy", "Energy"),
+    (re.compile(r"\b(utility|utilities|power (?:gen|util|station)|electric (?:util|company)|water util|gas util|solar (?:power|gen|farm)|wind (?:power|gen|farm)|renewable energy)\b", re.I), "Utilities", "Utilities"),
+    (re.compile(r"\b(backup power generation|nuclear power)\b", re.I), "Utilities", "Utilities"),
+    # Materials / Industrials
+    (re.compile(r"\b(chemical|specialty chemical|polymer|plastic (?:resin|compound)|metal-based laminat|metals? (?:and|&) mining|forest product|paper (?:product|mill)|packaging|container (?:and|&) packaging)\b", re.I), "Materials", "Materials"),
+    (re.compile(r"\b(aerospace|defense|airline|aircraft|aviation|military)\b", re.I), "Industrials", "Capital Goods"),
+    (re.compile(r"\b(machinery|industrial equipment|industrial manufact|construction equipment|heavy equipment|electrical equipment|building products?|industrial automation)\b", re.I), "Industrials", "Capital Goods"),
+    (re.compile(r"\b(manufactur|production facility|fabricat|assembly|tool & die|metalwork|precision metal|die cut|electrical distribution|disconnect switch|industrial piping|specialty fabricat|component (?:manufactur|machining)|engineered (?:component|product|solution))\b", re.I), "Industrials", "Capital Goods"),
+    # Transportation
+    (re.compile(r"\b(trucking|freight|logistics|shipping|rail(?:road|way)?|marine transport|tanker|ocean carrier|airfreight|air freight|courier|last[- ]mile delivery|transport(?:ation)? infrastructure|port operator|tugboat|marine tourism)\b", re.I), "Industrials", "Transportation"),
+    # Commercial / Professional Services
+    (re.compile(r"\b(staffing (?:agency|service|firm)|talent advisory|professional service|consulting|HR services|recruitment|outsourcing|business process outsourcing|BPO|facility manag|facility (?:service|maintenance)|janitorial|landscaping|pest control|security service|environmental service|waste manag|recycling|advertising|marketing services|PR firm|public relations|legal service|accounting|audit firm|maintenance services?|snow removal|ice management|test(?:ing)?, inspection)\b", re.I), "Industrials", "Commercial & Professional Services"),
+    (re.compile(r"\b(vegetation management|residential re-roofing|nuclear power staffing|healthcare temporary staffing|tech-enabled distribution)\b", re.I), "Industrials", "Commercial & Professional Services"),
+    # Consumer
+    (re.compile(r"\b(automotive (?:parts|aftermarket|dealer|service)|auto (?:parts|repair|service)|car (?:wash|dealer)|tire (?:retail|distrib)|vehicle (?:parts|service))\b", re.I), "Consumer Discretionary", "Automobiles & Components"),
+    (re.compile(r"\b(hotel|resort|gaming|casino|cruise|leisure|restaurants?|franchisee|fast food|quick service|QSR|food service|catering|amusement park|theme park|tourism|travel agen|casual dining|fine dining)\b", re.I), "Consumer Discretionary", "Consumer Services"),
+    (re.compile(r"\b(higher education|education service|child[- ]care|day[- ]care|tutoring|test prep|for-profit (?:thrift |)retail|specialty (?:apparel|footwear|jewel)|substance abuse|behavioral health|applied behavior analysis|outsourced consumer service)\b", re.I), "Consumer Discretionary", "Consumer Services"),
+    (re.compile(r"\b(retailer|retail (?:chain|store|operator)|e-commerce|online retailer|department store|specialty retail|big[- ]box|wholesaler|wholesale (?:distrib|trader)|closeout|off[- ]price)\b", re.I), "Consumer Discretionary", "Retailing"),
+    (re.compile(r"\b(apparel|textile|footwear|sporting goods|luxury goods|household appliances|home furnish|furniture|consumer plastic product|beaded ice cream|toy (?:maker|manufact)|musical instrument)\b", re.I), "Consumer Discretionary", "Consumer Durables & Apparel"),
+    (re.compile(r"\b(supermarket|grocery|food retailer|food distributor|specialized food|beverage (?:distrib|maker|producer|solutions)|food processor|nut(?:rition)? (?:supplement|product)|rice processor|food (?:and|&) staples|coffee (?:roaster|company)|ice cream|premium beaded|roaster|baker|nuts and seeds|food ingredient|food and beverage|specialty food|tea|wine|spirit|brewer)\b", re.I), "Consumer Staples", "Food, Beverage & Tobacco"),
+    (re.compile(r"\b(household products|personal product|personal care|cosmetic|consumer packaged goods|CPG|consumer health)\b", re.I), "Consumer Staples", "Household & Personal Products"),
+    # Media / Communications
+    (re.compile(r"\b(media (?:company|operator)|broadcast|newspaper operator|local newspaper|cable network|publishing|content creator|advertis(?:ing agency|ing network)|film studio|music label|streaming service|gaming studio|video game)\b", re.I), "Communication Services", "Media & Entertainment"),
+    (re.compile(r"\b(telecom(?:munication)?|wireless carrier|wireline|broadband (?:provider|carrier)|ISP|internet service|cable (?:provider|operator))\b", re.I), "Communication Services", "Telecommunication Services"),
+    # CLO / structured credit
+    (re.compile(r"\b(CLO|collateralized loan obligation|structured credit|securitization)\b", re.I), "Black Box", "CLO / Structured Credit"),
+    # JV / fund of funds
+    (re.compile(r"\b(joint venture|fund of funds|investment partnership)\b", re.I), "Black Box", "JV / Fund of Funds"),
+)
+
+
+def classify_from_description(desc: str) -> Optional[tuple[str, str]]:
+    """Keyword-based sector classifier for free-text business descriptions
+    (used by MAIN and others whose SOI HTML carries only a description, no
+    sector field). Returns (sector, industry_group) on a confident hit,
+    None otherwise (caller falls back to Other)."""
+    if not desc:
+        return None
+    for rx, g, ig in _DESC_KEYWORD_RULES:
+        if rx.search(desc):
+            return (g, ig)
+    return None
+
+
 def classify_position(entity: str, raw_sector_xbrl: str,
-                      raw_sector_soi: str) -> tuple[str, str]:
+                      raw_sector_soi: str,
+                      business_description: str = "") -> tuple[str, str]:
     """Top-level classifier: combines entity-based black-box detection
-    with raw-sector normalization.
+    with raw-sector normalization, falling back to business-description
+    keyword classification when sector fields are unusable.
 
     Order of resolution:
       1. If entity matches a Black Box pattern → ("Black Box", sub)
       2. Try normalize_sector on XBRL raw value
       3. Try normalize_sector on SOI HTML raw value
-      4. Return ("Other", "Other")
+      4. Keyword-classify the free-text business description
+      5. Return ("Other", "Other")
     """
     bb = is_black_box_entity(entity or "")
     if bb:
@@ -628,4 +694,7 @@ def classify_position(entity: str, raw_sector_xbrl: str,
         g, ig = normalize_sector(raw_sector_soi)
         if g != "Other":
             return (g, ig)
+    by_desc = classify_from_description(business_description)
+    if by_desc is not None:
+        return by_desc
     return ("Other", "Other")

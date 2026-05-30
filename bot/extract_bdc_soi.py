@@ -944,11 +944,15 @@ def write_summary(results: list[ExtractResult], out_dir: Path,
 
 # Dashboard-reported portfolio FVs ($ in MILLIONS) from website/index.html.
 # Used in --all mode for QA. Update when dashboard refreshes.
+# Authoritative XBRL `us-gaap:InvestmentOwnedAtFairValue` (Q1 CY26 10-Q values).
+# This is the BDC's own GAAP "Total Investments at Fair Value" on its balance
+# sheet. Updated 2026-05-30 from companyfacts API.
 DASHBOARD_FV_M = {
-    "ARCC": 29485, "BBDC": 2399, "BCSF": 2509, "BXSL": 14207, "CGBD": 2464,
-    "FSK": 14404, "GBDC": 8769, "GSBD": 3262, "HTGC": 4477, "MAIN": 5518,
-    "MFIC": 3168, "MSDL": 3772, "NMFC": 2742, "OBDC": 16475, "OCSL": 2838,
-    "PSEC": 6674, "TCPC": 1533, "TSLX": 3347,
+    "ARCC": 29499.3, "BBDC": 2370.0, "BCSF": 2470.8, "BXSL": 13942.1,
+    "CGBD": 2277.1, "FSK": 12269.4, "GBDC": 8317.2, "GSBD": 3228.9,
+    "HTGC": 4722.0, "MAIN": 5674.8, "MFIC": 2971.5, "MSDL": 3668.9,
+    "NMFC": 2313.4, "OBDC": 15344.2, "OCSL": 2766.4, "PSEC": 6302.5,
+    "TCPC": 1388.7, "TSLX": 3313.4,
 }
 
 

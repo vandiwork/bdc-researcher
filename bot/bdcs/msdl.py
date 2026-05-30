@@ -66,10 +66,30 @@ _MSDL_SECTORS = (
 @register
 class Msdl(Bdc):
     ticker = "MSDL"
-    canonical_fv_m = 3772.0
-    canonical_period = "2025-12-31"
+    canonical_fv_m = 3668.9
+    canonical_period = "2026-03-31"
     column_aliases = {"Investments": "company"}
     value_scale_m = 0.001
+
+    # MSDL tags JV / controlled equity stakes twice — once with the long-form
+    # "Investments controlled/affiliated Equity Investments Investments in
+    # Joint Ventures <Entity>, …" identifier (cost > 0) and once with a bare
+    # "<Entity>" alias (cost = 0). Drop the bare aliases when a long-form
+    # row with the same FV is present.
+    def post_filter(self, positions: list) -> list:
+        all_cost_fvs: set[int] = set()
+        for p in positions:
+            if p.cost and p.cost > 0 and p.fv:
+                all_cost_fvs.add(round(p.fv))
+        kept = []
+        for p in positions:
+            ident = p.identifier or ""
+            is_bare = not ident.startswith("Investments")
+            cost_missing = p.cost is None or p.cost == 0
+            if is_bare and cost_missing and p.fv and round(p.fv) in all_cost_fvs:
+                continue
+            kept.append(p)
+        return kept
 
     def parse_identifier(self, ident: str) -> dict:
         out: dict = {}

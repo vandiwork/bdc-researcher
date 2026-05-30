@@ -66,8 +66,8 @@ _CURRENCY_CODE = {
 @register
 class Bcsf(Bdc):
     ticker = "BCSF"
-    canonical_fv_m = 2509.0
-    canonical_period = "2025-12-31"
+    canonical_fv_m = 2470.8
+    canonical_period = "2026-03-31"
 
     def parse_identifier(self, ident: str) -> dict:
         out: dict = {}

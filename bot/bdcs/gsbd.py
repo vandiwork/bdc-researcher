@@ -27,8 +27,8 @@ _MARKERS = [
 @register
 class Gsbd(Bdc):
     ticker = "GSBD"
-    canonical_fv_m = 3262.0
-    canonical_period = "2025-12-31"
+    canonical_fv_m = 3228.9
+    canonical_period = "2026-03-31"
 
     def parse_identifier(self, ident: str) -> dict:
         out: dict = {}

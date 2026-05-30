@@ -237,7 +237,8 @@ def enrich_one(ticker: str, xbrl_csv: Path, html_bytes: bytes,
         entity = (p.get("entity") or p.get("company") or "").strip()
         xbrl_sec = (p.get("sector") or "").strip()
         soi_sec = (p.get("sector_soi") or "").strip()
-        gics, ig = classify_position(entity, xbrl_sec, soi_sec)
+        desc = (p.get("business_description") or p.get("desc") or "").strip()
+        gics, ig = classify_position(entity, xbrl_sec, soi_sec, desc)
         p["gics_sector"] = gics
         p["gics_industry_group"] = ig
 

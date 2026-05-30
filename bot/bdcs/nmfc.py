@@ -16,8 +16,8 @@ from . import register
 @register
 class Nmfc(Bdc):
     ticker = "NMFC"
-    canonical_fv_m = 2742.0
-    canonical_period = "2025-12-31"
+    canonical_fv_m = 2313.4
+    canonical_period = "2026-03-31"
 
     drop_identifier_patterns = (
         re.compile(r"\|\s*Non-accrual status\s*$", re.I),

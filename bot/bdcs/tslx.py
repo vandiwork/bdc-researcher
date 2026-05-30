@@ -54,8 +54,8 @@ _TSLX_SECTORS = (
 @register
 class Tslx(Bdc):
     ticker = "TSLX"
-    canonical_fv_m = 3347.0
-    canonical_period = "2025-12-31"
+    canonical_fv_m = 3313.4
+    canonical_period = "2026-03-31"
     value_scale_m = 0.001
 
     def parse_identifier(self, ident: str) -> dict:

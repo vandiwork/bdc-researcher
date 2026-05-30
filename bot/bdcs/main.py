@@ -29,8 +29,8 @@ _TYPE_FROM_TRANCHE = [
 @register
 class Main(Bdc):
     ticker = "MAIN"
-    canonical_fv_m = 5518.0
-    canonical_period = "2025-12-31"
+    canonical_fv_m = 5674.8
+    canonical_period = "2026-03-31"
 
     def parse_identifier(self, ident: str) -> dict:
         out: dict = {}

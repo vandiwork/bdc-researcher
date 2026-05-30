@@ -22,8 +22,8 @@ from . import register
 @register
 class Fsk(Bdc):
     ticker = "FSK"
-    canonical_fv_m = 14404.0
-    canonical_period = "2025-12-31"
+    canonical_fv_m = 12269.4
+    canonical_period = "2026-03-31"
 
     def post_filter(self, positions: list) -> list:
         # Pass 1: drop sub-SOI rollups (no pipe, no comma, no cost).

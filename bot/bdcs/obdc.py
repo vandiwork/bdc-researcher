@@ -32,8 +32,8 @@ _TYPE_FROM_TRANCHE = [
 @register
 class Obdc(Bdc):
     ticker = "OBDC"
-    canonical_fv_m = 16475.0
-    canonical_period = "2025-12-31"
+    canonical_fv_m = 15344.2
+    canonical_period = "2026-03-31"
 
     def post_filter(self, positions: list) -> list:
         # Drop sub-SOI rollup rows: no pipe, cost missing/zero.

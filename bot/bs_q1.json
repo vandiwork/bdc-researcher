@@ -23,6 +23,18 @@
     "portfolio_fv": 2369989000,
     "nav_per_share": 11.016
   },
+  "BCRED": {
+    "period_end": "2026-03-31",
+    "total_liabilities": 39792863000,
+    "gross_debt": 35167792000,
+    "gross_debt_concept": "DebtLongtermAndShorttermCombinedAmount",
+    "nav": 45035436000,
+    "nav_concept": "StockholdersEquity",
+    "shares": 1862005513,
+    "shares_concept": "CommonStockSharesOutstanding",
+    "portfolio_fv": 80469381000,
+    "nav_per_share": 24.1865
+  },
   "BCSF": {
     "period_end": "2026-03-31",
     "total_liabilities": 1508121000,

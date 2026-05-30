@@ -682,9 +682,17 @@ def update_comps(bs_data: dict, market_data: dict, all_data: dict) -> bool:
 
         # P/NAV = market price / NAV per share
         p_nav = price / nps if (price and nps) else None
-        # P/GAV = (price × shares) / GAV. GAV = NAV + liabilities.
+        # P/GAV is enterprise-value / GAV — i.e. (market_cap + debt) / GAV.
+        # GAV = NAV + total liabilities. This is the "price you'd pay for the
+        # whole asset side" measure. A levered BDC at 0.9x P/NAV with debt
+        # at par will trade close to 1.0x P/GAV, since the debt portion is
+        # marked at par regardless of equity discount.
         shares = bs.get("shares") or 0
-        p_gav = (price * shares / (gav_m * 1e6)) if (price and shares and gav_m) else None
+        if price and shares and gav_m:
+            market_cap_m = price * shares / 1e6
+            p_gav = (market_cap_m + debt_m) / gav_m
+        else:
+            p_gav = None
 
         # Pull to par = IRR contribution from discount closure. If you
         # buy at the current P/NAV and the stock re-rates to 1.00x NAV,

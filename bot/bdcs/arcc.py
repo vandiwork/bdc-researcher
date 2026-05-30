@@ -13,5 +13,5 @@ from . import register
 @register
 class Arcc(Bdc):
     ticker = "ARCC"
-    canonical_fv_m = 29485.0
-    canonical_period = "2025-12-31"
+    canonical_fv_m = 29499.3
+    canonical_period = "2026-03-31"

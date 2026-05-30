@@ -65,8 +65,8 @@ _MFIC_SECTORS = (
 @register
 class Mfic(Bdc):
     ticker = "MFIC"
-    canonical_fv_m = 3168.0
-    canonical_period = "2025-12-31"
+    canonical_fv_m = 2971.5
+    canonical_period = "2026-03-31"
 
     # MFIC reports redundant alias rows for each consolidated- or
     # affiliated-investment position with prefixes "Controlled Investments "
