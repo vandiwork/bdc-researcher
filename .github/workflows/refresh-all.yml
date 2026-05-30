@@ -105,7 +105,14 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "data: full refresh ($(date -u +%Y-%m-%dT%H:%M))"
-            git push
+            # Race-safe push: pull any commits that landed since checkout,
+            # rebase our refresh commit on top, then push. Retry once if
+            # the remote was updated mid-push.
+            for i in 1 2 3; do
+              git pull --rebase origin main && git push && break
+              echo "Push attempt $i failed; retrying after fetch..."
+              sleep 3
+            done
           fi
 
       - name: Upload Pages artifact

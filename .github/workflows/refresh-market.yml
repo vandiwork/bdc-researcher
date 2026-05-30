@@ -73,7 +73,11 @@ jobs:
             echo "No price changes since last run."
           else
             git commit -m "market: intraday refresh ($(date -u +%H:%M))"
-            git push
+            for i in 1 2 3; do
+              git pull --rebase origin main && git push && break
+              echo "Push attempt $i failed; retrying after fetch..."
+              sleep 3
+            done
           fi
 
       - name: Upload Pages artifact
