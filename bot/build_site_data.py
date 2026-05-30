@@ -178,11 +178,25 @@ def build_status_data(per_bdc: dict[str, list[dict]],
     # _soi field is populated, not just sector_soi — many BDCs (MAIN,
     # NMFC) don't expose an industry column in their SOI but still
     # match rows for maturity / acq date / affiliation / etc.
+    #
+    # Eligibility excludes "unfunded commitment adjustment" rows: XBRL
+    # often emits a separate position for the mark-down on the undrawn
+    # portion of a revolver — typically cost=0 and par=0 with a small
+    # negative FV. These have no standalone HTML row (the mark is shown
+    # inline with the parent funded position), so they shouldn't count
+    # against match rate.
     SOI_FIELDS = ("sector_soi", "investment_type_soi", "maturity_soi",
                    "acq_soi", "base_rate_soi", "interest_rate_soi",
                    "spread_soi", "rate_floor_soi", "business_description",
                    "footnotes", "affiliation_soi", "pct_net_assets_soi",
                    "pik_rate_soi")
+
+    def _fnum(s):
+        try:
+            return float(s or 0)
+        except (TypeError, ValueError):
+            return 0.0
+
     match_rates: dict[str, float] = {}
     for ticker in per_bdc:
         enr_files = sorted(ENRICHED_DIR.glob(f"{ticker}_*.csv"),
@@ -191,12 +205,19 @@ def build_status_data(per_bdc: dict[str, list[dict]],
             continue
         with enr_files[0].open(encoding="utf-8") as f:
             enr_rows = list(csv.DictReader(f))
-        # Eligible = non-zero FV (these are the ones that get HTML-joined)
+
         def is_eligible(r):
-            try:
-                return float(r.get("fv") or 0) != 0
-            except ValueError:
+            fv = _fnum(r.get("fv"))
+            cost = _fnum(r.get("cost"))
+            par = _fnum(r.get("par"))
+            # Exclude rows with no FV (unparseable / zero) and rows that
+            # are unfunded-commitment adjustments (no cost, no par).
+            if fv == 0:
                 return False
+            if cost == 0 and par == 0:
+                return False
+            return True
+
         eligible_rows = [r for r in enr_rows if is_eligible(r)]
         matched = sum(1 for r in eligible_rows
                        if any((r.get(f) or "").strip() for f in SOI_FIELDS))

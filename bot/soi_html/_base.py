@@ -657,12 +657,32 @@ class SoiHtmlParser:
                 if not non_empty:
                     continue
 
-                # Skip repeating header rows
+                # Skip repeating header rows. A real header row has
+                # multiple column-label cells AND no money values; a
+                # company name that happens to contain the word
+                # "Company" (e.g. "Nelipak Holding Company") or
+                # "Investments" (e.g. "Fifth Season Investments LLC")
+                # must NOT be skipped just because its first text
+                # matches one label. Require BOTH: (a) first cell text
+                # matches a header label, AND (b) at least one other
+                # cell also matches a header label, AND (c) no money
+                # values present in the row.
                 first_text = non_empty[0][2]
-                if any(label in first_text for label in
-                       ("Company", "Portfolio Company", "Issuer",
-                        "Investments", "Investment Type")):
-                    if len(non_empty) >= 4:
+                HEADER_LABELS = ("Company", "Portfolio Company", "Issuer",
+                                  "Investments", "Investment", "Investment Type",
+                                  "Maturity Date", "Maturity", "Fair Value",
+                                  "Amortized Cost", "Cost", "Industry",
+                                  "Par / Units", "Par Amount", "Shares/Units",
+                                  "% of Net Assets", "Coupon", "Spread", "Rate",
+                                  "Reference", "Reference Rate")
+                if first_text in HEADER_LABELS:
+                    other_labels = sum(
+                        1 for _, _, t in non_empty[1:]
+                        if t in HEADER_LABELS)
+                    has_money = any(
+                        looks_like_money(t) or t.startswith("$")
+                        for _, _, t in non_empty)
+                    if other_labels >= 2 and not has_money:
                         continue
 
                 # Section-break detection — fires for BOTH:
