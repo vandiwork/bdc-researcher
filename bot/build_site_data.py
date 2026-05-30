@@ -292,16 +292,67 @@ def inject_markdelta(md_data: list) -> bool:
     return True
 
 
+def _borrower_key(name: str) -> str:
+    """Normalize a borrower name so the same issuer matches across BDCs
+    that spell it slightly differently. Drops punctuation, common
+    corporate suffixes, and parenthetical aliases."""
+    if not name:
+        return ""
+    s = name.strip().lower()
+    s = re.sub(r"\s*\((?:dba|d/b/a|fka|f/k/a|aka|a/k/a)\b[^)]*\)", "", s)
+    s = re.sub(r"\s*\([^)]*\)\s*$", "", s)
+    s = re.sub(r"[.,'`]", "", s)
+    s = re.sub(r"\s+&\s+", " and ", s)
+    suffix_rx = re.compile(
+        r"\s+(?:inc|llc|l\s*l\s*c|lp|l\s*p|ltd|limited|corp|corporation|"
+        r"plc|gmbh|sarl|s\s*a\s*r\s*l|s\s*a|b\s*v|n\s*v|company|co|"
+        r"holdings?|holdco|topco|midco|bidco|group)$",
+        re.I)
+    for _ in range(3):
+        new = suffix_rx.sub("", s).strip()
+        if new == s:
+            break
+        s = new
+    return re.sub(r"\s+", " ", s).strip()
+
+
+# Full BDC names for the pairs.html summary blurb
+BDC_FULL_NAMES = {
+    "ARCC": "Ares Capital Corporation",
+    "BBDC": "Barings BDC",
+    "BCRED": "Blackstone Private Credit Fund",
+    "BCSF": "Bain Capital Specialty Finance",
+    "BXSL": "Blackstone Secured Lending",
+    "CGBD": "Carlyle Secured Lending",
+    "FSK":  "FS KKR Capital Corp",
+    "GBDC": "Golub Capital BDC",
+    "GSBD": "Goldman Sachs BDC",
+    "HTGC": "Hercules Capital",
+    "MAIN": "Main Street Capital",
+    "MFIC": "MidCap Financial Investment",
+    "MSDL": "Morgan Stanley Direct Lending",
+    "NMFC": "New Mountain Finance",
+    "OBDC": "Blue Owl Capital Corporation",
+    "OCSL": "Oaktree Specialty Lending",
+    "PSEC": "Prospect Capital",
+    "SLRC": "SLR Investment Corp",
+    "TCPC": "BlackRock TCP Capital",
+    "TRIN": "Trinity Capital",
+    "TSLX": "Sixth Street Specialty Lending",
+    "WHF":  "WhiteHorse Finance",
+}
+
+
 def build_pairs_data(all_data: dict, existing_pnav: dict,
                       bs_data: dict = None, market_data: dict = None) -> dict:
-    """Build D = {pnav, totals, books} for pairs.html.
+    """Build D = {pnav, totals, books, names} for pairs.html.
 
-    pnav is recomputed from market price / Q1 NAV/share when both
-    inputs are available; otherwise we preserve the existing market-data
-    value.
+    Books are keyed by a normalized borrower key so the same issuer
+    matches across BDCs that spell it slightly differently. pnav is
+    recomputed from market price / Q1 NAV/share when both inputs are
+    available; otherwise we preserve the existing market-data value.
     """
-    # Compute P/NAV from market + BS where possible
-    pnav = dict(existing_pnav)  # start with existing values as fallback
+    pnav = dict(existing_pnav)
     bs_data = bs_data or {}
     market_data = market_data or {}
     for tk in set(list(bs_data.keys()) + list(market_data.keys())):
@@ -319,7 +370,9 @@ def build_pairs_data(all_data: dict, existing_pnav: dict,
             cname = (r.get("company") or r.get("entity") or "").strip()
             if not cname or not r.get("fv"):
                 continue
-            key = cname.lower()
+            key = _borrower_key(cname)
+            if not key:
+                continue
             d = book.setdefault(key, {
                 "name": cname,
                 "sector": r.get("sector", "Other"),
@@ -330,7 +383,8 @@ def build_pairs_data(all_data: dict, existing_pnav: dict,
             d["cost"] += r.get("cost") or 0
             d["par"] += r.get("par") or 0
         books[tk] = book
-    return {"pnav": pnav, "totals": totals, "books": books}
+    names = {tk: BDC_FULL_NAMES.get(tk, tk) for tk in pnav}
+    return {"pnav": pnav, "totals": totals, "books": books, "names": names}
 
 
 def inject_pairs(pairs_data: dict) -> bool:
