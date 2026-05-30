@@ -649,7 +649,33 @@ class SoiHtmlParser:
             except Exception:
                 continue
 
-            for row in doc.xpath("//tr"):
+            # Some filers (e.g. CGBD) use different column layouts for
+            # different SOI sub-tables — debt has cost at col 60 while
+            # equity has cost at col 39. Detect a new header row at the
+            # start of this table and rebuild the header_map for the
+            # subsequent rows. We only switch when the new map covers
+            # company + (fair_value | cost | principal); if no valid
+            # header is found, we keep using the previous map.
+            new_hm: dict[int, tuple[int, str]] = {}
+            tbl_rows = list(doc.xpath("//tr"))
+            consec_non_header = 0
+            for row in tbl_rows[:8]:
+                hm = build_header_map(row, self.column_aliases)
+                if hm:
+                    new_hm.update(hm)
+                    consec_non_header = 0
+                else:
+                    consec_non_header += 1
+                    if consec_non_header >= 2 and new_hm:
+                        break
+            for (col_s, col_e), field in self.extra_columns.items():
+                new_hm[col_s] = (col_e, field)
+            new_fields = {f for _, (_, f) in new_hm.items()}
+            if ("company" in new_fields
+                    and new_fields & {"fair_value", "cost", "principal"}):
+                header_map = new_hm
+
+            for row in tbl_rows:
                 cells = row_cells_with_cols(row)
                 if not cells:
                     continue
