@@ -83,7 +83,7 @@ table.status-tbl tbody tr:nth-child(even) { background:#fafbfc; }
   <tbody id="accuracy-tbody"></tbody>
 </table>
 <p class="sub">*Match rate = % of XBRL positions joined to a SOI-HTML row for sector / maturity / acq-date enrichment.</p>
-<p class="sub" style="margin-top:-12px">&dagger; <strong>FSK</strong> and <strong>MSDL</strong> show a larger &Delta;: their inline-XBRL tags the consolidated Schedule of Investments at a finer line-item granularity than rolls into the filer's own reported &ldquo;Total Investments at Fair Value&rdquo; (uniformly across cost and fair value, with no duplicate or roll-up rows we can safely net out). Everywhere the site shows a portfolio size, it uses the filer&rsquo;s <em>reported</em> figure; the &Delta; here is a transparency metric, not a display value.</p>
+<p class="sub" style="margin-top:-12px">&dagger; <strong>FSK</strong> and <strong>MSDL</strong> file an internally-inconsistent SOI: their per-position inline-XBRL fair values (each correct vs the filing line-by-line) sum ~8&ndash;11% above the filer&rsquo;s own stated &ldquo;Total Investments at Fair Value.&rdquo; We reconcile by scaling every position&rsquo;s fair value and cost by the same factor so the portfolio foots to the filer&rsquo;s reported total &mdash; this preserves each position&rsquo;s mark and all relative weights (sector mix, concentration, cross-holdings).</p>
 
 <div class="section-title">Data sources</div>
 <table class="status-tbl" style="max-width:1000px">

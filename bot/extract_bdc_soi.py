@@ -118,6 +118,7 @@ class Position:
     maturity: Optional[str] = None
     acq: Optional[str] = None
     ccy: str = "USD"
+    fv_raw: Optional[float] = None   # pre-reconciliation fv (for HTML matching)
 
 
 @dataclass
@@ -656,6 +657,24 @@ def parse_facts(xml_bytes: bytes, contexts: dict[str, Context],
 
     if handler is not None:
         positions = handler.post_filter(positions)
+        # Reconcile filers whose per-position XBRL over-tags their own
+        # reported total (FSK, MSDL). Scale fv/cost/par uniformly so the
+        # portfolio foots to the filer's authoritative total; marks and
+        # relative weights are preserved (same factor on fv and cost).
+        if getattr(handler, "reconcile_to_reported", False) and handler.canonical_fv_m:
+            cur_m = sum((fv_usd(p.fv, p.ccy) or 0) for p in positions) / 1e6
+            tgt_m = handler.canonical_fv_m
+            if cur_m > 0 and abs(cur_m - tgt_m) / tgt_m > 0.02:
+                factor = tgt_m / cur_m
+                for p in positions:
+                    p.fv_raw = p.fv   # preserve original for HTML matching
+                    if p.fv is not None:
+                        p.fv *= factor
+                    if p.cost is not None:
+                        p.cost *= factor
+                    if p.par is not None:
+                        p.par *= factor
+                    # mark = fv/cost is unchanged by a uniform scale; leave as-is
     return positions
 
 
@@ -802,7 +821,7 @@ def write_outputs(positions: list[Position], filing: Filing, out_dir: Path
         "identifier", "entity", "company", "type", "sector", "desc", "affil",
         "fv", "cost", "par", "shares", "mark",
         "spread", "rate", "base_rate", "pik_rate", "pik",
-        "maturity", "acq", "ccy",
+        "maturity", "acq", "ccy", "fv_raw",
     ]
     with csv_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=csv_cols)
@@ -835,6 +854,7 @@ def write_outputs(positions: list[Position], filing: Filing, out_dir: Path
                 "maturity": p.maturity or "",
                 "acq": p.acq or "",
                 "ccy": p.ccy,
+                "fv_raw": p.fv_raw if p.fv_raw is not None else "",
             })
     return json_path, csv_path
 

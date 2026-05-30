@@ -47,6 +47,19 @@ class Bdc:
     # FV (bare_FV - leaf_sum) so the dashboard total matches canonical.
     keep_partial_rollup_excess: bool = False
 
+    # A few filers (FSK, MSDL) tag their Schedule of Investments at a finer
+    # line-item granularity than rolls into their OWN reported "Total
+    # Investments at Fair Value". Their per-position inline-XBRL facts (each
+    # individually correct vs the SOI) sum ~8–11% above the filer's stated
+    # total fact — an internal inconsistency in the filing itself, with no
+    # duplicate identifier / dimension / value signature to net out. When
+    # this flag is set AND the extracted sum exceeds canonical_fv_m by more
+    # than 2%, scale every position's fv/cost/par by canonical/extracted so
+    # the portfolio foots to the filer's authoritative total. Scaling fv and
+    # cost by the same factor preserves each position's mark (fv/cost) and
+    # all relative weights (sector mix, concentration, cross-holdings).
+    reconcile_to_reported: bool = False
+
     # ── Hooks ─────────────────────────────────────────────────────────
 
     def should_drop_context(self, ctx) -> bool:
