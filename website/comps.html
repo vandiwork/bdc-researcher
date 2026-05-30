@@ -3,23 +3,26 @@
 <title>BDC Comps</title>
 <link rel="stylesheet" href="assets.css">
 <style>
-/* Sticky header that locks below the fixed sitenav while the page
-   scrolls normally. All 22 rows stay visible — no inner-scroll clipping. */
+/* Sticky header locks below the fixed sitenav while the page
+   scrolls naturally. We must NOT wrap the table in an
+   overflow:auto/scroll container — that creates a new scroll context
+   and breaks viewport-relative sticky positioning. */
 .comps-wrap {
   border: 1px solid var(--border);
   border-radius: 8px;
   margin-top: 16px;
-  overflow-x: auto;  /* horizontal only — let the page handle vertical scroll */
+  overflow: visible;
 }
+#cmp { width: 100%; border-collapse: separate; border-spacing: 0; }
 #cmp thead th {
   position: sticky;
   top: 40px;   /* height of the fixed .sitenav */
   z-index: 5;
-  background: #1f4e78;
+  background: #1f4e78 !important;
   color: #fff;
+  box-shadow: 0 1px 0 #163d5e;  /* visual separator */
 }
-/* Pad bottom so the freshness banner (position:fixed; bottom:0) doesn't
-   cover the last row. */
+/* Pad bottom so the freshness banner doesn't cover the last row. */
 body { padding-bottom: 44px; }
 </style>
 </head><body><nav class="sitenav">
@@ -29,8 +32,8 @@ body { padding-bottom: 44px; }
 </nav>
 <div class="page">
 <h1>BDC Comps Tracker</h1>
-<div class="sub">Price, returns, and NAV multiples across 22 listed BDCs. Click any ticker to view that BDC's portfolio. Click column headers to sort.</div>
-<div class="comps-wrap" style="overflow-x:auto">
+<div class="sub">Price, returns, and NAV multiples across 21 listed BDCs. Click any ticker to view that BDC's portfolio. Click column headers to sort.</div>
+<div class="comps-wrap">
 <table id="cmp">
 <thead><tr>
 <th data-k="ticker">Ticker</th>
@@ -47,7 +50,7 @@ body { padding-bottom: 44px; }
 <th class="num" data-k="nav">NAV ($M)</th>
 <th class="num" data-k="ltv">LTV</th>
 <th class="num" data-k="yield">Div Yield</th>
-<th class="num" data-k="pullpar">Pull to Par</th>
+<th class="num" data-k="pullpar" title="Avg discount-to-par on debt positions in the portfolio (100% − wtd-avg mark). Different from P/NAV which is market discount to NAV.">Pull to Par</th>
 <th class="num" data-k="total1yr">1yr @ NAV</th>
 </tr></thead>
 <tbody id="cmp-body">
@@ -85,23 +88,6 @@ body { padding-bottom: 44px; }
 <td class="num pos">+12.6%</td>
 <td class="num pos">+1.9%</td>
 <td class="num pos">+40.6%</td>
-</tr><tr>
-<td><a href="dashboards/bcred_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">BCRED</a></td>
-<td>Blackstone Private Credit Fund (Non-traded)</td>
-<td class="num">—</td>
-<td class="num">—</td>
-<td class="num">—</td>
-<td class="num">—</td>
-<td class="num">—</td>
-<td class="num">—</td>
-<td class="num"><span class="pnav-hi">1.00x</span></td>
-<td class="num">14,656</td>
-<td class="num">8,411</td>
-<td class="num">6,245</td>
-<td class="num">57.4%</td>
-<td class="num ">—</td>
-<td class="num pos">+0.0%</td>
-<td class="num ">—</td>
 </tr><tr>
 <td><a href="dashboards/fsk_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">FSK</a></td>
 <td>FS KKR Capital Corp</td>
