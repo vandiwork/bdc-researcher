@@ -756,7 +756,15 @@ function renderAnalytics() {
 function buildSectorBars(data, total) {
   const map = {};
   data.forEach(r => { map[r.sector]=(map[r.sector]||0)+r.fv; });
-  const sorted = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  // Show top 11 sectors, roll the rest into "Other (N sectors)"
+  const allSorted = Object.entries(map).sort((a,b)=>b[1]-a[1]);
+  let sorted = allSorted;
+  if (allSorted.length > 12) {
+    const top11 = allSorted.slice(0, 11);
+    const tail = allSorted.slice(11);
+    const tailSum = tail.reduce((s, [,v]) => s + v, 0);
+    sorted = [...top11, [`Other (${tail.length} sectors)`, tailSum]];
+  }
   const max = sorted[0][1];
   const COLORS = ['#4f9cf9','#a78bfa','#34d399','#fbbf24','#f87171','#38bdf8','#fb923c','#a3e635','#e879f9','#67e8f9','#fde68a','#86efac'];
   const rows = sorted.map(([s,fv],i) => `

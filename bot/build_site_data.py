@@ -347,20 +347,24 @@ def build_markdelta_data(all_data: dict) -> list[dict]:
     type_class_map = {
         "First Lien": "t1", "Second Lien": "t2", "Subordinated": "t3",
         "Mezzanine": "t3", "Unsecured": "t3",
-        "Common Equity": "tEq", "Preferred Equity": "tEq",
-        "Warrant": "tEq", "Structured Credit": "tCLO", "Other": "tO",
     }
+    # Mark Delta is debt-only ("Loan-Level Divergent Valuations" per the
+    # page title). Equity / Warrant / Preferred / CLO marks are not
+    # apples-to-apples across BDCs.
+    DEBT_ONLY = set(type_class_map.keys())
 
     # Bucket by (normalized issuer, canonical type, maturity year)
     buckets: dict[tuple, list[dict]] = defaultdict(list)
     company_names: dict[tuple, str] = {}
     for ticker, rows in all_data.items():
         for r in rows:
+            type_ = r.get("type") or "Other"
+            if type_ not in DEBT_ONLY:
+                continue
             cname = (r.get("company") or r.get("entity") or "").strip()
             fv = r.get("fv") or 0
             if not cname or fv <= 0:
                 continue
-            type_ = r.get("type") or "Other"
             mat_yr = _maturity_year(r.get("maturity") or "")
             k = (_borrower_key(cname), type_, mat_yr)
             buckets[k].append({
@@ -682,24 +686,13 @@ def update_comps(bs_data: dict, market_data: dict, all_data: dict) -> bool:
         shares = bs.get("shares") or 0
         p_gav = (price * shares / (gav_m * 1e6)) if (price and shares and gav_m) else None
 
-        # Pull to par = FV-weighted distance to par for marked debt
-        # positions. Exclude positions with abnormally high marks (>200%)
-        # which are typically small-cost-basis revolvers / equity-like —
-        # they're not "pulling to par" since they aren't fixed-income.
-        # Also restrict to debt positions only.
-        rows = all_data.get(ticker, [])
-        debt_types = {"First Lien", "Second Lien", "Subordinated",
-                      "Mezzanine", "Unsecured"}
-        marked = [(r.get("mark"), r.get("fv") or 0)
-                  for r in rows
-                  if r.get("type") in debt_types
-                  and r.get("mark") is not None
-                  and r.get("fv")
-                  and -50 <= (r.get("mark") or 0) <= 150]
-        if marked:
-            tot_fv = sum(fv for _, fv in marked)
-            wtd_mark = sum(m * fv for m, fv in marked) / tot_fv
-            pull_to_par = round(100 - wtd_mark, 2)  # % left to recover
+        # Pull to par = IRR contribution from discount closure. If you
+        # buy at the current P/NAV and the stock re-rates to 1.00x NAV,
+        # this is the % return you'd earn from that re-rating (excluding
+        # dividends). Equals (1/P_NAV − 1) × 100.
+        # Premium-priced BDCs (P/NAV > 1) get NEGATIVE pull-to-par.
+        if p_nav and p_nav > 0:
+            pull_to_par = round((1 / p_nav - 1) * 100, 2)
         else:
             pull_to_par = None
 

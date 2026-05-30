@@ -3,26 +3,21 @@
 <title>BDC Comps</title>
 <link rel="stylesheet" href="assets.css">
 <style>
-/* Sticky header locks below the fixed sitenav while the page
-   scrolls naturally. We must NOT wrap the table in an
-   overflow:auto/scroll container — that creates a new scroll context
-   and breaks viewport-relative sticky positioning. */
-.comps-wrap {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  margin-top: 16px;
-  overflow: visible;
-}
-#cmp { width: 100%; border-collapse: separate; border-spacing: 0; }
+/* The global stylesheet sets `table { overflow:hidden }` which clips
+   the sticky thead. Override that, and disable any scroll-context
+   ancestors. */
+.comps-wrap { border: 1px solid var(--border); border-radius: 8px;
+              margin-top: 16px; overflow: visible !important; }
+#cmp { width: 100%; border-collapse: separate; border-spacing: 0;
+       overflow: visible !important; }
 #cmp thead th {
-  position: sticky;
-  top: 40px;   /* height of the fixed .sitenav */
-  z-index: 5;
+  position: sticky !important;
+  top: 40px !important;
+  z-index: 50 !important;
   background: #1f4e78 !important;
-  color: #fff;
-  box-shadow: 0 1px 0 #163d5e;  /* visual separator */
+  color: #fff !important;
+  box-shadow: 0 1px 0 #163d5e;
 }
-/* Pad bottom so the freshness banner doesn't cover the last row. */
 body { padding-bottom: 44px; }
 </style>
 </head><body><nav class="sitenav">
@@ -50,7 +45,7 @@ body { padding-bottom: 44px; }
 <th class="num" data-k="nav">NAV ($M)</th>
 <th class="num" data-k="ltv">LTV</th>
 <th class="num" data-k="yield">Div Yield</th>
-<th class="num" data-k="pullpar" title="Avg discount-to-par on debt positions in the portfolio (100% − wtd-avg mark). Different from P/NAV which is market discount to NAV.">Pull to Par</th>
+<th class="num" data-k="pullpar" title="IRR contribution from discount closure: if you bought at the current P/NAV and the stock re-rated to 1.00x NAV one year later, this is the % gain (excluding dividends). Equals (1/P_NAV − 1) × 100. Negative for BDCs trading at a premium.">Pull to Par</th>
 <th class="num" data-k="total1yr">1yr @ NAV</th>
 </tr></thead>
 <tbody id="cmp-body">
@@ -69,7 +64,7 @@ body { padding-bottom: 44px; }
 <td class="num">14,065</td>
 <td class="num">51.7%</td>
 <td class="num pos">+10.1%</td>
-<td class="num pos">+2.0%</td>
+<td class="num pos">+3.1%</td>
 <td class="num pos">+13.3%</td>
 </tr><tr>
 <td><a href="dashboards/obdc_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">OBDC</a></td>
@@ -86,7 +81,7 @@ body { padding-bottom: 44px; }
 <td class="num">7,154</td>
 <td class="num">52.8%</td>
 <td class="num pos">+12.6%</td>
-<td class="num pos">+1.9%</td>
+<td class="num pos">+28.0%</td>
 <td class="num pos">+40.6%</td>
 </tr><tr>
 <td><a href="dashboards/fsk_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">FSK</a></td>
@@ -103,7 +98,7 @@ body { padding-bottom: 44px; }
 <td class="num">5,274</td>
 <td class="num">56.7%</td>
 <td class="num pos">+21.2%</td>
-<td class="num pos">+4.8%</td>
+<td class="num pos">+73.2%</td>
 <td class="num pos">+94.4%</td>
 </tr><tr>
 <td><a href="dashboards/psec_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">PSEC</a></td>
@@ -120,7 +115,7 @@ body { padding-bottom: 44px; }
 <td class="num">2,954</td>
 <td class="num">36.3%</td>
 <td class="num pos">+20.7%</td>
-<td class="num pos">+3.1%</td>
+<td class="num pos">+151.1%</td>
 <td class="num pos">+171.8%</td>
 </tr><tr>
 <td><a href="dashboards/gbdc_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">GBDC</a></td>
@@ -137,7 +132,7 @@ body { padding-bottom: 44px; }
 <td class="num">3,748</td>
 <td class="num">55.1%</td>
 <td class="num pos">+10.9%</td>
-<td class="num pos">+1.3%</td>
+<td class="num pos">+9.1%</td>
 <td class="num pos">+20.0%</td>
 </tr><tr>
 <td><a href="dashboards/main_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">MAIN</a></td>
@@ -154,7 +149,7 @@ body { padding-bottom: 44px; }
 <td class="num">3,094</td>
 <td class="num">43.4%</td>
 <td class="num pos">+8.6%</td>
-<td class="num pos">+0.8%</td>
+<td class="num neg">-34.7%</td>
 <td class="num neg">-26.1%</td>
 </tr><tr>
 <td><a href="dashboards/htgc_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">HTGC</a></td>
@@ -171,7 +166,7 @@ body { padding-bottom: 44px; }
 <td class="num">2,227</td>
 <td class="num">52.6%</td>
 <td class="num pos">+12.2%</td>
-<td class="num neg">-0.3%</td>
+<td class="num neg">-23.0%</td>
 <td class="num neg">-10.8%</td>
 </tr><tr>
 <td><a href="dashboards/msdl_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">MSDL</a></td>
@@ -188,7 +183,7 @@ body { padding-bottom: 44px; }
 <td class="num">1,690</td>
 <td class="num">53.7%</td>
 <td class="num pos">+11.7%</td>
-<td class="num pos">+1.8%</td>
+<td class="num pos">+28.5%</td>
 <td class="num pos">+40.1%</td>
 </tr><tr>
 <td><a href="dashboards/tslx_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">TSLX</a></td>
@@ -205,7 +200,7 @@ body { padding-bottom: 44px; }
 <td class="num">1,543</td>
 <td class="num">53.1%</td>
 <td class="num pos">+9.8%</td>
-<td class="num pos">+1.6%</td>
+<td class="num neg">-5.8%</td>
 <td class="num pos">+4.0%</td>
 </tr><tr>
 <td><a href="dashboards/ocsl_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">OCSL</a></td>
@@ -222,7 +217,7 @@ body { padding-bottom: 44px; }
 <td class="num">1,382</td>
 <td class="num">51.2%</td>
 <td class="num pos">+12.9%</td>
-<td class="num pos">+2.0%</td>
+<td class="num pos">+31.2%</td>
 <td class="num pos">+44.1%</td>
 </tr><tr>
 <td><a href="dashboards/gsbd_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">GSBD</a></td>
@@ -239,7 +234,7 @@ body { padding-bottom: 44px; }
 <td class="num">1,370</td>
 <td class="num">56.8%</td>
 <td class="num pos">+11.1%</td>
-<td class="num pos">+15.8%</td>
+<td class="num pos">+35.8%</td>
 <td class="num pos">+46.9%</td>
 </tr><tr>
 <td><a href="dashboards/mfic_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">MFIC</a></td>
@@ -256,7 +251,7 @@ body { padding-bottom: 44px; }
 <td class="num">1,176</td>
 <td class="num">60.9%</td>
 <td class="num pos">+10.5%</td>
-<td class="num pos">+3.2%</td>
+<td class="num pos">+27.0%</td>
 <td class="num pos">+37.5%</td>
 </tr><tr>
 <td><a href="dashboards/nmfc_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">NMFC</a></td>
@@ -273,7 +268,7 @@ body { padding-bottom: 44px; }
 <td class="num">1,044</td>
 <td class="num">54.8%</td>
 <td class="num pos">+15.1%</td>
-<td class="num pos">+3.1%</td>
+<td class="num pos">+36.5%</td>
 <td class="num pos">+51.6%</td>
 </tr><tr>
 <td><a href="dashboards/cgbd_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">CGBD</a></td>
@@ -290,7 +285,7 @@ body { padding-bottom: 44px; }
 <td class="num">1,117</td>
 <td class="num">53.9%</td>
 <td class="num pos">+14.3%</td>
-<td class="num pos">+1.5%</td>
+<td class="num pos">+47.0%</td>
 <td class="num pos">+61.3%</td>
 </tr><tr>
 <td><a href="dashboards/bbdc_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">BBDC</a></td>
@@ -307,7 +302,7 @@ body { padding-bottom: 44px; }
 <td class="num">1,153</td>
 <td class="num">43.1%</td>
 <td class="num pos">+12.0%</td>
-<td class="num pos">+1.1%</td>
+<td class="num pos">+27.2%</td>
 <td class="num pos">+39.2%</td>
 </tr><tr>
 <td><a href="dashboards/bcsf_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">BCSF</a></td>
@@ -324,7 +319,7 @@ body { padding-bottom: 44px; }
 <td class="num">1,094</td>
 <td class="num">55.9%</td>
 <td class="num pos">+12.6%</td>
-<td class="num pos">+1.7%</td>
+<td class="num pos">+26.7%</td>
 <td class="num pos">+39.3%</td>
 </tr><tr>
 <td><a href="dashboards/trin_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">TRIN</a></td>
@@ -375,7 +370,7 @@ body { padding-bottom: 44px; }
 <td class="num">565</td>
 <td class="num">61.3%</td>
 <td class="num pos">+21.8%</td>
-<td class="num pos">+2.7%</td>
+<td class="num pos">+74.6%</td>
 <td class="num pos">+96.4%</td>
 </tr><tr>
 <td><a href="dashboards/whf_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">WHF</a></td>
@@ -409,7 +404,7 @@ body { padding-bottom: 44px; }
 <td class="num">6,100</td>
 <td class="num">55.6%</td>
 <td class="num pos">+13.0%</td>
-<td class="num pos">+1.7%</td>
+<td class="num pos">+10.7%</td>
 <td class="num pos">+23.6%</td>
 </tr>
 </tbody>

@@ -17,7 +17,7 @@ h2{font-size:16px;margin:24px 0 10px;color:#1f4e78;font-weight:600}
 .sub{font-size:13px;color:var(--muted);margin-bottom:20px}
 .card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 
-table{width:100%;background:#fff;border-collapse:collapse;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+table{width:100%;background:#fff;border-collapse:collapse;border-radius:8px;border:1px solid var(--border)}
 th{background:#1f4e78;color:#fff;padding:10px 12px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.3px;font-weight:600;cursor:pointer;user-select:none;position:sticky;top:40px;z-index:2}
 th:hover{background:#2a6ba0}
 th.num,td.num{text-align:right}
