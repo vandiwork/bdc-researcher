@@ -3,18 +3,24 @@
 <title>BDC Comps</title>
 <link rel="stylesheet" href="assets.css">
 <style>
+/* Sticky header that locks below the fixed sitenav while the page
+   scrolls normally. All 22 rows stay visible — no inner-scroll clipping. */
 .comps-wrap {
-  max-height: calc(100vh - 140px);
-  overflow-y: auto;
   border: 1px solid var(--border);
   border-radius: 8px;
   margin-top: 16px;
+  overflow-x: auto;  /* horizontal only — let the page handle vertical scroll */
 }
-.comps-wrap th {
+#cmp thead th {
   position: sticky;
-  top: 0;
-  z-index: 2;
+  top: 40px;   /* height of the fixed .sitenav */
+  z-index: 5;
+  background: #1f4e78;
+  color: #fff;
 }
+/* Pad bottom so the freshness banner (position:fixed; bottom:0) doesn't
+   cover the last row. */
+body { padding-bottom: 44px; }
 </style>
 </head><body><nav class="sitenav">
 <a href="index.html" class="brand">BDC Researcher</a>

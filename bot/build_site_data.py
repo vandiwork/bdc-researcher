@@ -174,32 +174,34 @@ def build_status_data(per_bdc: dict[str, list[dict]],
         except Exception:
             build_info = {}
 
-    # Pull HTML-match rates from the enriched filenames + a fresh tally
+    # HTML match rate per BDC. A position is "matched" if ANY enriched
+    # _soi field is populated, not just sector_soi — many BDCs (MAIN,
+    # NMFC) don't expose an industry column in their SOI but still
+    # match rows for maturity / acq date / affiliation / etc.
+    SOI_FIELDS = ("sector_soi", "investment_type_soi", "maturity_soi",
+                   "acq_soi", "base_rate_soi", "interest_rate_soi",
+                   "spread_soi", "rate_floor_soi", "business_description",
+                   "footnotes", "affiliation_soi", "pct_net_assets_soi",
+                   "pik_rate_soi")
     match_rates: dict[str, float] = {}
-    for ticker, rows in per_bdc.items():
-        # The enrich script already wrote match counts to its log; we can't
-        # easily recover them here. Re-compute by reading the enriched CSV
-        # row count vs the pre-enrich (out_all) row count.
-        xbrl_files = sorted((SCRIPT_DIR / "out_all").glob(f"{ticker}_*.csv"),
-                            key=lambda p: p.stem.split("_", 1)[1], reverse=True)
-        if not xbrl_files:
-            continue
-        with xbrl_files[0].open(encoding="utf-8") as f:
-            xbrl_rows = list(csv.DictReader(f))
-        # Count XBRL positions with non-zero FV (eligible for HTML join)
-        eligible = sum(1 for r in xbrl_rows
-                        if (r.get("fv") or "").strip()
-                        and float(r.get("fv") or 0) != 0)
+    for ticker in per_bdc:
         enr_files = sorted(ENRICHED_DIR.glob(f"{ticker}_*.csv"),
                             key=lambda p: p.stem.split("_", 1)[1], reverse=True)
         if not enr_files:
             continue
         with enr_files[0].open(encoding="utf-8") as f:
             enr_rows = list(csv.DictReader(f))
-        matched = sum(1 for r in enr_rows
-                       if (r.get("sector_soi") or "").strip())
-        if eligible:
-            match_rates[ticker] = round(matched / eligible, 4)
+        # Eligible = non-zero FV (these are the ones that get HTML-joined)
+        def is_eligible(r):
+            try:
+                return float(r.get("fv") or 0) != 0
+            except ValueError:
+                return False
+        eligible_rows = [r for r in enr_rows if is_eligible(r)]
+        matched = sum(1 for r in eligible_rows
+                       if any((r.get(f) or "").strip() for f in SOI_FIELDS))
+        if eligible_rows:
+            match_rates[ticker] = round(matched / len(eligible_rows), 4)
 
     # Build per-BDC accuracy table
     rows = []
@@ -295,21 +297,32 @@ def inject_all_data(page_name: str, all_data: dict) -> bool:
     return True
 
 
+def _maturity_year(s: str) -> str:
+    """Extract a 4-digit maturity year from MM/DD/YYYY or YYYY-MM-DD."""
+    if not s:
+        return ""
+    m = re.search(r"(20\d{2})", str(s))
+    return m.group(1) if m else ""
+
+
 def build_markdelta_data(all_data: dict) -> list[dict]:
-    """Compute cross-BDC company overlaps with min/max marks.
+    """Compute cross-BDC overlaps where two or more BDCs hold the same
+    facility, with min/max marks across holders.
 
-    For each company name held by 2+ BDCs, output:
-      {company, type, type_class, holders, spread, min_mark, min_bdc,
-       max_mark, max_bdc, total_fv, details: [{bdc, fv, mark, spread}]}
+    Matched on (normalized company key + canonical type + maturity year)
+    so that different facilities for the same borrower don't get falsely
+    merged. Filters:
+      - per-position FV must be > $0
+      - aggregate group FV >= $500K (drops dust positions)
+      - per-row marks outside [30%, 200%] are excluded from the spread
+        calc (small-cost-basis revolvers + DIP positions skew badly).
+        The position still counts toward FV / holders.
+
+    Output schema matches website/markdelta.html's render expectations:
+      {company, type, type_class, holders, spread,
+       min_mark, min_bdc, max_mark, max_bdc, total_fv,
+       details: [{bdc, fv, mark, spread, par}]}
     """
-    # Normalize company key
-    def keyfn(c: str) -> str:
-        s = (c or "").strip().lower()
-        s = re.sub(r"\s+", " ", s)
-        s = re.sub(r"[.,]", "", s)
-        s = re.sub(r"\s+(inc|llc|lp|corp|ltd|holdings?)$", "", s)
-        return s.strip()
-
     type_class_map = {
         "First Lien": "t1", "Second Lien": "t2", "Subordinated": "t3",
         "Mezzanine": "t3", "Unsecured": "t3",
@@ -317,75 +330,115 @@ def build_markdelta_data(all_data: dict) -> list[dict]:
         "Warrant": "tEq", "Structured Credit": "tCLO", "Other": "tO",
     }
 
+    # Bucket by (normalized issuer, canonical type, maturity year)
     buckets: dict[tuple, list[dict]] = defaultdict(list)
     company_names: dict[tuple, str] = {}
     for ticker, rows in all_data.items():
         for r in rows:
             cname = (r.get("company") or r.get("entity") or "").strip()
-            if not cname or not r.get("fv"):
+            fv = r.get("fv") or 0
+            if not cname or fv <= 0:
                 continue
-            k = (keyfn(cname), r.get("type") or "Other")
+            type_ = r.get("type") or "Other"
+            mat_yr = _maturity_year(r.get("maturity") or "")
+            k = (_borrower_key(cname), type_, mat_yr)
             buckets[k].append({
                 "bdc": ticker,
-                "fv": r["fv"],
+                "fv": fv,
+                "cost": r.get("cost") or 0,
+                "par": r.get("par"),
                 "mark": r.get("mark"),
                 "spread": r.get("spread"),
-                "company": cname,
             })
             company_names.setdefault(k, cname)
+
+    SANE_MARK = lambda m: m is not None and 30 <= m <= 200
 
     out = []
     for k, entries in buckets.items():
         bdcs = sorted(set(e["bdc"] for e in entries))
         if len(bdcs) < 2:
             continue
-        marks = [e["mark"] for e in entries if e["mark"] is not None]
-        if not marks:
-            continue
-        ckey, type_ = k
-        # Pick the most common display name
-        name = company_names[k]
-        total_fv = sum(e["fv"] for e in entries)
-        marks_with_bdc = [(e["mark"], e["bdc"]) for e in entries
-                          if e["mark"] is not None]
-        marks_with_bdc.sort()
-        min_mark, min_bdc = marks_with_bdc[0]
-        max_mark, max_bdc = marks_with_bdc[-1]
-        # Avg spread across all entries with a spread
-        spreads = [e["spread"] for e in entries if e["spread"] is not None]
-        avg_spread = round(sum(spreads) / len(spreads), 2) if spreads else None
-        # Details — one per BDC, aggregated
+        ckey, type_, mat_yr = k
+        # Aggregate by BDC (one issuer can have multiple tranches at the
+        # same BDC with the same type+maturity-year — sum them).
         per_bdc: dict[str, dict] = {}
         for e in entries:
-            d = per_bdc.setdefault(e["bdc"], {"bdc": e["bdc"], "fv": 0,
-                                              "marks": [], "spreads": []})
+            d = per_bdc.setdefault(e["bdc"], {
+                "bdc": e["bdc"], "fv": 0, "cost": 0, "par": 0,
+                "marks": [], "spreads": [],
+            })
             d["fv"] += e["fv"]
-            if e["mark"] is not None:
+            d["cost"] += e["cost"]
+            d["par"] += (e["par"] or 0)
+            if SANE_MARK(e["mark"]):
                 d["marks"].append(e["mark"])
             if e["spread"] is not None:
                 d["spreads"].append(e["spread"])
+
+        total_fv = sum(d["fv"] for d in per_bdc.values())
+        if total_fv < 500:  # $500K minimum (FV stored in $K)
+            continue
+
         details = []
         for d in per_bdc.values():
-            m = round(sum(d["marks"]) / len(d["marks"]), 2) if d["marks"] else None
-            s = round(sum(d["spreads"]) / len(d["spreads"]), 2) if d["spreads"] else None
-            details.append({"bdc": d["bdc"], "fv": round(d["fv"]),
-                            "mark": m, "spread": s})
+            # FV-weighted mark (cost-recompute if no row-mark available)
+            if d["marks"]:
+                m = round(sum(d["marks"]) / len(d["marks"]), 2)
+            elif d["cost"] > 0:
+                computed = d["fv"] / d["cost"] * 100
+                m = round(computed, 2) if 30 <= computed <= 200 else None
+            else:
+                m = None
+            s = (round(sum(d["spreads"]) / len(d["spreads"]), 2)
+                 if d["spreads"] else None)
+            details.append({
+                "bdc": d["bdc"], "fv": round(d["fv"]),
+                "mark": m, "spread": s,
+                "par": round(d["par"]) if d["par"] else None,
+            })
         details.sort(key=lambda x: -x["fv"])
+
+        # min/max across BDCs that have a mark
+        marks_bdcs = [(d["mark"], d["bdc"]) for d in details if d["mark"] is not None]
+        if marks_bdcs:
+            marks_bdcs.sort()
+            min_mark, min_bdc = marks_bdcs[0]
+            max_mark, max_bdc = marks_bdcs[-1]
+            spread = round(max_mark - min_mark, 2)
+        else:
+            min_mark = max_mark = spread = None
+            min_bdc = max_bdc = ""
+
+        # Avg spread across all entries with a credit-spread value
+        all_spreads = [s for s in (d["spread"] for d in details) if s is not None]
+        avg_credit_spread = (round(sum(all_spreads) / len(all_spreads), 2)
+                             if all_spreads else None)
+
+        name = company_names[k]
+        if mat_yr:
+            name_disp = f"{name} ({mat_yr})"
+        else:
+            name_disp = name
+
         out.append({
-            "company": name,
+            "company": name_disp,
             "type": type_,
             "type_class": type_class_map.get(type_, "tO"),
             "holders": len(bdcs),
-            "spread": avg_spread,
-            "min_mark": round(min_mark, 2),
+            # "spread" in the table header means MARK SPREAD (max-min).
+            # Credit spread is per-BDC; we don't surface an aggregate one.
+            "spread": spread,
+            "credit_spread": avg_credit_spread,
+            "min_mark": min_mark,
             "min_bdc": min_bdc,
-            "max_mark": round(max_mark, 2),
+            "max_mark": max_mark,
             "max_bdc": max_bdc,
             "total_fv": round(total_fv),
             "details": details,
         })
-    # Sort: most holders first, then total_fv
-    out.sort(key=lambda x: (-x["holders"], -x["total_fv"]))
+    # Default sort: widest mark-spread first, then total FV
+    out.sort(key=lambda x: (-(x["spread"] or 0), -x["total_fv"]))
     return out
 
 
