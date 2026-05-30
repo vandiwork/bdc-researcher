@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Status Report &mdash; BDC Researcher</title>
+<link rel="stylesheet" href="assets.css">
+<style>
+.status-page { max-width:1400px; margin:0 auto; padding:24px; }
+.status-page h1 { font-size:22px; margin-bottom:6px; color:#1f4e78; }
+.status-page .sub { color:#5a6172; font-size:13px; margin-bottom:24px; }
+.kpi-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+            gap:14px; margin-bottom:28px; }
+.kpi-card { background:#fff; border:1px solid #d1d5de; border-radius:8px; padding:16px; }
+.kpi-card .lab { font-size:11px; color:#5a6172; text-transform:uppercase; letter-spacing:.04em; }
+.kpi-card .val { font-size:20px; font-weight:700; color:#1f4e78; margin-top:6px; font-family:'DM Mono', monospace; }
+.kpi-card .sub2 { font-size:11px; color:#5a6172; margin-top:2px; }
+.section-title { font-size:14px; font-weight:600; color:#1f4e78;
+                 margin:28px 0 12px; text-transform:uppercase;
+                 letter-spacing:.04em; border-bottom:1px solid #d1d5de;
+                 padding-bottom:6px; }
+table.status-tbl { width:100%; border-collapse:collapse; font-size:12px;
+                   background:#fff; border:1px solid #d1d5de; border-radius:6px; overflow:hidden; }
+table.status-tbl th { background:#1f4e78; color:#fff; padding:8px 10px;
+                      text-align:left; font-size:11px; }
+table.status-tbl th.num { text-align:right; }
+table.status-tbl td { padding:7px 10px; border-bottom:1px solid #eef1f5; }
+table.status-tbl td.num { text-align:right; font-family:'DM Mono', monospace; }
+table.status-tbl tbody tr:nth-child(even) { background:#fafbfc; }
+.delta-ok { color:#0d9f6e; font-weight:600; }
+.delta-warn { color:#c47f00; font-weight:600; }
+.delta-bad { color:#dc2626; font-weight:600; }
+.src-pill { display:inline-block; padding:1px 8px; border-radius:10px;
+            background:#eef1f5; font-size:11px; font-family:'DM Mono', monospace;
+            color:#1f4e78; border:1px solid #d1d5de; }
+.timestamp { font-family:'DM Mono', monospace; font-size:11px; color:#5a6172; }
+.accession a { color:#1a6ef5; text-decoration:none; font-family:'DM Mono', monospace;
+               font-size:11px; }
+.accession a:hover { text-decoration:underline; }
+</style>
+</head>
+<body>
+<nav class="sitenav">
+<a href="index.html" class="brand">BDC Researcher</a>
+<a href="index.html">Home</a>
+<a href="dashboards.html">Dashboards</a>
+<a href="overlap.html">Cross-Holdings</a>
+<a href="compare.html">BDC Compare</a>
+<a href="analytics.html">Analytics</a>
+<a href="markdelta.html">Mark Delta</a>
+<a href="comps.html">Comps</a>
+<a href="status.html" class="active">Status</a>
+<div class="spacer"></div>
+</nav>
+
+<div class="status-page">
+<h1>Pipeline Status Report</h1>
+<p class="sub">Data sources, refresh timestamps, and reported-vs-extracted accuracy for every BDC.</p>
+
+<div class="kpi-grid" id="kpi-grid"></div>
+
+<div class="section-title">Refresh timestamps</div>
+<table class="status-tbl" style="max-width:800px">
+  <thead><tr><th>Layer</th><th>Source</th><th>Last refreshed (UTC)</th><th>Cadence</th></tr></thead>
+  <tbody id="refresh-tbody"></tbody>
+</table>
+
+<div class="section-title">Per-BDC accuracy &mdash; extracted vs reported portfolio FV</div>
+<p class="sub">"Reported" is the filer's own canonical portfolio total (XBRL <code>InvestmentOwnedAtFairValue</code> at the consolidated level). Extracted is the sum of per-position FVs from our pipeline. Delta &lt;1% = OK.</p>
+<table class="status-tbl">
+  <thead><tr>
+    <th>BDC</th>
+    <th>Period</th>
+    <th class="num">Reported FV ($M)</th>
+    <th class="num">Extracted FV ($M)</th>
+    <th class="num">&Delta;</th>
+    <th class="num">Positions</th>
+    <th class="num">Match Rate*</th>
+    <th>Filing</th>
+  </tr></thead>
+  <tbody id="accuracy-tbody"></tbody>
+</table>
+<p class="sub">*Match rate = % of XBRL positions joined to a SOI-HTML row for sector / maturity / acq-date enrichment.</p>
+
+<div class="section-title">Data sources</div>
+<table class="status-tbl" style="max-width:1000px">
+  <thead><tr><th>Layer</th><th>Source</th><th>Endpoint</th></tr></thead>
+  <tbody>
+    <tr><td>SOI XBRL positions</td><td><span class="src-pill">SEC EDGAR</span></td>
+        <td class="accession"><a href="https://www.sec.gov/edgar/sec-api-documentation" target="_blank">data.sec.gov/submissions + XBRL inline-tagged 10-Q</a></td></tr>
+    <tr><td>SOI HTML enrichment</td><td><span class="src-pill">SEC EDGAR</span></td>
+        <td class="accession"><a href="https://www.sec.gov/edgar.shtml" target="_blank">Primary document HTML on edgar/data/{cik}/...</a></td></tr>
+    <tr><td>Balance sheet (NAV, debt, shares)</td><td><span class="src-pill">SEC EDGAR XBRL</span></td>
+        <td class="accession"><a href="https://www.sec.gov/edgar/sec-api-documentation" target="_blank">data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json</a></td></tr>
+    <tr><td>Stock prices, returns, dividend yield</td><td><span class="src-pill">Yahoo Finance</span></td>
+        <td class="accession"><a href="https://finance.yahoo.com" target="_blank">yfinance Python library (query2.finance.yahoo.com)</a></td></tr>
+    <tr><td>GICS sector mapping</td><td><span class="src-pill">Built-in</span></td>
+        <td>bot/normalize.py (hand-curated GICS sub-industry → sector table)</td></tr>
+    <tr><td>Hosting + build</td><td><span class="src-pill">GitHub</span></td>
+        <td>GitHub Actions workflows + GitHub Pages</td></tr>
+  </tbody>
+</table>
+
+<footer style="text-align:center;color:#5a6172;font-size:12px;padding:30px 20px 50px;border-top:1px solid #d1d5de;margin-top:40px">
+Data: Mar 31 2026 SOIs from SEC EDGAR &middot; P/NAV from latest Yahoo Finance close &middot; BDC Researcher
+</footer>
+</div>
+
+<script>
+// STATUS_DATA injected by bot/build_site_data.py at build time.
+const STATUS_DATA_INLINE = {"build_info":{"last_full_refresh_utc":"2026-05-30T10:58:32.905286+00:00","trigger":"workflow_dispatch","run_url":"https://github.com/vandiwork/bdc-researcher/actions/runs/26682064258"},"bdcs":[{"ticker":"ARCC","cik":"0001287750","period_end":"2026-03-31","form":"10-Q","accession":"0001628280-26-027688","positions":1420,"extracted_fv_m":29506.6,"reported_fv_m":29499.3,"delta_pct":0.02,"html_match_rate":1.0},{"ticker":"BBDC","cik":"0001379785","period_end":"2026-03-31","form":"10-Q","accession":"0001379785-26-000022","positions":656,"extracted_fv_m":2369.9,"reported_fv_m":2370.0,"delta_pct":-0.0,"html_match_rate":0.9967},{"ticker":"BCSF","cik":"0001655050","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-217068","positions":555,"extracted_fv_m":2472.3,"reported_fv_m":2470.8,"delta_pct":0.06,"html_match_rate":0.9354},{"ticker":"BXSL","cik":"0001736035","period_end":"2026-03-31","form":"10-Q","accession":"0001736035-26-000010","positions":696,"extracted_fv_m":13942.1,"reported_fv_m":13942.1,"delta_pct":0.0,"html_match_rate":1.0},{"ticker":"CGBD","cik":"0001544206","period_end":"2026-03-31","form":"10-Q","accession":"0001544206-26-000033","positions":252,"extracted_fv_m":2368.8,"reported_fv_m":2277.1,"delta_pct":4.03,"html_match_rate":0.9412},{"ticker":"FSK","cik":"0001422183","period_end":"2026-03-31","form":"10-Q","accession":"0001628280-26-033118","positions":632,"extracted_fv_m":13600.3,"reported_fv_m":12269.4,"delta_pct":10.85,"html_match_rate":0.9983},{"ticker":"GBDC","cik":"0001476765","period_end":"2026-03-31","form":"10-Q","accession":"0001476765-26-000033","positions":1784,"extracted_fv_m":8453.1,"reported_fv_m":8317.2,"delta_pct":1.63,"html_match_rate":0.9994},{"ticker":"GSBD","cik":"0001572694","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-212431","positions":564,"extracted_fv_m":3223.7,"reported_fv_m":3228.9,"delta_pct":-0.16,"html_match_rate":0.808},{"ticker":"HTGC","cik":"0001280784","period_end":"2026-03-31","form":"10-Q","accession":"0001280784-26-000027","positions":363,"extracted_fv_m":4730.9,"reported_fv_m":4722.0,"delta_pct":0.19,"html_match_rate":0.9819},{"ticker":"MAIN","cik":"0001396440","period_end":"2026-03-31","form":"10-Q","accession":"0001396440-26-000073","positions":625,"extracted_fv_m":5672.6,"reported_fv_m":5674.8,"delta_pct":-0.04,"html_match_rate":0.1311},{"ticker":"MFIC","cik":"0001278752","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-208941","positions":602,"extracted_fv_m":2971.4,"reported_fv_m":2971.5,"delta_pct":-0.0,"html_match_rate":0.8308},{"ticker":"MSDL","cik":"0001782524","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-211906","positions":729,"extracted_fv_m":4055.2,"reported_fv_m":3668.9,"delta_pct":10.53,"html_match_rate":0.7936},{"ticker":"NMFC","cik":"0001496099","period_end":"2026-03-31","form":"10-Q","accession":"0001496099-26-000016","positions":349,"extracted_fv_m":2316.1,"reported_fv_m":2313.4,"delta_pct":0.12,"html_match_rate":1.0},{"ticker":"OBDC","cik":"0001655888","period_end":"2026-03-31","form":"10-Q","accession":"0001655888-26-000033","positions":586,"extracted_fv_m":15344.2,"reported_fv_m":15344.2,"delta_pct":0.0,"html_match_rate":0.5718},{"ticker":"OCSL","cik":"0001414932","period_end":"2026-03-31","form":"10-Q","accession":"0001414932-26-000012","positions":372,"extracted_fv_m":2793.5,"reported_fv_m":2766.4,"delta_pct":0.98,"html_match_rate":1.0},{"ticker":"PSEC","cik":"0001287032","period_end":"2026-03-31","form":"10-Q","accession":"0001287032-26-000164","positions":213,"extracted_fv_m":8586.2,"reported_fv_m":6302.5,"delta_pct":36.24,"html_match_rate":0.5361},{"ticker":"TCPC","cik":"0001370755","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-210632","positions":322,"extracted_fv_m":1388.7,"reported_fv_m":1388.7,"delta_pct":-0.0,"html_match_rate":0.8831},{"ticker":"TSLX","cik":"0001508655","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-206313","positions":218,"extracted_fv_m":3335.8,"reported_fv_m":3313.4,"delta_pct":0.68,"html_match_rate":0.8433}]};
+const STATUS_DATA = (typeof STATUS_DATA_INLINE !== "undefined")
+  ? STATUS_DATA_INLINE
+  : {"build_info":{}, "bdcs":[]};
+
+function fmtNum(v, d) {
+  if (v == null || isNaN(v)) return "—";
+  const abs = Math.abs(v);
+  if (abs >= 1000) return Math.round(v).toLocaleString();
+  if (abs >= 1)    return (+v.toFixed(d === undefined ? 1 : d)).toLocaleString();
+  return v.toFixed(d === undefined ? 2 : d);
+}
+
+function fmtDate(iso) {
+  if (!iso) return "—";
+  try {
+    const d = new Date(iso);
+    return d.toISOString().replace("T", " ").slice(0, 16) + " UTC";
+  } catch (e) { return iso; }
+}
+
+function fmtAgo(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  const sec = Math.floor((new Date() - d) / 1000);
+  if (sec < 60) return `${sec}s ago`;
+  if (sec < 3600) return `${Math.floor(sec / 60)} min ago`;
+  if (sec < 86400) return `${Math.floor(sec / 3600)} hr ago`;
+  return `${Math.floor(sec / 86400)} d ago`;
+}
+
+function deltaClass(p) {
+  if (p == null) return "";
+  const a = Math.abs(p);
+  if (a < 1) return "delta-ok";
+  if (a < 5) return "delta-warn";
+  return "delta-bad";
+}
+
+function renderKPIs() {
+  const bdcs = STATUS_DATA.bdcs || [];
+  const bi = STATUS_DATA.build_info || {};
+  const total_ext = bdcs.reduce((s, r) => s + (r.extracted_fv_m || 0), 0);
+  const total_rep = bdcs.reduce((s, r) => s + (r.reported_fv_m || 0), 0);
+  const within_1 = bdcs.filter(r => r.delta_pct != null && Math.abs(r.delta_pct) < 1).length;
+  const within_5 = bdcs.filter(r => r.delta_pct != null && Math.abs(r.delta_pct) < 5).length;
+  const total_positions = bdcs.reduce((s, r) => s + (r.positions || 0), 0);
+  const kpis = [
+    { lab: "BDCs tracked", val: bdcs.length, sub2: "" },
+    { lab: "Total positions", val: fmtNum(total_positions), sub2: "" },
+    { lab: "Total extracted FV", val: "$" + fmtNum(total_ext / 1000) + "B", sub2: "$M extracted across all 18 BDCs" },
+    { lab: "Within ±1% of filer", val: `${within_1} / ${bdcs.length}`,
+      sub2: `${within_5} within ±5%` },
+    { lab: "Filings last refreshed", val: fmtAgo(bi.last_full_refresh_utc) || "—",
+      sub2: fmtDate(bi.last_full_refresh_utc) },
+    { lab: "Prices last refreshed", val: fmtAgo(bi.last_market_refresh_utc) || "—",
+      sub2: fmtDate(bi.last_market_refresh_utc) },
+  ];
+  document.getElementById("kpi-grid").innerHTML = kpis.map(k =>
+    `<div class="kpi-card">
+       <div class="lab">${k.lab}</div>
+       <div class="val">${k.val}</div>
+       ${k.sub2 ? `<div class="sub2">${k.sub2}</div>` : ""}
+     </div>`).join("");
+}
+
+function renderRefresh() {
+  const bi = STATUS_DATA.build_info || {};
+  const rows = [
+    { layer: "SOI positions + sector enrichment", src: "SEC EDGAR XBRL/HTML",
+      ts: bi.last_full_refresh_utc, cadence: "Daily 23:30 UTC + on-demand" },
+    { layer: "Balance sheets (NAV, debt, shares)", src: "SEC EDGAR XBRL",
+      ts: bi.last_full_refresh_utc, cadence: "Daily 23:30 UTC + on-demand" },
+    { layer: "Market prices / returns / div yield", src: "Yahoo Finance",
+      ts: bi.last_market_refresh_utc, cadence: "Every 15 min, 13:00–20:59 UTC, Mon–Fri" },
+    { layer: "Static site deployment", src: "GitHub Pages",
+      ts: bi.last_full_refresh_utc || bi.last_market_refresh_utc,
+      cadence: "On every CI run" },
+  ];
+  document.getElementById("refresh-tbody").innerHTML = rows.map(r =>
+    `<tr>
+       <td>${r.layer}</td>
+       <td><span class="src-pill">${r.src}</span></td>
+       <td class="timestamp">${fmtDate(r.ts)} <span style="color:#9ba3b5">(${fmtAgo(r.ts)})</span></td>
+       <td>${r.cadence}</td>
+     </tr>`).join("");
+}
+
+function renderAccuracy() {
+  const rows = (STATUS_DATA.bdcs || []).slice();
+  rows.sort((a, b) => (b.reported_fv_m || 0) - (a.reported_fv_m || 0));
+  document.getElementById("accuracy-tbody").innerHTML = rows.map(r => {
+    const accUrl = r.accession
+      ? `https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${r.cik}&type=10-Q&dateb=&owner=include&count=40`
+      : "#";
+    return `<tr>
+      <td><strong>${r.ticker}</strong></td>
+      <td class="timestamp">${r.period_end || "—"}</td>
+      <td class="num">${fmtNum(r.reported_fv_m)}</td>
+      <td class="num">${fmtNum(r.extracted_fv_m)}</td>
+      <td class="num ${deltaClass(r.delta_pct)}">${r.delta_pct == null ? "—" : (r.delta_pct >= 0 ? "+" : "") + r.delta_pct.toFixed(2) + "%"}</td>
+      <td class="num">${fmtNum(r.positions)}</td>
+      <td class="num">${r.html_match_rate == null ? "—" : (r.html_match_rate * 100).toFixed(1) + "%"}</td>
+      <td class="accession">
+        <a href="${accUrl}" target="_blank">${r.accession || "—"}</a>
+      </td>
+    </tr>`;
+  }).join("");
+}
+
+renderKPIs();
+renderRefresh();
+renderAccuracy();
+</script>
+<script src="assets/refresh-banner.js" defer></script>
+</body>
+</html>

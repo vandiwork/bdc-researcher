@@ -147,6 +147,118 @@ def load_market() -> dict[str, dict]:
     return json.loads(p.read_text(encoding="utf-8"))
 
 
+def load_summary() -> list[dict]:
+    """Load the SOI extraction summary (one row per BDC) written by
+    extract_bdc_soi.py --all to out_all/_summary.csv. Provides reported
+    vs extracted FV, position count, accession, form, period_end."""
+    p = SCRIPT_DIR / "out_all" / "_summary.csv"
+    if not p.exists():
+        return []
+    with p.open(encoding="utf-8") as f:
+        return list(csv.DictReader(f))
+
+
+def build_status_data(per_bdc: dict[str, list[dict]],
+                       bs_data: dict, summary_rows: list[dict]) -> dict:
+    """Build the status.html data: per-BDC extracted vs reported FV
+    along with refresh timestamps + match rates."""
+    # Index summary rows by ticker
+    by_ticker = {r["ticker"]: r for r in summary_rows}
+
+    # Build_info from the data directory (CI overwrites this)
+    build_info_path = (WEBSITE / "dashboards" / "data" / "build_info.json")
+    build_info = {}
+    if build_info_path.exists():
+        try:
+            build_info = json.loads(build_info_path.read_text(encoding="utf-8"))
+        except Exception:
+            build_info = {}
+
+    # Pull HTML-match rates from the enriched filenames + a fresh tally
+    match_rates: dict[str, float] = {}
+    for ticker, rows in per_bdc.items():
+        # The enrich script already wrote match counts to its log; we can't
+        # easily recover them here. Re-compute by reading the enriched CSV
+        # row count vs the pre-enrich (out_all) row count.
+        xbrl_files = sorted((SCRIPT_DIR / "out_all").glob(f"{ticker}_*.csv"),
+                            key=lambda p: p.stem.split("_", 1)[1], reverse=True)
+        if not xbrl_files:
+            continue
+        with xbrl_files[0].open(encoding="utf-8") as f:
+            xbrl_rows = list(csv.DictReader(f))
+        # Count XBRL positions with non-zero FV (eligible for HTML join)
+        eligible = sum(1 for r in xbrl_rows
+                        if (r.get("fv") or "").strip()
+                        and float(r.get("fv") or 0) != 0)
+        enr_files = sorted(ENRICHED_DIR.glob(f"{ticker}_*.csv"),
+                            key=lambda p: p.stem.split("_", 1)[1], reverse=True)
+        if not enr_files:
+            continue
+        with enr_files[0].open(encoding="utf-8") as f:
+            enr_rows = list(csv.DictReader(f))
+        matched = sum(1 for r in enr_rows
+                       if (r.get("sector_soi") or "").strip())
+        if eligible:
+            match_rates[ticker] = round(matched / eligible, 4)
+
+    # Build per-BDC accuracy table
+    rows = []
+    for ticker, sr in sorted(by_ticker.items()):
+        try:
+            ext_fv = float(sr.get("total_fv_usd") or 0) / 1e6
+        except (TypeError, ValueError):
+            ext_fv = 0
+        try:
+            rep_fv = float(sr.get("expected_fv_usd") or 0) / 1e6
+        except (TypeError, ValueError):
+            rep_fv = 0
+        delta_pct = ((ext_fv - rep_fv) / rep_fv * 100) if rep_fv else None
+        bs_rep_fv = (bs_data.get(ticker, {}).get("portfolio_fv") or 0) / 1e6
+        rows.append({
+            "ticker": ticker,
+            "cik": sr.get("cik", ""),
+            "period_end": sr.get("period_end", ""),
+            "form": sr.get("form", ""),
+            "accession": sr.get("accession", ""),
+            "positions": int(sr.get("positions") or 0),
+            "extracted_fv_m": round(ext_fv, 1),
+            # Prefer XBRL-canonical "reported FV" from the company-facts API
+            # (bs_q1.json portfolio_fv) when available; fall back to the
+            # dashboard expected value.
+            "reported_fv_m": round(bs_rep_fv if bs_rep_fv else rep_fv, 1),
+            "delta_pct": round(((ext_fv - (bs_rep_fv if bs_rep_fv else rep_fv))
+                                 / (bs_rep_fv if bs_rep_fv else rep_fv)) * 100, 2)
+                        if (bs_rep_fv or rep_fv) else None,
+            "html_match_rate": match_rates.get(ticker),
+        })
+
+    return {"build_info": build_info, "bdcs": rows}
+
+
+def inject_status(status_data: dict) -> bool:
+    """Inject STATUS_DATA_INLINE into status.html."""
+    fp = WEBSITE / "status.html"
+    if not fp.exists():
+        return False
+    content = fp.read_text(encoding="utf-8")
+    json_blob = json.dumps(status_data, separators=(",", ":"), ensure_ascii=False)
+    new_block = f"const STATUS_DATA_INLINE = {json_blob};"
+    # Insert just before the existing STATUS_DATA const declaration,
+    # or replace an existing inline.
+    if re.search(r"const STATUS_DATA_INLINE\s*=", content):
+        pattern = re.compile(r"const STATUS_DATA_INLINE\s*=\s*\{.*?\};", re.S)
+        new_content, n = pattern.subn(lambda _: new_block, content, count=1)
+    else:
+        # Insert before `const STATUS_DATA = ...`
+        pattern = re.compile(r"(// STATUS_DATA injected.*?\n)(const STATUS_DATA = )", re.S)
+        new_content, n = pattern.subn(lambda m: m.group(1) + new_block + "\n" + m.group(2),
+                                       content, count=1)
+    if n == 0:
+        return False
+    fp.write_text(new_content, encoding="utf-8")
+    return True
+
+
 def _f(v, suffix="", spec=",.0f"):
     """Format a number for display; '—' if None."""
     if v is None:
@@ -388,16 +500,30 @@ def build_pairs_data(all_data: dict, existing_pnav: dict,
 
 
 def inject_pairs(pairs_data: dict) -> bool:
-    fp = WEBSITE / "pairs.html"
+    """Inject PAIR_D_INLINE into compare.html.
+
+    (pairs.html is now a redirect to compare.html#pair — no longer holds
+    its own data blob.)"""
+    fp = WEBSITE / "compare.html"
     if not fp.exists():
         return False
     content = fp.read_text(encoding="utf-8")
     json_blob = json.dumps(pairs_data, separators=(",", ":"), ensure_ascii=False)
-    new_block = f"const D = {json_blob};"
-    pattern = re.compile(r"const D\s*=\s*\{.*?\};\s*\n", re.S)
-    new_content, n = pattern.subn(lambda _: new_block + "\n", content, count=1)
-    if n == 0:
-        return False
+    new_block = f"const PAIR_D_INLINE = {json_blob};"
+    # Idempotent: replace existing inline if present, otherwise insert
+    # right before the first <script> body line (after ALL_DATA).
+    if re.search(r"const PAIR_D_INLINE\s*=", content):
+        pattern = re.compile(r"const PAIR_D_INLINE\s*=\s*\{.*?\};", re.S)
+        new_content, n = pattern.subn(lambda _: new_block, content, count=1)
+        if n == 0:
+            return False
+    else:
+        # Place it directly after ALL_DATA so the closure-scoped PAIR_D
+        # reference sees it.
+        pattern = re.compile(r"(const ALL_DATA\s*=\s*\{.*?\};)", re.S)
+        new_content, n = pattern.subn(lambda m: m.group(1) + "\n" + new_block, content, count=1)
+        if n == 0:
+            return False
     fp.write_text(new_content, encoding="utf-8")
     return True
 
@@ -619,7 +745,7 @@ def main() -> int:
     computed = sum(1 for tk in pairs["pnav"]
                    if bs_data.get(tk, {}).get("nav_per_share")
                    and market_data.get(tk, {}).get("price"))
-    print(f"  D        → pairs.html           {'OK' if ok else 'SKIP'} "
+    print(f"  PAIR_D   → compare.html         {'OK' if ok else 'SKIP'} "
           f"(pnav: {computed} computed from market, "
           f"{len(pairs['pnav']) - computed} preserved)")
 
@@ -627,6 +753,14 @@ def main() -> int:
     if bs_data:
         ok = update_comps(bs_data, market_data, all_data)
         print(f"  comps    → comps.html           {'OK' if ok else 'SKIP'}")
+
+    # 5. status.html — pipeline status, accuracy table, refresh timestamps
+    summary_rows = load_summary()
+    if summary_rows:
+        status = build_status_data(all_data, bs_data, summary_rows)
+        ok = inject_status(status)
+        print(f"  status   → status.html          {'OK' if ok else 'SKIP'} "
+              f"({len(status['bdcs'])} BDCs)")
 
     # 5. Date strings across all top-level pages
     print()
