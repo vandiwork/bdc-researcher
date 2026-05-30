@@ -1001,13 +1001,13 @@ def main() -> int:
         print()
         print(f"{'TICKER':<7s} {'POSITIONS':>10s} {'FV ($M)':>12s} {'EXPECTED':>12s} {'DELTA':>8s}  STATUS")
         print("-" * 78)
-        ok = warn = bad = 0
+        ok = warn = bad = errors = 0
         for r in results:
             exp_m = DASHBOARD_FV_M.get(r.ticker, 0)
             fv_m = r.total_fv / 1e6
             if r.error:
                 status = "ERROR"
-                bad += 1
+                errors += 1
                 print(f"{r.ticker:<7s} {'-':>10s} {'-':>12s} {exp_m:>12,.0f} {'-':>8s}  {status}: {r.error[:50]}")
                 continue
             if exp_m:
@@ -1020,8 +1020,12 @@ def main() -> int:
             else:
                 print(f"{r.ticker:<7s} {r.n_positions:>10,d} {fv_m:>12,.1f} {'-':>12s} {'-':>8s}  (no expected)")
         print("-" * 78)
-        print(f"OK: {ok} | WARN: {warn} | BAD/ERROR: {bad}")
-        return 0 if bad == 0 else 1
+        print(f"OK: {ok} | WARN: {warn} | BAD: {bad} | ERRORS: {errors}")
+        # Only fail the build on hard extraction errors. BAD/WARN deltas vs
+        # DASHBOARD_FV_M are informational — those are FY2025-calibrated
+        # reference values, and a >20% delta on quarterly data just means
+        # the portfolio moved, not that extraction is broken.
+        return 0 if errors == 0 else 1
 
     # Single-BDC mode
     if not args.ticker:
