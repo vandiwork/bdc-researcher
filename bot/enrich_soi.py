@@ -247,14 +247,37 @@ def enrich_one(ticker: str, xbrl_csv: Path, html_bytes: bytes,
     except Exception:
         _sector_overrides = {}
 
+    # Normalize an entity name so the same borrower matches across BDCs that
+    # spell it differently (dba parentheticals, trailing section leaks, pipe
+    # fields, corp/holdco suffixes, case). Lets one override entry cover e.g.
+    # "MRI Software LLC", "MRI Software, LLC", "MRI Software LLC |".
+    def _norm_ov(s: str) -> str:
+        s = (s or "").lower().replace("|", " ")                # drop pipe fields
+        s = re.sub(r"\([^)]*\)", " ", s)                       # drop (dba …)
+        s = re.sub(r",\s*(real estate|structured|debt invest|equity|"
+                   r"non-control|non-affil|aerospace|health care|"
+                   r"capital goods|services|software)\b.*$", "", s)  # section leak
+        s = re.sub(r"[.,'`&/]", " ", s)
+        s = re.sub(r"\b(inc|llc|l\s*l\s*c|lp|l\s*p|ltd|limited|corp|"
+                   r"corporation|plc|sarl|s\s*a\s*r\s*l|s\s*a|ab|gmbh|co|"
+                   r"holdings?|holdco)\b", " ", s)
+        return re.sub(r"\s+", " ", s).strip()
+
+    # Curated sector corrections are AUTHORITATIVE — they override the filer's
+    # classification (e.g. proptech SaaS like Eptura/MRI/Lone Wolf/LightBox is
+    # tagged "Real Estate" by filers but is really Software & Services).
+    _ov_norm = {}
+    for k, v in _sector_overrides.items():
+        _ov_norm.setdefault(_norm_ov(k), v)
+
     for p in positions:
         entity = (p.get("entity") or p.get("company") or "").strip()
         xbrl_sec = (p.get("sector") or "").strip()
         soi_sec = (p.get("sector_soi") or "").strip()
         desc = (p.get("business_description") or p.get("desc") or "").strip()
         gics, ig = classify_position(entity, xbrl_sec, soi_sec, desc)
-        ov = _sector_overrides.get(entity)
-        if ov and (ig in ("Other", "", None)):
+        ov = _ov_norm.get(_norm_ov(entity))
+        if ov:
             gics, ig = ov[0], ov[1]
         p["gics_sector"] = gics
         p["gics_industry_group"] = ig

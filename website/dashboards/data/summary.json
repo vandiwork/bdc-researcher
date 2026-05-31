@@ -8,8 +8,8 @@
       "positions": 1105,
       "total_fv_k": 29506600,
       "sectors": {
-        "Information Technology": 4418200,
-        "Financials": 8458800,
+        "Information Technology": 4429700,
+        "Financials": 8447300,
         "Health Care": 3885900,
         "Industrials": 2987100,
         "Consumer Discretionary": 4289400,
@@ -205,12 +205,12 @@
         "Financials": 639951,
         "Consumer Staples": 365699,
         "Materials": 279651,
-        "Information Technology": 2510756,
+        "Information Technology": 2565959,
         "Utilities": 82703,
         "Health Care": 1704672,
         "Communication Services": 18843,
         "Energy": 3103,
-        "Real Estate": 110328,
+        "Real Estate": 55125,
         "Other": 0
       },
       "types": {
@@ -232,12 +232,11 @@
         "Health Care": 664757,
         "Energy": 42481,
         "Industrials": 706515,
-        "Information Technology": 706434,
+        "Information Technology": 878534,
         "Consumer Discretionary": 294448,
         "Consumer Staples": 61210,
         "Communication Services": 193559,
-        "Utilities": 58120,
-        "Real Estate": 172100
+        "Utilities": 58120
       },
       "types": {
         "First Lien": 3132723,
@@ -335,11 +334,11 @@
         "Financials": 462042,
         "Consumer Staples": 69291,
         "Materials": 56759,
-        "Information Technology": 1205707,
+        "Information Technology": 1278439,
         "Health Care": 307227,
         "Communication Services": 91059,
         "Utilities": 14169,
-        "Real Estate": 127692,
+        "Real Estate": 54960,
         "Other": 86185
       },
       "types": {
@@ -356,9 +355,9 @@
       "total_fv_k": 2313393,
       "sectors": {
         "Health Care": 477088,
-        "Information Technology": 429748,
-        "Industrials": 450559,
-        "Consumer Discretionary": 340104,
+        "Information Technology": 466484,
+        "Industrials": 450585,
+        "Consumer Discretionary": 303342,
         "Consumer Staples": 20363,
         "Other": 61660,
         "Black Box": 447039,
@@ -407,14 +406,14 @@
       "positions": 287,
       "total_fv_k": 2766399,
       "sectors": {
-        "Information Technology": 592488,
+        "Information Technology": 611182,
         "Energy": 33576,
         "Health Care": 583706,
         "Black Box": 191287,
         "Materials": 45578,
         "Communication Services": 171517,
         "Financials": 168289,
-        "Real Estate": 73282,
+        "Real Estate": 54588,
         "Consumer Discretionary": 290572,
         "Industrials": 488994,
         "Consumer Staples": 104625,
@@ -512,24 +511,24 @@
   },
   "aggregate_sectors": {
     "Industrials": {
-      "fv_k": 50451046,
-      "positions": 2195
+      "fv_k": 50451072,
+      "positions": 2194
     },
     "Information Technology": {
-      "fv_k": 49186072,
-      "positions": 1781
+      "fv_k": 49553037,
+      "positions": 1796
     },
     "Health Care": {
       "fv_k": 33272947,
       "positions": 1478
     },
     "Financials": {
-      "fv_k": 26296685,
-      "positions": 949
+      "fv_k": 26285185,
+      "positions": 947
     },
     "Consumer Discretionary": {
-      "fv_k": 16504527,
-      "positions": 1157
+      "fv_k": 16467765,
+      "positions": 1156
     },
     "Black Box": {
       "fv_k": 6449768,
@@ -548,8 +547,8 @@
       "positions": 213
     },
     "Real Estate": {
-      "fv_k": 2683376,
-      "positions": 87
+      "fv_k": 2364647,
+      "positions": 76
     },
     "Utilities": {
       "fv_k": 2202987,
@@ -570,12 +569,12 @@
   },
   "aggregate_industry_groups": {
     "Software & Services": {
-      "fv_k": 47281349,
-      "positions": 1684
+      "fv_k": 47648314,
+      "positions": 1699
     },
     "Commercial & Professional Services": {
-      "fv_k": 29525280,
-      "positions": 1227
+      "fv_k": 29525306,
+      "positions": 1226
     },
     "Health Care Equipment & Services": {
       "fv_k": 27292706,
@@ -590,12 +589,12 @@
       "positions": 491
     },
     "Insurance": {
-      "fv_k": 13085511,
-      "positions": 453
+      "fv_k": 13074011,
+      "positions": 451
     },
     "Consumer Services": {
-      "fv_k": 8115471,
-      "positions": 621
+      "fv_k": 8078709,
+      "positions": 620
     },
     "Pharmaceuticals, Biotechnology & Life Sciences": {
       "fv_k": 5980241,
@@ -622,8 +621,8 @@
       "positions": 213
     },
     "Real Estate": {
-      "fv_k": 2683376,
-      "positions": 87
+      "fv_k": 2364647,
+      "positions": 76
     },
     "Utilities": {
       "fv_k": 2202987,
