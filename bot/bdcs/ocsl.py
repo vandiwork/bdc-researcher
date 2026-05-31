@@ -71,6 +71,7 @@ _OCSL_SECTORS = (
 class Ocsl(Bdc):
     ticker = "OCSL"
     canonical_fv_m = 2766.4
+    reconcile_to_reported = True
     canonical_period = "2026-03-31"   # OCSL fiscal year ends Sept 30
 
     def parse_identifier(self, ident: str) -> dict:

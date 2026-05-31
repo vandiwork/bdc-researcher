@@ -146,10 +146,14 @@ def load_positions(ticker: str) -> tuple[list[dict], str, str]:
             if not period_end:
                 period_end = r.get("period_end", "")
                 form = r.get("form", "")
-            # Skip zero-FV positions only if they also lack cost (likely
-            # rolled-up or stale identifiers). Keep unfunded commitments
-            # that have a recorded cost or par.
-            if fv == 0 and not r.get("cost") and not r.get("par"):
+            # Hide positions that show as $0 fair value AND $0 cost (raw
+            # values under $500 round to zero) — stale/rolled-up identifiers
+            # or fully-written-down equity/warrants with nothing to display.
+            try:
+                cost = float(r.get("cost") or 0)
+            except ValueError:
+                cost = 0
+            if round(fv / 1000) == 0 and round(cost / 1000) == 0:
                 continue
             rows.append(csv_row_to_dashboard(r))
     return rows, period_end, form

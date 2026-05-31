@@ -684,7 +684,10 @@ def parse_facts(xml_bytes: bytes, contexts: dict[str, Context],
         if getattr(handler, "reconcile_to_reported", False) and handler.canonical_fv_m:
             cur_m = sum((fv_usd(p.fv, p.ccy) or 0) for p in positions) / 1e6
             tgt_m = handler.canonical_fv_m
-            if cur_m > 0 and abs(cur_m - tgt_m) / tgt_m > 0.02:
+            # Foot to the filer's authoritative reported total whenever the
+            # per-position XBRL is off by more than 0.1% (filers routinely
+            # over/under-tag the SOI relative to their reported total).
+            if cur_m > 0 and abs(cur_m - tgt_m) / tgt_m > 0.001:
                 factor = tgt_m / cur_m
                 for p in positions:
                     p.fv_raw = p.fv   # preserve original for HTML matching

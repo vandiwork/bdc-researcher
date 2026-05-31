@@ -51,6 +51,7 @@ _HTGC_CORP_SUFFIX = re.compile(
 class Htgc(Bdc):
     ticker = "HTGC"
     canonical_fv_m = 4722.0   # un-segmented XBRL total for 2025-12-31
+    reconcile_to_reported = True
     canonical_period = "2026-03-31"
 
     # HTGC tags issuer-level totals like "Debt Investments <Sector> and

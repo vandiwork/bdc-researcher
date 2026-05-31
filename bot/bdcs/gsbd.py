@@ -28,6 +28,7 @@ _MARKERS = [
 class Gsbd(Bdc):
     ticker = "GSBD"
     canonical_fv_m = 3228.9
+    reconcile_to_reported = True
     canonical_period = "2026-03-31"
 
     def parse_identifier(self, ident: str) -> dict:

@@ -9,11 +9,16 @@
 .news-page { max-width:1100px; margin:0 auto; padding:64px 24px 40px; }
 .news-page h1 { font-size:22px; margin-bottom:6px; color:var(--head); }
 .news-page .sub { color:var(--muted); font-size:13px; margin-bottom:18px; max-width:760px; }
-.news-controls { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px; }
+/* Sticky filter/search bar — stays pinned below the nav while the headline
+   list scrolls. */
+.news-controls { display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+  position:sticky; top:40px; z-index:50; background:var(--bg);
+  padding:12px 0 10px; margin-bottom:0; border-bottom:1px solid var(--border); }
 .news-controls select, .news-controls input {
-  padding:7px 10px; border:1px solid var(--border); border-radius:6px; font-size:13px; background:var(--surface); }
+  padding:7px 10px; border:1px solid var(--border); border-radius:6px; font-size:13px; background:var(--surface); color:var(--text); }
+.news-controls select option { background:var(--surface); color:var(--text); }
 .news-controls input { flex:1; min-width:200px; }
-.news-count { font-size:12px; color:var(--muted); margin-bottom:14px; }
+.news-count { font-size:12px; color:var(--muted); margin:12px 0 14px; }
 .news-list { display:flex; flex-direction:column; gap:0; border:1px solid var(--border);
   border-radius:8px; overflow:hidden; background:var(--surface); }
 .news-item { display:flex; gap:14px; padding:13px 16px; border-bottom:1px solid var(--border);

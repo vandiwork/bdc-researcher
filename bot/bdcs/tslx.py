@@ -58,6 +58,7 @@ _TSLX_SECTORS = (
 class Tslx(Bdc):
     ticker = "TSLX"
     canonical_fv_m = 3313.4
+    reconcile_to_reported = True
     canonical_period = "2026-03-31"
     value_scale_m = 0.001
 

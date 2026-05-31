@@ -124,7 +124,12 @@ def load_all_data() -> dict[str, list[dict]]:
                     fv = float(r.get("fv") or 0)
                 except ValueError:
                     fv = 0
-                if fv == 0 and not r.get("cost") and not r.get("par"):
+                try:
+                    cost = float(r.get("cost") or 0)
+                except ValueError:
+                    cost = 0
+                # Hide positions that show as $0 FV AND $0 cost (raw < $500).
+                if round(fv / 1000) == 0 and round(cost / 1000) == 0:
                     continue
                 rows.append(csv_row_to_dashboard(r))
         all_data[ticker] = rows
@@ -468,16 +473,24 @@ def build_markdelta_data(all_data: dict) -> list[dict]:
             })
         details.sort(key=lambda x: -x["fv"])
 
-        # min/max across BDCs that have a mark
-        marks_bdcs = [(d["mark"], d["bdc"]) for d in details if d["mark"] is not None]
-        if marks_bdcs:
+        # Cross-BDC min/max spread — only over MATERIAL holders (>= $2M FV in
+        # this bucket). A tiny $0-1M tranche at one fund (often an unfunded
+        # revolver/DDTL marked at a discount) otherwise manufactures a huge
+        # apparent "disagreement" against another fund's funded term loan
+        # (e.g. Vermont Aus: GBDC $18M@100 vs OBDC $1M@68). All holders still
+        # appear in the detail table; they just don't drive the headline.
+        MATERIAL_FV = 2000  # $2M, fv stored in $000s
+        marks_bdcs = [(d["mark"], d["bdc"]) for d in details
+                      if d["mark"] is not None and (d["fv"] or 0) >= MATERIAL_FV]
+        if len(marks_bdcs) >= 2:
             marks_bdcs.sort()
             min_mark, min_bdc = marks_bdcs[0]
             max_mark, max_bdc = marks_bdcs[-1]
             spread = round(max_mark - min_mark, 2)
         else:
-            min_mark = max_mark = spread = None
-            min_bdc = max_bdc = ""
+            # Fewer than 2 material holders — no meaningful cross-BDC price
+            # comparison; drop from the Mark Delta table.
+            continue
 
         # Avg spread across all entries with a credit-spread value
         all_spreads = [s for s in (d["spread"] for d in details) if s is not None]
