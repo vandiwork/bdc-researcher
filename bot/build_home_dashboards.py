@@ -207,7 +207,7 @@ def update_index_html(rows: list[dict]) -> bool:
         '<a class="bdccard" href="compare.html">\n'
         '    <div class="tkr">⇄ BDC Compare</div>\n'
         '    <div class="nm">Side-by-side KPIs, sector / type / maturity breakouts, '
-        'and pair-compare on shared borrowers across all 18 BDCs.</div>\n'
+        f'and pair-compare on shared borrowers across all {len(rows)} BDCs.</div>\n'
         '  </a>',
         content, flags=re.S)
 
@@ -229,8 +229,13 @@ def update_index_html(rows: list[dict]) -> bool:
         lambda _: new_stats + "\n\n",
         content, count=1, flags=re.S)
 
-    # 2. "22×22 matrix" → "18×18 matrix" in Cross-Holdings card
-    content = content.replace("22×22 matrix", "18×18 matrix")
+    # 2. Cross-Holdings card matrix dimension + page subtitle — keep the BDC
+    # count in sync with the actual number of tracked funds (no hardcoding).
+    n = len(rows)
+    content = re.sub(r"\d+×\d+ matrix", f"{n}×{n} matrix", content)
+    content = re.sub(r"\d+ Business Development Companies",
+                     f"{n} Business Development Companies", content)
+    content = re.sub(r"across all \d+ BDCs", f"across all {n} BDCs", content)
 
     # 3. Replace the universe-table header row + tbody
     new_thead = (

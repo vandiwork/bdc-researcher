@@ -941,6 +941,87 @@ def write_borrower_index(all_data: dict) -> int:
     return len(borrowers)
 
 
+def write_overlap(pairs_data: dict) -> int:
+    """Regenerate overlap.html — the N×N cross-holdings matrix over the
+    CURRENTLY-tracked BDCs (was a stale hand-built 22×22 incl. dropped funds).
+    cell[i][j] = BDC_i's FV ($M) in borrowers also held by BDC_j."""
+    books = pairs_data["books"]
+    pnav = pairs_data["pnav"]
+    totals = pairs_data["totals"]
+    bdcs = sorted(books.keys())
+
+    def pnav_str(tk):
+        v = pnav.get(tk)
+        return f"{v:.2f}x" if v else "—"
+
+    head_cells = "".join(f"<th>{t}</th>" for t in bdcs)
+    pnav_row = "".join(f'<td class="pnav">{pnav_str(t)}</td>' for t in bdcs)
+
+    body = []
+    for i in bdcs:
+        bi = books[i]
+        cell_fv = {}
+        for j in bdcs:
+            if j == i:
+                continue
+            bj = books[j]
+            cell_fv[j] = sum((d.get("fv") or 0) for k, d in bi.items()
+                             if k in bj) / 1000.0  # $K -> $M
+        rowmax = max(cell_fv.values(), default=0) or 1
+        cells = []
+        for j in bdcs:
+            if j == i:
+                cells.append('<td class="diag">—</td>')
+                continue
+            v = cell_fv[j]
+            if v <= 0:
+                cells.append('<td style="color:var(--dim)">·</td>')
+            else:
+                alpha = round(0.06 + 0.52 * min(1.0, v / rowmax), 2)
+                cells.append(
+                    f'<td style="background:rgba(13,159,110,{alpha})">'
+                    f'<a href="compare.html?a={i}&b={j}#pair" '
+                    f'style="color:inherit;text-decoration:none;display:block" '
+                    f'title="Shared borrowers: {i} × {j}">{v:,.0f}</a></td>')
+        fvm = totals.get(i, 0) / 1000.0
+        body.append(
+            f'<tr><td class="rowlbl">{i}</td>'
+            f'<td class="pnav">{pnav_str(i)}</td>'
+            f'<td style="text-align:right;background:var(--surface2);font-weight:600">{fvm:,.0f}</td>'
+            + "".join(cells) + "</tr>")
+
+    n = len(bdcs)
+    html = (
+        '<!DOCTYPE html><html lang="en"><head>\n'
+        '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">\n'
+        '<title>Cross-Holdings Matrix &mdash; BDC Researcher</title>\n'
+        '<link rel="stylesheet" href="assets.css">\n'
+        '</head><body><nav class="sitenav">\n'
+        '<a href="index.html" class="brand">BDC Researcher</a>\n'
+        '<a href="index.html">Home</a><a href="dashboards.html">Dashboards</a>'
+        '<a href="overlap.html" class="active">Cross-Holdings</a>'
+        '<a href="borrower.html">Borrowers</a><a href="compare.html">BDC Compare</a>'
+        '<a href="analytics.html">Analytics</a><a href="markdelta.html">Mark Delta</a>'
+        '<a href="comps.html">Comps</a><a href="news.html">News</a>\n'
+        '<div class="spacer"></div>\n</nav>\n'
+        '<div class="page" style="max-width:1800px">\n'
+        '<h1>Cross-Portfolio Overlap Matrix</h1>\n'
+        f'<div class="sub">Row BDC = holder of record. Column BDC = co-lender. '
+        f'Cell = row-BDC&rsquo;s FV ($M) in borrowers also held by the column BDC, '
+        f'across all {n} tracked BDCs. Darker green = bigger overlap. Click a cell '
+        f'for the shared-borrower detail.</div>\n'
+        '<div class="card" style="padding:0;overflow:auto">\n'
+        '<table class="matrix sticky-th">\n<thead>\n'
+        f'<tr><th></th><th>P/NAV</th><th>FV ($M)</th>{head_cells}</tr>\n'
+        f'<tr><td class="rowlbl">P/NAV &darr;</td><td></td><td></td>{pnav_row}</tr>\n'
+        '</thead>\n<tbody>\n' + "\n".join(body) + '\n</tbody>\n</table>\n</div>\n</div>\n'
+        '<footer>Data: Q1 2026 SOIs from SEC EDGAR &middot; P/NAV from latest market '
+        'close &middot; BDC Researcher</footer>\n</body></html>\n'
+    )
+    (WEBSITE / "overlap.html").write_text(html, encoding="utf-8")
+    return n
+
+
 def main() -> int:
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -961,6 +1042,15 @@ def main() -> int:
         ok = inject_all_data(page, all_data)
         print(f"  ALL_DATA → {page:18s} {'OK' if ok else 'SKIP (no match)'}")
 
+    # Keep the analytics subtitle's BDC count in sync with the real number.
+    _an = WEBSITE / "analytics.html"
+    if _an.exists():
+        _c = _an.read_text(encoding="utf-8")
+        _c2 = re.sub(r"\d+ BDCs benchmarked",
+                     f"{len(all_data)} BDCs benchmarked", _c)
+        if _c2 != _c:
+            _an.write_text(_c2, encoding="utf-8")
+
     # 2. markdelta.html
     md = build_markdelta_data(all_data)
     ok = inject_markdelta(md)
@@ -978,6 +1068,10 @@ def main() -> int:
     print(f"  PAIR_D   → compare.html         {'OK' if ok else 'SKIP'} "
           f"(pnav: {computed} computed from market, "
           f"{len(pairs['pnav']) - computed} preserved)")
+
+    # 3b. overlap.html — N×N cross-holdings matrix (regenerated from data)
+    n_ov = write_overlap(pairs)
+    print(f"  overlap  → overlap.html         OK ({n_ov}×{n_ov} matrix)")
 
     # 4. comps.html — refresh BS + market columns
     if bs_data:
