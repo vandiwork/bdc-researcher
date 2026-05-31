@@ -1063,7 +1063,7 @@ def write_screener(all_data: dict, pairs_data: dict, md_data: list) -> int:
         'table.scr{width:100%;border-collapse:collapse;font-size:13px}\n'
         'table.scr th{background:var(--surface2);color:var(--head);font-size:11px;'
         'text-transform:uppercase;letter-spacing:.3px;padding:9px 10px;cursor:pointer;'
-        'white-space:nowrap;border-bottom:2px solid var(--border);text-align:right;position:sticky;top:40px}\n'
+        'white-space:nowrap;border-bottom:2px solid var(--border);text-align:right;position:sticky;top:40px;z-index:10}\n'
         'table.scr th:first-child,table.scr th:nth-child(2){text-align:left}\n'
         'table.scr th:hover{background:#27517f}\n'
         'table.scr td{padding:8px 10px;border-bottom:1px solid var(--border-soft);text-align:right}\n'
@@ -1088,7 +1088,11 @@ def write_screener(all_data: dict, pairs_data: dict, md_data: list) -> int:
         '(senior-secured % minus PIK %), and <strong>valuation</strong> (P/NAV; low = cheaper). '
         'The composite is the average of the four ranks (1 = best on that lens). '
         'Click any column to sort.</div>\n'
-        '<div class="card" style="padding:0;overflow-x:auto">\n'
+        # overflow:visible (not overflow-x:auto) so the sticky <th> sticks to
+        # the viewport below the fixed nav; an overflow container would scope
+        # sticky to the (non-scrolling) card and the header would scroll away,
+        # hiding the #1 row. Inline value also overrides the mobile .card rule.
+        '<div class="card" style="padding:0;overflow:visible">\n'
         '<table class="scr" id="scr"><thead><tr>'
         '<th data-k="comp" data-asc="1">Rank</th>'
         '<th data-k="bdc">BDC</th>'

@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="assets.css">
 <style>
 table.scr{width:100%;border-collapse:collapse;font-size:13px}
-table.scr th{background:var(--surface2);color:var(--head);font-size:11px;text-transform:uppercase;letter-spacing:.3px;padding:9px 10px;cursor:pointer;white-space:nowrap;border-bottom:2px solid var(--border);text-align:right;position:sticky;top:40px}
+table.scr th{background:var(--surface2);color:var(--head);font-size:11px;text-transform:uppercase;letter-spacing:.3px;padding:9px 10px;cursor:pointer;white-space:nowrap;border-bottom:2px solid var(--border);text-align:right;position:sticky;top:40px;z-index:10}
 table.scr th:first-child,table.scr th:nth-child(2){text-align:left}
 table.scr th:hover{background:#27517f}
 table.scr td{padding:8px 10px;border-bottom:1px solid var(--border-soft);text-align:right}
@@ -19,7 +19,7 @@ table.scr a{color:var(--accent);text-decoration:none;font-weight:600}
 <div class="spacer"></div></nav>
 <div class="page"><h1>BDC Screener</h1>
 <div class="sub">Ranks all tracked BDCs on four lenses &mdash; <strong>software exposure</strong> (low = less tech-concentrated), <strong>marking conservatism</strong> (mark vs the consensus of co-lenders on the same loans; negative = marks below peers), <strong>first-lien / PIK</strong> (senior-secured % minus PIK %), and <strong>valuation</strong> (P/NAV; low = cheaper). The composite is the average of the four ranks (1 = best on that lens). Click any column to sort.</div>
-<div class="card" style="padding:0;overflow-x:auto">
+<div class="card" style="padding:0;overflow:visible">
 <table class="scr" id="scr"><thead><tr><th data-k="comp" data-asc="1">Rank</th><th data-k="bdc">BDC</th><th data-k="soft">Software %</th><th data-k="cons">Mark vs peers</th><th data-k="fl">First Lien %</th><th data-k="pik">PIK %</th><th data-k="pnav">P/NAV</th><th data-k="comp" data-asc="1">Composite</th></tr></thead><tbody id="tb"></tbody></table></div>
 <p class="sub" style="margin-top:10px">Marking conservatism uses only loans co-held by 2+ BDCs; funds with few shared loans (shown as a small n) are less statistically reliable. Non-traded BDCs have no P/NAV.</p>
 </div>
