@@ -77,6 +77,32 @@ _FX_TO_USD = {
 }
 
 
+def _fill_floating_rates(rows: list) -> dict:
+    """Show a coherent all-in Rate for floating-rate loans whose filing only
+    reported spread + floor (notably MFIC, where the floor leaked into the rate
+    column so Rate < Spread). Derive each index's reference rate empirically —
+    median of (reported all-in − spread) across loans that DO report an all-in —
+    then set rate = reference + spread where the reported rate is missing or
+    below the spread."""
+    import statistics
+    from collections import defaultdict
+    imp = defaultdict(list)
+    for r in rows:
+        b = (r.get("baseRate") or "").upper()
+        rt, sp = r.get("rate"), r.get("spread")
+        if b and rt and sp and sp <= rt < 30:
+            imp[b].append(rt - sp)
+    ref = {b: round(statistics.median(v), 2) for b, v in imp.items()
+           if len(v) >= 20 and statistics.median(v) >= 1.0}
+    for r in rows:
+        b = (r.get("baseRate") or "").upper()
+        sp = r.get("spread")
+        if b in ref and sp and (r.get("rate") is None or r.get("rate") < sp):
+            r["rate"] = round(ref[b] + sp, 2)
+            r["rate_est"] = True
+    return ref
+
+
 def csv_row_to_dashboard(r: dict) -> dict:
     """Transform one enriched-CSV row into the dashboard JSON shape."""
     # Money fields: dashboard uses $K. CSV stores raw dollars.
@@ -326,6 +352,7 @@ def write_summary(per_bdc: dict[str, list[dict]],
     all_rows = []
     for rows in per_bdc.values():
         all_rows.extend(rows)
+    _fill_floating_rates(all_rows)
     (out_dir / "portfolio.json").write_text(
         json.dumps(all_rows, separators=(",", ":")), encoding="utf-8")
 
@@ -344,15 +371,29 @@ def main() -> int:
 
     per_bdc: dict[str, list[dict]] = {}
     bdc_periods: list[str] = []
+    periods: dict[str, tuple] = {}
+    # Pass 1: load every BDC's positions.
+    for ticker in sorted(registry):
+        rows, period_end, form = load_positions(ticker)
+        if not rows:
+            continue
+        per_bdc[ticker] = rows
+        periods[ticker] = (period_end, form)
+        if period_end:
+            bdc_periods.append(period_end)
+
+    # Derive floating-rate all-in (reference + spread) across the FULL dataset
+    # BEFORE injecting, so the per-BDC embedded data shows a coherent Rate.
+    _fill_floating_rates([r for rs in per_bdc.values() for r in rs])
+
+    # Pass 2: inject the (rate-filled) data into each dashboard.
     print(f"{'BDC':5s} {'rows':>5s}  {'total FV ($M)':>13s}  {'period':>12s}  status")
     print("-" * 64)
     total_rows = 0
     total_fv_k = 0
-    for ticker in sorted(registry):
-        rows, period_end, form = load_positions(ticker)
-        if not rows:
-            print(f"{ticker:5s}    --              --  no enriched CSV")
-            continue
+    for ticker in sorted(per_bdc):
+        rows = per_bdc[ticker]
+        period_end, form = periods[ticker]
         fv_k = sum(r.get("fv") or 0 for r in rows)
         ok = inject_into_dashboard(ticker, rows)
         short_lbl, long_lbl = period_label(period_end, form)
@@ -363,9 +404,6 @@ def main() -> int:
               f"{short_lbl:>12s}  {status}")
         total_rows += len(rows)
         total_fv_k += fv_k
-        per_bdc[ticker] = rows
-        if period_end:
-            bdc_periods.append(period_end)
 
     print("-" * 64)
     print(f"TOTAL  {total_rows:>4d}  {total_fv_k/1000:>13,.0f}")

@@ -165,7 +165,37 @@ def load_all_data() -> dict[str, list[dict]]:
                     continue
                 rows.append(csv_row_to_dashboard(r))
         all_data[ticker] = rows
+    fill_floating_rates([r for rs in all_data.values() for r in rs])
     return all_data
+
+
+def fill_floating_rates(rows: list) -> dict:
+    """Show a coherent all-in Rate for floating-rate loans whose filing only
+    reported spread + floor (notably MFIC, where the floor was leaking into the
+    rate column so Rate < Spread). Derive each index's reference rate
+    empirically — median of (reported all-in − spread) across every loan that
+    DOES report an all-in — then set rate = reference + spread where the
+    reported rate is missing or implausibly below the spread. Data-driven, so
+    it tracks the prevailing reference each refresh."""
+    import statistics
+    from collections import defaultdict
+    imp = defaultdict(list)
+    for r in rows:
+        b = (r.get("baseRate") or "").upper()
+        rt, sp = r.get("rate"), r.get("spread")
+        if b and rt and sp and sp <= rt < 30:
+            imp[b].append(rt - sp)
+    ref = {b: round(statistics.median(v), 2) for b, v in imp.items()
+           if len(v) >= 20 and statistics.median(v) >= 1.0}
+    n = 0
+    for r in rows:
+        b = (r.get("baseRate") or "").upper()
+        sp = r.get("spread")
+        if b in ref and sp and (r.get("rate") is None or r.get("rate") < sp):
+            r["rate"] = round(ref[b] + sp, 2)
+            r["rate_est"] = True
+            n += 1
+    return ref
 
 
 def load_bs() -> dict[str, dict]:
