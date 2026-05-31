@@ -92,6 +92,7 @@ def csv_row_to_dashboard(r: dict) -> dict:
     return {
         "bdc": (r.get("bdc") or "").strip(),
         "entity": entity, "company": company, "desc": desc,
+        "common_name": (r.get("common_name") or "").strip(),
         "sector": r.get("gics_industry_group") or "Other",
         "type": r.get("type_canonical") or "Other",
         "affil": affil,

@@ -522,7 +522,7 @@ function render(){
     const tr = document.createElement('tr');
     tr.dataset.idx = idx;
     tr.innerHTML = `
-      <td><span class="co-name">${r.company}</span><span class="co-ent">${r.entity}</span></td>
+      <td><span class="co-name">${r.company}</span><span class="co-ent">${r.common_name||""}</span></td>
       <td><span class="badge ${sc}">${r.sector}</span></td>
       <td><span class="badge ${tc}">${typeShort(r.type)}</span>${pikBadge}</td>
       <td class="mn" style="color:var(--text-muted)">${fmt(r.cost)}</td>

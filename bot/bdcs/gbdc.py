@@ -17,6 +17,7 @@ Bares with no leaves (e.g. Fleet Farm Group) are genuine standalone
 positions and kept untouched.
 """
 from __future__ import annotations
+import re as _re
 from ._base import Bdc
 from . import register
 
@@ -29,6 +30,41 @@ class Gbdc(Bdc):
     canonical_fv_m = 8317.2
     canonical_period = "2026-03-31"
     keep_partial_rollup_excess = True
+
+    def parse_identifier(self, ident: str) -> dict:
+        # GBDC identifier: "<Entity> | <Tranche> | <Affiliation>"
+        #   e.g. "PPW Aero Buyer, Inc. | One stop 1 | Non-Affiliated Issuer"
+        # Entity is just the first segment; the generic splitter keeps the
+        # whole pipe string, so parse it explicitly here.
+        base = ident.split(_EXCESS_TAG)[0]
+        parts = [p.strip() for p in base.split(" | ")]
+        entity = parts[0]
+        tranche = parts[1] if len(parts) >= 2 else ""
+        # Some GBDC leaves use a COMMA-form tranche on the bare entity, e.g.
+        # "MMan Acquisition Co., One stop 1" (no pipe). Peel that off too.
+        m = _re.search(r",\s*(One stop|Senior secured|Second lien|Subordinated|"
+                       r"Mezzanine|LLC interest|Preferred|Warrant|Common|Equity|"
+                       r"Units|Partnership|Membership)\b.*$", entity, _re.I)
+        if m and not tranche:
+            tranche = entity[m.start():].lstrip(", ").strip()
+            entity = entity[:m.start()].strip()
+        out: dict = {"entity": entity}
+        if tranche:
+            tr = _re.sub(r"\s*\d+\s*$", "", tranche.lower()).strip()
+            if "one stop" in tr or "senior secured" in tr or "first lien" in tr:
+                out["type"] = "First Lien"   # Golub "one stop" = unitranche/1L
+            elif "second lien" in tr:
+                out["type"] = "Second Lien"
+            elif "subordinated" in tr or "mezz" in tr:
+                out["type"] = "Subordinated"
+            elif "preferred" in tr:
+                out["type"] = "Preferred Equity"
+            elif "warrant" in tr:
+                out["type"] = "Warrant"
+            elif any(k in tr for k in ("llc interest", "equity", "common", "units",
+                                       "partnership", "membership", "stock")):
+                out["type"] = "Common Equity"
+        return out
 
     def post_filter(self, positions: list) -> list:
         # Bare rows = no " | " separator and not the generic extractor's

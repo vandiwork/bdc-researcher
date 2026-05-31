@@ -100,6 +100,7 @@ def csv_row_to_dashboard(r: dict) -> dict:
         "bdc": (r.get("bdc") or "").strip(),
         "entity": entity,
         "company": company,
+        "common_name": (r.get("common_name") or "").strip(),
         "desc": desc,
         # Canonical sector / type fed into the existing dashboard fields:
         "sector": r.get("gics_industry_group") or "Other",
