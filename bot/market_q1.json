@@ -162,7 +162,7 @@
     "mtd_pct": -7.87,
     "ytd_pct": -4.9,
     "ltm_pct": -17.14,
-    "div_yield_pct": 10.47,
+    "div_yield_pct": 11.4,
     "market_cap": 896214144,
     "week52_high": 13.51,
     "week52_low": 9.48,
@@ -211,7 +211,7 @@
     "market_cap": 5588399104,
     "week52_high": 15.185,
     "week52_low": 10.52,
-    "beta": null
+    "beta": 0.687
   },
   "OCSL": {
     "ticker": "OCSL",
@@ -316,6 +316,6 @@
     "market_cap": 144580208,
     "week52_high": 9.66,
     "week52_low": 6.07,
-    "beta": null
+    "beta": 0.455
   }
 }
