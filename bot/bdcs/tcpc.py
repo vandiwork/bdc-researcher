@@ -21,10 +21,10 @@ _TYPE_KEYWORDS = [
     ("Second Lien",         re.compile(r"Second Lien", re.I)),
     ("Senior Subordinated", re.compile(r"Senior Subordinated", re.I)),
     ("Subordinated",        re.compile(r"\bSubordinated\b", re.I)),
-    ("Preferred Equity",    re.compile(r"Preferred", re.I)),
+    ("Preferred Equity",    re.compile(r"Preferred|Series\s+[A-Z0-9][\w-]*\s+Shares", re.I)),
     ("Warrant",             re.compile(r"\bWarrant", re.I)),
-    ("Common Equity",       re.compile(r"Common Stock|Common Equity|Common Units?", re.I)),
-    ("Equity",              re.compile(r"\b(?:Equity|Stock|Units?|Interest)\b", re.I)),
+    ("Common Equity",       re.compile(r"Common\s+(?:Stock|Equity|Units?|Shares)", re.I)),
+    ("Equity",              re.compile(r"Limited Partnership|Limited Liability|\b(?:Equity|Stock|Units?|Interests?)\b", re.I)),
 ]
 _SPREAD_RX = re.compile(r"Spread\s+([0-9]+\.[0-9]+)\s*%", re.I)
 _RATE_RX = re.compile(r"Total\s+([0-9]+\.[0-9]+)\s*%", re.I)
@@ -59,21 +59,26 @@ class Tcpc(Bdc):
                 out["sector"] = sect
                 s = s[len(sect) + 1:]
                 break
-        # Find type marker — issuer is what comes before
+        # Issuer ends at the EARLIEST type/instrument/descriptor marker. Equity
+        # rows often have no loan-style type keyword (e.g. "... Common Shares",
+        # "... Series X Shares", "... Limited Partnership/Limited Liability
+        # Company Interests"); we still delimit the issuer so the section/sector
+        # prefix never leaks into the name via the generic fallback.
+        cut = len(s)
+        best = None
         for tname, rx in _TYPE_KEYWORDS:
             tm = rx.search(s)
-            if tm:
-                out["type"] = tname
-                out["entity"] = s[:tm.start()].strip(" ,.")
-                break
-        else:
-            # No type keyword — try splitting at "Ref " or known instruments
-            for marker in (" Senior Note ", " Sr Secured ", " Membership Units",
-                           " Ref ", " Term Loan "):
-                idx = s.find(marker)
-                if idx > 0:
-                    out["entity"] = s[:idx].strip(" ,.")
-                    break
+            if tm and tm.start() < cut:
+                cut = tm.start()
+                best = tname
+        if best:
+            out["type"] = best
+        for marker in (" Senior Note ", " Sr Secured ", " Membership Units",
+                       " Ref ", " Term Loan ", " ("):
+            idx = s.find(marker)
+            if 0 < idx < cut:
+                cut = idx
+        out["entity"] = s[:cut].strip(" ,.")
         m = _SPREAD_RX.search(ident)
         if m: out["spread"] = float(m.group(1))
         m = _RATE_RX.search(ident)
@@ -97,7 +102,11 @@ _TCPC_SECTORS = (
     "Commercial Services and Supplies", "Construction & Engineering",
     "Construction and Engineering", "Consumer Finance",
     "Containers & Packaging", "Containers and Packaging",
-    "Diversified Consumer Services", "Diversified Financial Services",
+    "Diversified Consumer Services", "Diversified Consumer Service",
+    "Diversified Financial Services",
+    "Insurance", "Trading Companies & Distributors",
+    "Internet and Catalog Retail", "Internet & Catalog Retail",
+    "Oil, Gas and Consumable Fuels",
     "Electrical Equipment", "Electric Utilities",
     "Energy Equipment & Services", "Energy Equipment and Services",
     "Health Care Equipment & Supplies", "Health Care Providers & Services",

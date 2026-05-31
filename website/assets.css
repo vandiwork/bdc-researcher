@@ -1,76 +1,107 @@
-/* shared site styles */
-:root{--bg:#fff;--surface:#f5f6f8;--surface2:#eceef2;--border:#d1d5de;--border-soft:#e4e6ed;--text:#0d0f14;--muted:#5a6172;--dim:#9ba3b5;--accent:#1a6ef5;--green:#0d9f6e;--red:#dc2626;--amber:#c47f00}
+/* shared site styles — DARK THEME */
+:root{
+  --bg:#0e1116;          /* page background */
+  --surface:#161b22;     /* cards / tables */
+  --surface2:#1b2230;    /* alt rows / chips */
+  --border:#2b3240;
+  --border-soft:#222834;
+  --text:#e6e9ef;        /* primary text (high contrast on dark) */
+  --muted:#9aa4b2;       /* secondary text */
+  --dim:#6b7382;
+  --accent:#4d9fff;      /* links / accent */
+  --head:#79b8ff;        /* headings (was dark navy) */
+  --th-bg:#1f3a5f;       /* table header */
+  --th-text:#dce9ff;
+  --green:#3fb950;
+  --red:#f85149;
+  --amber:#d6a132;
+}
 *{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:13px;line-height:1.5}
+a{color:var(--accent)}
 
-.sitenav{position:fixed;top:0;left:0;right:0;height:40px;background:#0d0f14;color:#fff;display:flex;align-items:center;gap:4px;padding:0 16px;z-index:100;font-size:13px;border-bottom:1px solid #2a2d35}
+.sitenav{position:fixed;top:0;left:0;right:0;min-height:40px;background:#0a0d12;color:#fff;display:flex;align-items:center;gap:4px;padding:0 14px;z-index:100;font-size:13px;border-bottom:1px solid #2a313c;flex-wrap:wrap}
 .sitenav .brand{font-weight:600;margin-right:12px;color:#fff;text-decoration:none}
-.sitenav a{color:#c9ccd5;text-decoration:none;padding:6px 12px;border-radius:4px;font-size:12px}
-.sitenav a:hover{background:#2a2d35;color:#fff}
-.sitenav a.active{background:#1a6ef5;color:#fff}
+.sitenav a{color:#c9ccd5;text-decoration:none;padding:9px 11px;border-radius:4px;font-size:12px}
+.sitenav a:hover{background:#1c2230;color:#fff}
+.sitenav a.active{background:var(--accent);color:#fff}
 .sitenav .spacer{flex:1}
-.sitenav select{background:#1a1d24;color:#fff;border:1px solid #2a2d35;padding:5px 8px;border-radius:4px;font-size:12px}
+.sitenav select{background:#1a1d24;color:#fff;border:1px solid #2a313c;padding:7px 8px;border-radius:4px;font-size:12px}
 
-.page{padding:60px 24px 40px;max-width:1400px;margin:0 auto}
-h1{font-size:22px;margin-bottom:4px;color:#1f4e78;font-weight:600}
-h2{font-size:16px;margin:24px 0 10px;color:#1f4e78;font-weight:600}
+.page{padding:60px 24px 40px;max-width:1500px;margin:0 auto}
+h1{font-size:22px;margin-bottom:4px;color:var(--head);font-weight:600}
+h2{font-size:16px;margin:24px 0 10px;color:var(--head);font-weight:600}
 .sub{font-size:13px;color:var(--muted);margin-bottom:20px}
-.card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.3);overflow:visible}
 
-table{width:100%;background:#fff;border-collapse:collapse;border-radius:8px;border:1px solid var(--border)}
-th{background:#1f4e78;color:#fff;padding:10px 12px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.3px;font-weight:600;cursor:pointer;user-select:none}
-/* Sticky thead is opt-in via .sticky-th on the table. Default static so
-   short tables don't hide their first body row when the page scrolls. */
+table{width:100%;background:var(--surface);border-collapse:collapse;border-radius:8px;border:1px solid var(--border)}
+th{background:var(--th-bg);color:var(--th-text);padding:10px 12px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.3px;font-weight:600;cursor:pointer;user-select:none}
+/* Sticky thead is opt-in via .sticky-th on the table. */
 table.sticky-th th{position:sticky;top:40px;z-index:2}
-th:hover{background:#2a6ba0}
+th:hover{background:#27517f}
 th.num,td.num{text-align:right}
-td{padding:9px 12px;border-bottom:1px solid #eef1f5;font-size:13px}
-tr:hover{background:#f9fbfd}
+td{padding:9px 12px;border-bottom:1px solid var(--border-soft);font-size:13px;color:var(--text)}
+tr:hover{background:var(--surface2)}
 tr:last-child td{border-bottom:none}
 
 .pos{color:var(--green);font-weight:500}
 .neg{color:var(--red);font-weight:500}
 .pnav-hi{color:var(--green);font-weight:600}
 .pnav-lo{color:var(--red);font-weight:600}
-.tag{display:inline-block;padding:2px 8px;background:#eef2f7;border-radius:10px;font-size:11px;color:#445}
+.tag{display:inline-block;padding:2px 8px;background:var(--surface2);border-radius:10px;font-size:11px;color:var(--muted)}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
-.stat{background:#fff;padding:14px 18px;border-radius:8px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.stat{background:var(--surface);padding:14px 18px;border-radius:8px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .stat .lab{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
-.stat .val{font-size:20px;font-weight:600;color:#1f4e78;margin-top:4px}
+.stat .val{font-size:20px;font-weight:600;color:var(--head);margin-top:4px}
 .stat .sub2{font-size:12px;color:var(--muted);margin-top:2px}
 .controls{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
 .ctrl{display:flex;flex-direction:column;gap:4px}
 .ctrl label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
-.ctrl select,.ctrl input{padding:8px 12px;border:1px solid #d0d7de;border-radius:6px;font-size:14px;min-width:160px;background:#fff}
-.btn{padding:8px 14px;background:#1f4e78;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px}
-.btn:hover{background:#2a6ba0}
+.ctrl select,.ctrl input{padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;min-width:160px;background:var(--surface2);color:var(--text)}
+.btn{padding:9px 14px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px}
+.btn:hover{background:#3b8de6}
 .grid{display:grid;gap:16px}
 .grid-3{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
-.bdccard{background:#fff;border:1px solid var(--border);border-radius:8px;padding:18px;text-decoration:none;color:var(--text);transition:all .15s;display:block}
-.bdccard:hover{border-color:var(--accent);box-shadow:0 3px 8px rgba(26,110,245,.12);transform:translateY(-1px)}
-.bdccard .tkr{font-size:18px;font-weight:700;color:#1f4e78;margin-bottom:2px}
+.bdccard{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px;text-decoration:none;color:var(--text);transition:all .15s;display:block}
+.bdccard:hover{border-color:var(--accent);box-shadow:0 3px 8px rgba(77,159,255,.18);transform:translateY(-1px)}
+.bdccard .tkr{font-size:18px;font-weight:700;color:var(--head);margin-bottom:2px}
 .bdccard .nm{font-size:12px;color:var(--muted);margin-bottom:10px}
 .bdccard .row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0}
 .bdccard .row .l{color:var(--muted)}
 .bdccard .row .v{font-weight:500}
 
 .matrix{font-size:11px}
-.matrix th{padding:6px 4px;font-size:10px;background:#1f4e78}
-.matrix td{padding:4px 6px;font-size:11px;text-align:right;border-right:1px solid #f0f2f5}
-.matrix .rowlbl{background:#1f4e78;color:#fff;font-weight:600;text-align:center;position:sticky;left:0;z-index:3}
-.matrix .pnav{background:#eef2f7;color:var(--muted);font-weight:600;text-align:center}
-.matrix .diag{background:#e7e6e6}
-/* Fix sticky headers inside scrollable .card container */
+.matrix th{padding:6px 4px;font-size:10px;background:var(--th-bg)}
+.matrix td{padding:4px 6px;font-size:11px;text-align:right;border-right:1px solid var(--border-soft)}
+.matrix .rowlbl{background:var(--th-bg);color:var(--th-text);font-weight:600;text-align:center;position:sticky;left:0;z-index:3}
+.matrix .pnav{background:var(--surface2);color:var(--muted);font-weight:600;text-align:center}
+.matrix .diag{background:#0a0d12}
 .matrix th{top:0}
 .matrix thead tr:nth-child(2) td{position:sticky;top:27px;z-index:2}
 .matrix thead tr:nth-child(2) td.rowlbl{z-index:4}
-
-footer{padding:24px;color:var(--muted);font-size:12px;text-align:center;border-top:1px solid var(--border);margin-top:40px}
-
-/* matrix column width/stickiness fixes */
 .matrix th, .matrix td{white-space:nowrap;min-width:52px}
 .matrix th:nth-child(2), .matrix td.pnav{min-width:62px;padding-left:8px;padding-right:8px}
 .matrix th:first-child, .matrix td.rowlbl{min-width:70px;padding-left:10px;padding-right:10px}
-.card{overflow:visible}
-/* widen page so matrix isn't clipped at right */
-.page{max-width:1500px}
+
+footer{padding:24px;color:var(--muted);font-size:12px;text-align:center;border-top:1px solid var(--border);margin-top:40px}
+
+/* ── Mobile ───────────────────────────────────────────────────────── */
+@media (max-width: 768px){
+  body{font-size:14px}
+  .page{padding:64px 12px 40px}
+  h1{font-size:19px}
+  .sitenav{padding:0 8px}
+  .sitenav a{padding:10px 9px;font-size:12px}
+  .sitenav .brand{width:100%;padding:8px 4px 2px}
+  /* Wide tables scroll horizontally inside their card/container */
+  .card{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .stats{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+  .controls{gap:10px}
+  .ctrl select,.ctrl input{min-width:0;width:100%}
+  td,th{padding:8px 9px}
+  /* Larger tap targets for any link/button */
+  a,button,select,.tab,.tab-btn{min-height:38px}
+}
+/* Any element wrapped for horizontal scrolling */
+.scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}

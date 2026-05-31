@@ -32,6 +32,30 @@ class Gsbd(Bdc):
 
     def parse_identifier(self, ident: str) -> dict:
         out: dict = {}
+        # Step 0: investment type from the section path. GSBD's section
+        # header names the tranche type, e.g. "1st Lien/Senior Secured
+        # Debt", "2nd Lien", "Unsecured Debt", "Preferred Stock", "Common
+        # Stock", "Equity", "Warrants". Read it BEFORE the entity so the
+        # generic splitter (which mis-reads "Interest Rate" as an equity
+        # "interest") never has to run.
+        idx_e = ident.find(" Industry ")
+        tl = (ident[:idx_e] if idx_e > 0 else ident).lower()
+        if re.search(r"1st lien|first lien|senior secured|unitranche", tl):
+            out["type"] = "First Lien"
+        elif re.search(r"2nd lien|second lien", tl):
+            out["type"] = "Second Lien"
+        elif "senior subordinated" in tl:
+            out["type"] = "Senior Subordinated"
+        elif re.search(r"mezzanine|subordinated", tl):
+            out["type"] = "Subordinated"
+        elif "unsecured" in tl:
+            out["type"] = "Unsecured"
+        elif "warrant" in tl:
+            out["type"] = "Warrant"
+        elif "preferred" in tl:
+            out["type"] = "Preferred Equity"
+        elif re.search(r"common (?:stock|equity|units?)|\bequity\b", tl):
+            out["type"] = "Common Equity"
         # Step 1: extract field markers from the right side
         for field, rx in _MARKERS:
             m = rx.search(ident)

@@ -33,8 +33,52 @@ OUT = SCRIPT_DIR / "common_names.json"
 _DBA = re.compile(r"\s*\((?:dba|d/b/a|a/k/a|aka)\s+([^)]+)\)", re.I)
 # "(fka X)", "(f/k/a X)", "(formerly ... X)" -> X is a former/recognisable name.
 _FKA = re.compile(r"\s*\((?:fka|f/k/a|formerly(?:\s+known\s+as)?)\s+([^)]+)\)", re.I)
+# An UNCLOSED former-name parenthetical (a per-BDC parser cut the identifier
+# mid-paren), e.g. "FL Hawk ..., Inc. (f/k/a Fineline Technologies". Strip from
+# the "(f/k/a" to end of string.
+_FKA_OPEN = re.compile(r"\s*\((?:fka|f/k/a|formerly(?:\s+known\s+as)?)\b.*$", re.I)
 # Any leftover parenthetical to strip from the legal name for display.
 _ANY_PAREN = re.compile(r"\s*\([^)]*\)")
+
+# Unambiguous *terminal* corporate suffixes (ones that end a legal entity name,
+# not mid-name words like "Group"/"Holdings"/"Company" which would truncate too
+# early). Used to detect multi-borrower strings the filers list as one entity,
+# e.g. "Cloud Software Group, Inc., Picard Parent, Inc., Cloud Software Group
+# Holdings, ...". We keep only the FIRST (primary) borrower.
+_TERM_SUFFIX = (
+    r"(?:Inc|LLC|L\.?L\.?C|LLP|L\.?L\.?P|LP|L\.?P|Ltd|Limited|Corp|Corporation"
+    r"|Incorporated|S\.?A|S\.?A\.?R\.?L|N\.?V|B\.?V|GmbH|AG|S\.?p\.?A|plc"
+    r"|Pty|Cooperatief|U\.?A|AB|ApS|Oy)"
+)
+# First terminal suffix that is immediately followed by another capitalised
+# entity (", X..." / " and X..." / " & X...") → multiple co-borrowers.
+# case-insensitive so ALL-CAPS suffixes ("LTD", "PLC") are caught too; the
+# suffix-before-separator requirement is what prevents false positives on
+# names like "Berner Food & Beverage, LLC" (no suffix before the "&").
+_MULTI_BORROWER = re.compile(
+    r"^(.*?\b" + _TERM_SUFFIX + r"\.?)\s*(?:,\s+(?:and\s+)?|\s+and\s+|\s*&\s+)[A-Z\[]",
+    re.I,
+)
+# Instrument/class descriptor appended after a spaced hyphen / en / em dash,
+# e.g. "Axsome Therapeutics, Inc. - Common Stock", "1988 CLO 3, Ltd. - Class
+# ER". Real legal names don't use a spaced dash, so cut at the first one.
+_DESC_DASH = re.compile(r"\s[\-–—]\s")
+
+
+def primary_legal(legal: str) -> str:
+    """Collapse a multi-co-borrower legal string to its primary (first) entity.
+
+    Filers sometimes list every obligor on a tranche as one comma/'and'-joined
+    blob. We keep the first complete legal entity (through its terminal
+    corporate suffix) and drop the rest. No-ops on single-entity names.
+    """
+    m = _MULTI_BORROWER.match(legal)
+    if m:
+        cand = m.group(1).strip().rstrip(",").strip()
+        # Guard against pathological 2-char captures; require something real.
+        if len(cand) >= 5:
+            return cand
+    return legal
 
 
 def split_name(raw: str) -> tuple[str, str]:
@@ -55,7 +99,22 @@ def split_name(raw: str) -> tuple[str, str]:
     # that are part of the legal name, e.g. "(US)").
     legal = _DBA.sub("", raw)
     legal = _FKA.sub("", legal)
-    legal = re.sub(r"\s{2,}", " ", legal).strip().rstrip(",").strip()
+    legal = _FKA_OPEN.sub("", legal)
+    # Truncate any residual " | <sector/tranche/affiliation>" suffix that a
+    # per-BDC parser left on the entity (BBDC "| Revolver", PSEC "| <sector>",
+    # BXSL "| Non-Affiliated Issuer", etc.). A real company name never
+    # contains " | ".
+    # A real company name never contains a pipe; cut at the first one
+    # (parsers use it as a field separator, sometimes without spaces, e.g.
+    # "...LLC |First lien senior secured loan").
+    legal = legal.split("|")[0]
+    # Drop trailing instrument/class descriptor after a spaced dash.
+    legal = _DESC_DASH.split(legal)[0]
+    legal = re.sub(r"\s{2,}", " ", legal).strip()
+    # Drop trailing pipe/comma artifacts left by parsers.
+    legal = legal.rstrip(" |,").strip()
+    # Collapse multi-co-borrower blobs to the primary entity.
+    legal = primary_legal(legal)
     # Don't echo the common name if it's identical to the legal name.
     if common and common.lower() == legal.lower():
         common = ""
@@ -85,10 +144,13 @@ def build_final() -> dict:
             legals.add(legal)
             if common:
                 final.setdefault(legal, common)
-    # overlay web-search results (only where no filing dba already set)
+    # overlay web-search results (only where no filing dba already set).
+    # Normalise cache keys through primary_legal so entries written before the
+    # multi-borrower truncation still resolve to the truncated legal name.
     for legal, common in search.items():
-        if common and legal not in final:
-            final[legal] = common
+        key = primary_legal(legal.split(" | ")[0].strip())
+        if common and key not in final:
+            final[key] = common
     OUT.write_text(json.dumps(final, indent=2, ensure_ascii=False), encoding="utf-8")
     return final
 

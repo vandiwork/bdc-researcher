@@ -238,12 +238,24 @@ def enrich_one(ticker: str, xbrl_csv: Path, html_bytes: bytes,
     # Apply to every position (matched or not). Entity-based Black Box
     # detection takes precedence (JV / CLO / fund-of-funds positions).
     # Otherwise prefer XBRL raw sector, fall back to HTML-side.
+    # Web-searched sector overrides for borrowers whose filing carries no
+    # usable sector/description (heavy on MAIN equity co-investments).
+    # Keyed by legal name; value = [gics_sector, industry_group].
+    try:
+        _sector_overrides = json.loads(
+            (SCRIPT_DIR / "sector_overrides.json").read_text(encoding="utf-8"))
+    except Exception:
+        _sector_overrides = {}
+
     for p in positions:
         entity = (p.get("entity") or p.get("company") or "").strip()
         xbrl_sec = (p.get("sector") or "").strip()
         soi_sec = (p.get("sector_soi") or "").strip()
         desc = (p.get("business_description") or p.get("desc") or "").strip()
         gics, ig = classify_position(entity, xbrl_sec, soi_sec, desc)
+        ov = _sector_overrides.get(entity)
+        if ov and (ig in ("Other", "", None)):
+            gics, ig = ov[0], ov[1]
         p["gics_sector"] = gics
         p["gics_industry_group"] = ig
 
@@ -255,6 +267,28 @@ def enrich_one(ticker: str, xbrl_csv: Path, html_bytes: bytes,
         else:
             tc = tc_x
         p["type_canonical"] = tc
+
+    # ── Entity-level sector fill ──
+    # All tranches of one borrower share a sector, but filers tag it on
+    # only the (first) debt tranche, leaving equity/warrant tranches blank
+    # -> "Other" (heavy on PSEC, MAIN). Propagate the most common non-Other
+    # sector within each borrower to its "Other"/blank siblings.
+    from collections import Counter as _Counter
+    by_entity: dict[str, _Counter] = {}
+    for p in positions:
+        ent = (p.get("entity") or "").strip().lower()
+        g = p.get("gics_industry_group")
+        if ent and g and g not in ("Other", ""):
+            by_entity.setdefault(ent, _Counter())[(p.get("gics_sector"), g)] += 1
+    for p in positions:
+        if (p.get("gics_industry_group") or "Other") != "Other":
+            continue
+        ent = (p.get("entity") or "").strip().lower()
+        c = by_entity.get(ent)
+        if c:
+            (gs, ig), _ = c.most_common(1)[0]
+            p["gics_sector"] = gs
+            p["gics_industry_group"] = ig
 
     out_dir.mkdir(parents=True, exist_ok=True)
     out_csv = out_dir / xbrl_csv.name

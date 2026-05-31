@@ -22,7 +22,7 @@ _SECTORS = [
     "Aerospace & Defense", "Automotive", "Banking, Finance, Insurance & Real Estate",
     "Beverage, Food & Tobacco", "Capital Equipment", "Chemicals, Plastics & Rubber",
     "Construction & Building", "Consumer Goods: Durable", "Consumer Goods: Non-Durable",
-    "Containers, Packaging & Glass", "Energy: Oil & Gas",
+    "Containers, Packaging & Glass", "Energy: Oil & Gas", "Environmental Industries",
     "FIRE: Finance", "FIRE: Insurance", "FIRE: Real Estate",
     "Healthcare & Pharmaceuticals", "High Tech Industries", "Hotel, Gaming & Leisure",
     "Investment Vehicles", "Legacy Corporate Lending",
@@ -33,8 +33,12 @@ _SECTORS = [
     "Utilities: Oil & Gas", "Utilities: Water", "Wholesale",
 ]
 
+# BCSF's affiliation prefix varies: "Non-controlled/Non-Affiliated",
+# "Non-controlled/Non-Affiliate" (no trailing d), "Non-Controlled/Affiliate",
+# "Controlled Affiliate", etc. Match all spellings or the section path leaks
+# into the issuer name.
 _PFX = re.compile(
-    r"^(?:Non-controlled/Non-Affiliated|Non-Controlled/Affiliated|Controlled Affiliate)"
+    r"^(?:Non-?[Cc]ontrolled|Controlled)[/\s]+(?:Non-?)?Affiliated?"
     r"\s+Investments\s+", re.I)
 _CCY = re.compile(
     r"^(British Pound|Euro|Canadian Dollar|Australian Dollar|"
@@ -46,8 +50,11 @@ _MATURITY = re.compile(r"Maturity Date\s+(\d{1,2}/\d{1,2}/\d{4})")
 _BASE = re.compile(
     r"\b(SOFR|SONIA|EURIBOR|CDOR|TIBOR|BBSY|STIBOR|NIBOR|CIBOR|BKBM|Prime)\b", re.I)
 _TYPE_RX = [
-    ("First Lien",          re.compile(r"First Lien", re.I)),
     ("Second Lien",         re.compile(r"Second Lien", re.I)),
+    # Some tranches are written "Lien Senior Secured Loan" (the "First" is
+    # dropped); treat a "Lien Senior Secured" not preceded by "Second" as
+    # First Lien so the type description never leaks into the issuer name.
+    ("First Lien",          re.compile(r"First Lien|(?<!Second )Lien Senior Secured", re.I)),
     ("Senior Subordinated", re.compile(r"Senior Subordinated", re.I)),
     ("Subordinated",        re.compile(r"\bSubordinated\b", re.I)),
     ("Preferred Equity",    re.compile(r"Preferred (?:Equity|Stock|Interest|Units?)", re.I)),

@@ -7,11 +7,11 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#ffffff; --surface:#f5f6f8; --surface2:#eceef2;
-  --border:#d1d5de; --border-soft:#e4e6ed;
-  --text:#0d0f14; --text-muted:#5a6172; --text-dim:#9ba3b5;
-  --accent:#1a6ef5; --accent-dim:#dbeafe;
-  --green:#0d9f6e; --amber:#c47f00; --red:#dc2626; --purple:#7c3aed;
+  --bg:#0e1116; --surface:#161b22; --surface2:#1b2230;
+  --border:#2b3240; --border-soft:#222834;
+  --text:#e6e9ef; --text-muted:#9aa4b2; --text-dim:#6b7382;
+  --accent:#4d9fff; --accent-dim:#16304f; --head:#79b8ff;
+  --green:#3fb950; --amber:#d6a132; --red:#f85149; --purple:#a371f7;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;}
@@ -189,6 +189,24 @@ td{padding:8px 12px;vertical-align:middle;white-space:nowrap;}
 
 /* Par value column hidden per request (still in data for calcs) */
 #main-table th:nth-child(5), #main-table td:nth-child(5){display:none !important;}
+
+/* ── Mobile ── */
+@media (max-width: 768px){
+  body{font-size:14px}
+  .hdr{padding:6px 12px 8px}
+  .hdr-title{font-size:13px}
+  .hdr-stats{gap:12px}
+  .stat-val{font-size:12px}
+  .tabs{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tab{padding:11px 12px;min-height:40px}
+  .ctrl-row{flex-wrap:wrap;gap:8px}
+  .sw input,.fl select{min-width:0}
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  #main-table{min-width:760px}
+  a,button,select,.tab{min-height:38px}
+  .sitenav{flex-wrap:wrap;padding:0 8px}
+  .sitenav a{padding:10px 9px}
+}
 </style>
 </head>
 <body>

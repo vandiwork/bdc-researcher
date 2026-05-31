@@ -28,6 +28,18 @@ _TYPE_FROM_TRANCHE = [
     ("Equity",              re.compile(r"\b(?:equity|share|unit|interest)\b", re.I)),
 ]
 
+# Field separator is a pipe, but some rows render it without surrounding
+# spaces ("Inc.| First lien") or with the pipe mis-encoded as a capital "I"
+# ("Flexera Software LLC I First lien ..."). Treat a bare " I " as a separator
+# ONLY when it precedes a tranche/type keyword so real names like "Fund I" or
+# "Class I" are left intact.
+_OBDC_SEP = re.compile(
+    r"\s*\|\s*"
+    r"|\s+I\s+(?=First|Second|Senior|Subordinated|Unsecured|Preferred|Common|"
+    r"LP\b|LLC\b|Warrant|Delayed|Term|Revolv|Mezzanine|Equity)",
+    re.I,
+)
+
 
 @register
 class Obdc(Bdc):
@@ -36,10 +48,10 @@ class Obdc(Bdc):
     canonical_period = "2026-03-31"
 
     def post_filter(self, positions: list) -> list:
-        # Drop sub-SOI rollup rows: no pipe, cost missing/zero.
+        # Drop sub-SOI rollup rows: no separator, cost missing/zero.
         kept = []
         for p in positions:
-            no_pipe = " | " not in p.identifier
+            no_pipe = len(_OBDC_SEP.split(p.identifier)) < 2
             cost_missing = p.cost is None or p.cost == 0
             if no_pipe and cost_missing:
                 continue
@@ -48,7 +60,7 @@ class Obdc(Bdc):
 
     def parse_identifier(self, ident: str) -> dict:
         out: dict = {}
-        parts = [p.strip() for p in ident.split(" | ")]
+        parts = [p.strip() for p in _OBDC_SEP.split(ident)]
         if len(parts) >= 2:
             out["entity"] = parts[0]
             tranche = parts[1]

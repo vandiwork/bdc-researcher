@@ -15,7 +15,9 @@ from . import register
 
 _SECTION_RX = re.compile(
     r"^(?P<section>Debt Investments|Equity and Other Investments|"
-    r"Investment Funds|Warrant Investments|Other Investments)\s+", re.I)
+    r"Equity Investments|Investment Funds|Warrant Investments|"
+    r"Structured Credit Investments|Cash Equivalents|"
+    r"Other Investments)\s+", re.I)
 _TSLX_ACQ_RX = re.compile(
     r"Initial Acquisition Date\s+(\d{1,2}/\d{1,2}/\d{2,4})", re.I)
 _TSLX_SPREAD_RX = re.compile(
@@ -43,6 +45,7 @@ _TSLX_SECTORS = (
     "IT Services", "Industrials", "Investment Services", "Logistics",
     "Machinery", "Manufacturing", "Marketing Services", "Media",
     "Office Services & Supplies",
+    "Oil, Gas and Consumable Fuels", "Oil, Gas & Consumable Fuels",
     "Oil and Gas", "Pharmaceuticals", "Professional Services",
     "Real Estate", "Retail and Consumer Products", "Retail",
     "Road & Rail", "Software & Services", "Software", "Specialty Retail",
@@ -87,8 +90,17 @@ class Tslx(Bdc):
                        " Convertible", " ABL FILO ",
                        " Roll Up DIP ", " Super-Priority DIP ", " DIP ",
                        " Term loan ", " Revolver",
-                       " Preferred Stock", " Preferred",
+                       " Preferred Stock", " Preferred Shares",
+                       " Preferred Units", " Preferred",
                        " Common Stock", " Common Equity",
+                       " Common Shares", " Common Units",
+                       " Class A", " Class B", " Class C", " Class D",
+                       " Class E", " Class AA", " Series ",
+                       " Partnership Interest", " Partnership",
+                       " Membership Interest", " LLC Interest",
+                       " LP Interest", " Equity Interest",
+                       " Earnout", " Ordinary", " Convertible Preferred",
+                       " Trust Certif", " Units ",
                        " Warrant", " Structured Credit"):
             pos = s.find(marker)
             if pos > 0 and (idx < 0 or pos < idx):

@@ -8,33 +8,33 @@
 <style>
 /* 64px top = 40px sitenav height + 24px breathing room */
 .status-page { max-width:1400px; margin:0 auto; padding:64px 24px 24px; }
-.status-page h1 { font-size:22px; margin-bottom:6px; color:#1f4e78; }
-.status-page .sub { color:#5a6172; font-size:13px; margin-bottom:24px; }
+.status-page h1 { font-size:22px; margin-bottom:6px; color:var(--head); }
+.status-page .sub { color:var(--muted); font-size:13px; margin-bottom:24px; }
 .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
             gap:14px; margin-bottom:28px; }
-.kpi-card { background:#fff; border:1px solid #d1d5de; border-radius:8px; padding:16px; }
-.kpi-card .lab { font-size:11px; color:#5a6172; text-transform:uppercase; letter-spacing:.04em; }
-.kpi-card .val { font-size:20px; font-weight:700; color:#1f4e78; margin-top:6px; font-family:'DM Mono', monospace; }
-.kpi-card .sub2 { font-size:11px; color:#5a6172; margin-top:2px; }
-.section-title { font-size:14px; font-weight:600; color:#1f4e78;
+.kpi-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:16px; }
+.kpi-card .lab { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+.kpi-card .val { font-size:20px; font-weight:700; color:var(--head); margin-top:6px; font-family:'DM Mono', monospace; }
+.kpi-card .sub2 { font-size:11px; color:var(--muted); margin-top:2px; }
+.section-title { font-size:14px; font-weight:600; color:var(--head);
                  margin:28px 0 12px; text-transform:uppercase;
-                 letter-spacing:.04em; border-bottom:1px solid #d1d5de;
+                 letter-spacing:.04em; border-bottom:1px solid var(--border);
                  padding-bottom:6px; }
 table.status-tbl { width:100%; border-collapse:collapse; font-size:12px;
-                   background:#fff; border:1px solid #d1d5de; border-radius:6px; overflow:hidden; }
+                   background:var(--surface); border:1px solid var(--border); border-radius:6px; overflow:hidden; }
 table.status-tbl th { background:#1f4e78; color:#fff; padding:8px 10px;
                       text-align:left; font-size:11px; }
 table.status-tbl th.num { text-align:right; }
-table.status-tbl td { padding:7px 10px; border-bottom:1px solid #eef1f5; }
+table.status-tbl td { padding:7px 10px; border-bottom:1px solid var(--border); }
 table.status-tbl td.num { text-align:right; font-family:'DM Mono', monospace; }
-table.status-tbl tbody tr:nth-child(even) { background:#fafbfc; }
+table.status-tbl tbody tr:nth-child(even) { background:var(--surface2); }
 .delta-ok { color:#0d9f6e; font-weight:600; }
 .delta-warn { color:#c47f00; font-weight:600; }
 .delta-bad { color:#dc2626; font-weight:600; }
 .src-pill { display:inline-block; padding:1px 8px; border-radius:10px;
-            background:#eef1f5; font-size:11px; font-family:'DM Mono', monospace;
-            color:#1f4e78; border:1px solid #d1d5de; }
-.timestamp { font-family:'DM Mono', monospace; font-size:11px; color:#5a6172; }
+            background:var(--surface2); font-size:11px; font-family:'DM Mono', monospace;
+            color:var(--head); border:1px solid var(--border); }
+.timestamp { font-family:'DM Mono', monospace; font-size:11px; color:var(--muted); }
 .accession a { color:#1a6ef5; text-decoration:none; font-family:'DM Mono', monospace;
                font-size:11px; }
 .accession a:hover { text-decoration:underline; }
@@ -104,14 +104,14 @@ table.status-tbl tbody tr:nth-child(even) { background:#fafbfc; }
   </tbody>
 </table>
 
-<footer style="text-align:center;color:#5a6172;font-size:12px;padding:30px 20px 50px;border-top:1px solid #d1d5de;margin-top:40px">
+<footer style="text-align:center;color:var(--muted);font-size:12px;padding:30px 20px 50px;border-top:1px solid var(--border);margin-top:40px">
 Data: Mar 31 2026 SOIs from SEC EDGAR &middot; P/NAV from latest Yahoo Finance close &middot; BDC Researcher
 </footer>
 </div>
 
 <script>
 // STATUS_DATA injected by bot/build_site_data.py at build time.
-const STATUS_DATA_INLINE = {"build_info":{"last_full_refresh_utc":"2026-05-30T19:17:29.276206+00:00","trigger":"workflow_dispatch","run_url":"https://github.com/vandiwork/bdc-researcher/actions/runs/26692580523"},"bdcs":[{"ticker":"ARCC","cik":"0001287750","period_end":"2026-03-31","form":"10-Q","accession":"0001628280-26-027688","positions":1420,"extracted_fv_m":29506.6,"reported_fv_m":29499.3,"delta_pct":0.02,"html_match_rate":1.0},{"ticker":"BBDC","cik":"0001379785","period_end":"2026-03-31","form":"10-Q","accession":"0001379785-26-000022","positions":656,"extracted_fv_m":2369.9,"reported_fv_m":2370.0,"delta_pct":-0.0,"html_match_rate":0.9983},{"ticker":"BCRED","cik":"0001803498","period_end":"2026-03-31","form":"10-Q","accession":"0001803498-26-000031","positions":1290,"extracted_fv_m":80634.7,"reported_fv_m":80469.4,"delta_pct":0.21,"html_match_rate":0.9992},{"ticker":"BCSF","cik":"0001655050","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-217068","positions":555,"extracted_fv_m":2472.3,"reported_fv_m":2470.8,"delta_pct":0.06,"html_match_rate":0.9468},{"ticker":"BXSL","cik":"0001736035","period_end":"2026-03-31","form":"10-Q","accession":"0001736035-26-000010","positions":696,"extracted_fv_m":13942.1,"reported_fv_m":13942.1,"delta_pct":0.0,"html_match_rate":1.0},{"ticker":"CGBD","cik":"0001544206","period_end":"2026-03-31","form":"10-Q","accession":"0001544206-26-000033","positions":246,"extracted_fv_m":2277.1,"reported_fv_m":2277.1,"delta_pct":0.0,"html_match_rate":1.0},{"ticker":"FSK","cik":"0001422183","period_end":"2026-03-31","form":"10-Q","accession":"0001628280-26-033118","positions":632,"extracted_fv_m":13600.3,"reported_fv_m":12269.4,"delta_pct":10.85,"html_match_rate":0.9982},{"ticker":"GBDC","cik":"0001476765","period_end":"2026-03-31","form":"10-Q","accession":"0001476765-26-000033","positions":1781,"extracted_fv_m":8322.0,"reported_fv_m":8317.2,"delta_pct":0.06,"html_match_rate":1.0},{"ticker":"GSBD","cik":"0001572694","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-212431","positions":564,"extracted_fv_m":3223.7,"reported_fv_m":3228.9,"delta_pct":-0.16,"html_match_rate":0.8152},{"ticker":"HTGC","cik":"0001280784","period_end":"2026-03-31","form":"10-Q","accession":"0001280784-26-000027","positions":363,"extracted_fv_m":4730.9,"reported_fv_m":4722.0,"delta_pct":0.19,"html_match_rate":0.9849},{"ticker":"MAIN","cik":"0001396440","period_end":"2026-03-31","form":"10-Q","accession":"0001396440-26-000073","positions":625,"extracted_fv_m":5672.6,"reported_fv_m":5674.8,"delta_pct":-0.04,"html_match_rate":1.0},{"ticker":"MFIC","cik":"0001278752","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-208941","positions":602,"extracted_fv_m":2971.4,"reported_fv_m":2971.5,"delta_pct":-0.0,"html_match_rate":0.8388},{"ticker":"MSDL","cik":"0001782524","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-211906","positions":728,"extracted_fv_m":3962.1,"reported_fv_m":3668.9,"delta_pct":7.99,"html_match_rate":0.819},{"ticker":"NMFC","cik":"0001496099","period_end":"2026-03-31","form":"10-Q","accession":"0001496099-26-000016","positions":349,"extracted_fv_m":2316.1,"reported_fv_m":2313.4,"delta_pct":0.12,"html_match_rate":1.0},{"ticker":"OBDC","cik":"0001655888","period_end":"2026-03-31","form":"10-Q","accession":"0001655888-26-000033","positions":586,"extracted_fv_m":15344.2,"reported_fv_m":15344.2,"delta_pct":0.0,"html_match_rate":1.0},{"ticker":"OCSL","cik":"0001414932","period_end":"2026-03-31","form":"10-Q","accession":"0001414932-26-000012","positions":372,"extracted_fv_m":2793.5,"reported_fv_m":2766.4,"delta_pct":0.98,"html_match_rate":1.0},{"ticker":"PSEC","cik":"0001287032","period_end":"2026-03-31","form":"10-Q","accession":"0001287032-26-000164","positions":203,"extracted_fv_m":6302.5,"reported_fv_m":6302.5,"delta_pct":0.0,"html_match_rate":0.6731},{"ticker":"TCPC","cik":"0001370755","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-210632","positions":322,"extracted_fv_m":1388.7,"reported_fv_m":1388.7,"delta_pct":-0.0,"html_match_rate":0.9075},{"ticker":"TSLX","cik":"0001508655","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-206313","positions":218,"extracted_fv_m":3335.8,"reported_fv_m":3313.4,"delta_pct":0.68,"html_match_rate":0.8551}]};
+const STATUS_DATA_INLINE = {"build_info":{"last_full_refresh_utc":"2026-05-31T00:16:57.342229+00:00","trigger":"workflow_dispatch","run_url":"https://github.com/vandiwork/bdc-researcher/actions/runs/26698663696"},"bdcs":[{"ticker":"ARCC","cik":"0001287750","period_end":"2026-03-31","form":"10-Q","accession":"0001628280-26-027688","positions":1420,"extracted_fv_m":29506.6,"reported_fv_m":29499.3,"delta_pct":0.02,"html_match_rate":1.0},{"ticker":"BBDC","cik":"0001379785","period_end":"2026-03-31","form":"10-Q","accession":"0001379785-26-000022","positions":656,"extracted_fv_m":2369.9,"reported_fv_m":2370.0,"delta_pct":-0.0,"html_match_rate":0.9983},{"ticker":"BCRED","cik":"0001803498","period_end":"2026-03-31","form":"10-Q","accession":"0001803498-26-000031","positions":1290,"extracted_fv_m":80634.7,"reported_fv_m":80469.4,"delta_pct":0.21,"html_match_rate":0.9992},{"ticker":"BCSF","cik":"0001655050","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-217068","positions":555,"extracted_fv_m":2472.3,"reported_fv_m":2470.8,"delta_pct":0.06,"html_match_rate":0.9468},{"ticker":"BXSL","cik":"0001736035","period_end":"2026-03-31","form":"10-Q","accession":"0001736035-26-000010","positions":696,"extracted_fv_m":13942.1,"reported_fv_m":13942.1,"delta_pct":0.0,"html_match_rate":1.0},{"ticker":"CGBD","cik":"0001544206","period_end":"2026-03-31","form":"10-Q","accession":"0001544206-26-000033","positions":246,"extracted_fv_m":2277.1,"reported_fv_m":2277.1,"delta_pct":0.0,"html_match_rate":1.0},{"ticker":"FSK","cik":"0001422183","period_end":"2026-03-31","form":"10-Q","accession":"0001628280-26-033118","positions":632,"extracted_fv_m":12269.4,"reported_fv_m":12269.4,"delta_pct":0.0,"html_match_rate":0.9982},{"ticker":"GBDC","cik":"0001476765","period_end":"2026-03-31","form":"10-Q","accession":"0001476765-26-000033","positions":1773,"extracted_fv_m":8322.0,"reported_fv_m":8317.2,"delta_pct":0.06,"html_match_rate":1.0},{"ticker":"GSBD","cik":"0001572694","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-212431","positions":564,"extracted_fv_m":3223.7,"reported_fv_m":3228.9,"delta_pct":-0.16,"html_match_rate":0.8152},{"ticker":"HTGC","cik":"0001280784","period_end":"2026-03-31","form":"10-Q","accession":"0001280784-26-000027","positions":363,"extracted_fv_m":4730.9,"reported_fv_m":4722.0,"delta_pct":0.19,"html_match_rate":0.9849},{"ticker":"MAIN","cik":"0001396440","period_end":"2026-03-31","form":"10-Q","accession":"0001396440-26-000073","positions":625,"extracted_fv_m":5672.6,"reported_fv_m":5674.8,"delta_pct":-0.04,"html_match_rate":1.0},{"ticker":"MFIC","cik":"0001278752","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-208941","positions":602,"extracted_fv_m":2971.4,"reported_fv_m":2971.5,"delta_pct":-0.0,"html_match_rate":0.8388},{"ticker":"MSDL","cik":"0001782524","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-211906","positions":728,"extracted_fv_m":3668.9,"reported_fv_m":3668.9,"delta_pct":-0.0,"html_match_rate":0.819},{"ticker":"NMFC","cik":"0001496099","period_end":"2026-03-31","form":"10-Q","accession":"0001496099-26-000016","positions":349,"extracted_fv_m":2316.1,"reported_fv_m":2313.4,"delta_pct":0.12,"html_match_rate":1.0},{"ticker":"OBDC","cik":"0001655888","period_end":"2026-03-31","form":"10-Q","accession":"0001655888-26-000033","positions":586,"extracted_fv_m":15344.2,"reported_fv_m":15344.2,"delta_pct":0.0,"html_match_rate":1.0},{"ticker":"OCSL","cik":"0001414932","period_end":"2026-03-31","form":"10-Q","accession":"0001414932-26-000012","positions":372,"extracted_fv_m":2793.5,"reported_fv_m":2766.4,"delta_pct":0.98,"html_match_rate":1.0},{"ticker":"PSEC","cik":"0001287032","period_end":"2026-03-31","form":"10-Q","accession":"0001287032-26-000164","positions":203,"extracted_fv_m":6302.5,"reported_fv_m":6302.5,"delta_pct":0.0,"html_match_rate":0.6731},{"ticker":"TCPC","cik":"0001370755","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-210632","positions":322,"extracted_fv_m":1388.7,"reported_fv_m":1388.7,"delta_pct":-0.0,"html_match_rate":0.9075},{"ticker":"TSLX","cik":"0001508655","period_end":"2026-03-31","form":"10-Q","accession":"0001193125-26-206313","positions":218,"extracted_fv_m":3335.8,"reported_fv_m":3313.4,"delta_pct":0.68,"html_match_rate":0.8551}]};
 const STATUS_DATA = (typeof STATUS_DATA_INLINE !== "undefined")
   ? STATUS_DATA_INLINE
   : {"build_info":{}, "bdcs":[]};
@@ -194,7 +194,7 @@ function renderRefresh() {
     `<tr>
        <td>${r.layer}</td>
        <td><span class="src-pill">${r.src}</span></td>
-       <td class="timestamp">${fmtDate(r.ts)} <span style="color:#9ba3b5">(${fmtAgo(r.ts)})</span></td>
+       <td class="timestamp">${fmtDate(r.ts)} <span style="color:var(--muted)">(${fmtAgo(r.ts)})</span></td>
        <td>${r.cadence}</td>
      </tr>`).join("");
 }

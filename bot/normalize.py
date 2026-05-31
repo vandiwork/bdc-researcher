@@ -656,6 +656,28 @@ _DESC_KEYWORD_RULES: tuple[tuple[re.Pattern, str, str], ...] = (
 )
 
 
+# Broad, lower-precision fallbacks for generic business descriptions.
+_DESC_FALLBACK_RULES: tuple[tuple[re.Pattern, str, str], ...] = (
+    (re.compile(r"investment advis|asset manage|wealth manage|capital manage|fund manage", re.I), "Financials", "Diversified Financials"),
+    (re.compile(r"\binsurance\b", re.I), "Financials", "Insurance"),
+    (re.compile(r"distributor|distribution|wholesal|value[- ]added reseller", re.I), "Industrials", "Trading Companies & Distributors"),
+    (re.compile(r"manufactur|machining|fabricat|foundry|tooling|industrial|equipment|machinery|component", re.I), "Industrials", "Capital Goods"),
+    (re.compile(r"logistics|freight|trucking|transport|shipping", re.I), "Industrials", "Transportation"),
+    (re.compile(r"restaurant|dining|hospitality|hotel|leisure|fitness|salon|pools?\b|recreation", re.I), "Consumer Discretionary", "Consumer Services"),
+    (re.compile(r"retail|e-?commerce|consumer products|apparel|furniture", re.I), "Consumer Discretionary", "Retailing"),
+    (re.compile(r"food|beverage|nutrition|grocery|restaurant supply", re.I), "Consumer Staples", "Food, Beverage & Tobacco"),
+    (re.compile(r"software|saas|technolog|\bIT\b|data|digital|cloud|cyber|platform|app\b", re.I), "Information Technology", "Software & Services"),
+    (re.compile(r"health|medical|dental|clinic|care\b|pharma|therap", re.I), "Health Care", "Health Care Equipment & Services"),
+    (re.compile(r"energy|oil|gas|power|utility|solar|renewable", re.I), "Energy", "Energy"),
+    (re.compile(r"chemical|material|metal|plastic|rubber|coating", re.I), "Materials", "Materials"),
+    (re.compile(r"media|advertis|marketing|publish|content|entertain", re.I), "Communication Services", "Media & Entertainment"),
+    (re.compile(r"construction|building|engineering|contractor|HVAC|mechanical|electrical|roofing|fabrication", re.I), "Industrials", "Capital Goods"),
+    # Generic services catch-all (last): "business services", "provider of
+    # ... services", "outsourced ... services", "staffing", "consulting".
+    (re.compile(r"\bservices?\b|consult|staffing|outsourc|provider|solutions", re.I), "Industrials", "Commercial & Professional Services"),
+)
+
+
 def classify_from_description(desc: str) -> Optional[tuple[str, str]]:
     """Keyword-based sector classifier for free-text business descriptions
     (used by MAIN and others whose SOI HTML carries only a description, no
@@ -664,6 +686,12 @@ def classify_from_description(desc: str) -> Optional[tuple[str, str]]:
     if not desc:
         return None
     for rx, g, ig in _DESC_KEYWORD_RULES:
+        if rx.search(desc):
+            return (g, ig)
+    # Broad fallbacks for generic descriptions (esp. MAIN's
+    # "Manufacturer/Distributor/Provider of X" style) — lower precision but
+    # better than "Other". Order matters: most specific first.
+    for rx, g, ig in _DESC_FALLBACK_RULES:
         if rx.search(desc):
             return (g, ig)
     return None

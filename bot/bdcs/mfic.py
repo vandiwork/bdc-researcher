@@ -49,14 +49,17 @@ _MFIC_SECTORS = (
     "Leisure Products", "Life Sciences Tools & Services",
     "Machinery", "Media", "Metals & Mining", "Multi-Utilities",
     "Office Services & Supplies", "Oil, Gas & Consumable Fuels",
-    "Personal Products", "Pharmaceuticals",
+    "Personal Care Products", "Personal Products",
+    "Paper & Forest Products", "Health Care Providers & Service",
+    "Pharmaceuticals",
     "Professional Services", "Real Estate Management & Development",
     "Semiconductors & Semiconductor Equipment",
     "Software", "Specialty Retail",
     "Technology Hardware, Storage & Peripherals",
     "Textiles, Apparel & Luxury Goods",
     "Trading Companies & Distributors",
-    "Transportation Infrastructure",
+    "Transportation Infrastructure", "Ground Transportation",
+    "Passenger Airlines", "Consumer Staples Distribution & Retail",
     "Wireless Telecommunication Services",
     "Independent Power and Renewable Electricity Producers",
 )
@@ -113,16 +116,22 @@ class Mfic(Bdc):
         else:
             head = s.strip(" ,.")
 
-        # The issuer may itself contain ", <Subsidiary>" — keep the first
-        # comma-bounded segment as the entity (the parent name). If the
-        # head is short, keep it whole.
-        if "," in head:
-            parts = [p.strip() for p in head.split(",")]
-            # Drop trailing parts that look like duplicate subsidiary names
-            # (heuristic: same as previous after stripping ' LLC'/'Inc.')
-            out["entity"] = parts[0]
-        else:
-            out["entity"] = head
+        # MFIC concatenates the portfolio-company name and the legal
+        # borrower(s) with no clean delimiter, sometimes repeating the legal
+        # name verbatim, e.g.:
+        #   "Sperry Acquisition, LLC Sperry Acquisition, LLC"  (doubled)
+        #   "Primeflight PrimeFlight Acquisition, LLC"         (brand + legal)
+        # Collapse an exact doubling to a single copy. Preserve the corporate
+        # suffix (the old code split on the first comma and dropped ", Inc.").
+        head = re.sub(r"\s{2,}", " ", head).strip()
+        # Collapse "<name> <name>[, suffix]" → keep the copy carrying the
+        # corporate suffix. \1 is case-sensitive so genuine brand+legal pairs
+        # that differ only in case ("Primeflight PrimeFlight ...") are left
+        # intact.
+        dbl = re.match(r"^(.+?)[, ]+\1\b(.*)$", head)
+        if dbl:
+            head = (dbl.group(1) + dbl.group(2)).strip()
+        out["entity"] = head.strip(" ,.")
 
         m = _SPREAD_RX.search(ident)
         if m:

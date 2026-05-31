@@ -90,8 +90,12 @@ TYPE_RULES: list[tuple[str, re.Pattern]] = [
     ("LLC Interest",        re.compile(r"\b(?:llc|limited liability|member(?:ship)?)\s+interest", re.I)),
     ("Company Units",       re.compile(r"\bcompany units?\b", re.I)),
     ("Participation",       re.compile(r"\bparticipation\s+(?:right|interest)", re.I)),
-    # Final catch-all for residual equity-like labels
-    ("Equity",              re.compile(r"\b(?:units?|shares?|stock|interests?|equity|membership)\b", re.I)),
+    # Final catch-all for residual equity-like labels. NOTE: bare
+    # "interest(s)" is intentionally excluded — it false-matches "Interest
+    # Rate" in filers (GSBD/HTGC) that pack the rate into the identifier.
+    # Genuine equity interests are already caught by the LP/LLC/common/
+    # preferred "... interest" rules above.
+    ("Equity",              re.compile(r"\b(?:units?|shares?|stock|equity|membership)\b", re.I)),
 ]
 
 
@@ -577,8 +581,24 @@ def parse_facts(xml_bytes: bytes, contexts: dict[str, Context],
 
         fv = data.get("fv")
         cost = data.get("cost")
+        par = data.get("par")
+        # Mark = PRICE = fair value as a % of par (face). This is the metric
+        # that should match across BDCs holding the SAME loan (same instrument,
+        # same valuation date). Do NOT use fv/cost — two lenders that bought the
+        # same loan at different prices have different fv/cost even when they
+        # mark it identically, which manufactured false cross-BDC deltas (e.g.
+        # OCSL BAART fv/cost=123 vs fv/par=89). Fall back to fv/cost only for
+        # instruments with no par (most equity).
         mark = None
-        if fv is not None and cost not in (None, 0):
+        if fv is not None and par not in (None, 0):
+            price = fv / par * 100
+            # Use fv/par only when it yields a *plausible* price. Some filers
+            # report par at a different scale/unit than fv (or par is a share
+            # count for equity), which produces absurd ratios (e.g. 144,650%);
+            # in those cases fall back to fv/cost.
+            if 0 < price <= 130:
+                mark = round(price, 2)
+        if mark is None and fv is not None and cost not in (None, 0):
             mark = round(fv / cost * 100, 2)
 
         pik_rate = data.get("pik_rate")
@@ -674,7 +694,7 @@ def parse_facts(xml_bytes: bytes, contexts: dict[str, Context],
                         p.cost *= factor
                     if p.par is not None:
                         p.par *= factor
-                    # mark = fv/cost is unchanged by a uniform scale; leave as-is
+                    # mark = fv/par is unchanged by a uniform scale; leave as-is
     return positions
 
 

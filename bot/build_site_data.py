@@ -375,7 +375,12 @@ def build_markdelta_data(all_data: dict) -> list[dict]:
     # apples-to-apples across BDCs.
     DEBT_ONLY = set(type_class_map.keys())
 
-    # Bucket by (normalized issuer, canonical type, maturity year)
+    # Bucket by (normalized issuer, canonical type). Maturity year is NOT
+    # part of the key — filers tag maturity inconsistently (blank on some
+    # tranches/BDCs), which would fragment the same loan into separate
+    # buckets and surface a small DDTL's mark in isolation. Instead we
+    # group all of a BDC's same-seniority debt for an issuer and FV-weight
+    # the mark; the display year is taken from the largest tranche.
     buckets: dict[tuple, list[dict]] = defaultdict(list)
     company_names: dict[tuple, str] = {}
     for ticker, rows in all_data.items():
@@ -387,8 +392,7 @@ def build_markdelta_data(all_data: dict) -> list[dict]:
             fv = r.get("fv") or 0
             if not cname or fv <= 0:
                 continue
-            mat_yr = _maturity_year(r.get("maturity") or "")
-            k = (_borrower_key(cname), type_, mat_yr)
+            k = (_borrower_key(cname), type_)
             buckets[k].append({
                 "bdc": ticker,
                 "fv": fv,
@@ -396,30 +400,48 @@ def build_markdelta_data(all_data: dict) -> list[dict]:
                 "par": r.get("par"),
                 "mark": r.get("mark"),
                 "spread": r.get("spread"),
+                "mat_yr": _maturity_year(r.get("maturity") or ""),
             })
             company_names.setdefault(k, cname)
 
-    SANE_MARK = lambda m: m is not None and 30 <= m <= 200
+    # A tranche's mark is eligible for the cross-BDC spread only if it is in
+    # a plausible debt band AND not a dust position. A first lien marked
+    # >130% (fv >> cost) is a data artefact, not a valuation view; tiny
+    # tranches (< $250K) — undrawn DDTLs, fee accruals — swing wildly and
+    # would otherwise dominate a simple average.
+    def _eligible(mark, fv):
+        # mark is now a PRICE (fv/par). Real loan prices sit roughly in
+        # [40, 108]; anything above ~108 is a par-scale artefact from a single
+        # filer and must not pollute a cross-BDC price spread (e.g. one BDC's
+        # mis-scaled par showing 129 against everyone else's 98).
+        return mark is not None and 40 <= mark <= 108 and fv >= 250
 
     out = []
     for k, entries in buckets.items():
         bdcs = sorted(set(e["bdc"] for e in entries))
         if len(bdcs) < 2:
             continue
-        ckey, type_, mat_yr = k
+        ckey, type_ = k
+        # Display maturity year = year of the largest-FV tranche that has one.
+        _withyr = sorted((e for e in entries if e.get("mat_yr")),
+                         key=lambda e: -e["fv"])
+        mat_yr = _withyr[0]["mat_yr"] if _withyr else None
         # Aggregate by BDC (one issuer can have multiple tranches at the
-        # same BDC with the same type+maturity-year — sum them).
+        # same BDC with the same type+maturity-year — sum them). The per-BDC
+        # mark is FV-WEIGHTED across eligible tranches so a small DDTL can't
+        # drag down the main term loan's mark.
         per_bdc: dict[str, dict] = {}
         for e in entries:
             d = per_bdc.setdefault(e["bdc"], {
                 "bdc": e["bdc"], "fv": 0, "cost": 0, "par": 0,
-                "marks": [], "spreads": [],
+                "mnum": 0.0, "mden": 0.0, "spreads": [],
             })
             d["fv"] += e["fv"]
             d["cost"] += e["cost"]
             d["par"] += (e["par"] or 0)
-            if SANE_MARK(e["mark"]):
-                d["marks"].append(e["mark"])
+            if _eligible(e["mark"], e["fv"]):
+                d["mnum"] += e["mark"] * e["fv"]
+                d["mden"] += e["fv"]
             if e["spread"] is not None:
                 d["spreads"].append(e["spread"])
 
@@ -429,12 +451,12 @@ def build_markdelta_data(all_data: dict) -> list[dict]:
 
         details = []
         for d in per_bdc.values():
-            # FV-weighted mark (cost-recompute if no row-mark available)
-            if d["marks"]:
-                m = round(sum(d["marks"]) / len(d["marks"]), 2)
-            elif d["cost"] > 0:
-                computed = d["fv"] / d["cost"] * 100
-                m = round(computed, 2) if 30 <= computed <= 200 else None
+            # FV-weighted PRICE (fv/par) across eligible tranches only. No
+            # fv/cost fallback: two BDCs that bought the same loan at different
+            # prices have different fv/cost even when they mark it identically,
+            # which manufactured false cross-BDC deltas.
+            if d["mden"] > 0:
+                m = round(d["mnum"] / d["mden"], 2)
             else:
                 m = None
             s = (round(sum(d["spreads"]) / len(d["spreads"]), 2)

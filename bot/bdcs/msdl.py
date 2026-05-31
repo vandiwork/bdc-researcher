@@ -13,10 +13,15 @@ import re
 from ._base import Bdc
 from . import register
 
+# NB: MSDL separates "Investments" from the affiliation word with an EM-DASH
+# (U+2014), not a hyphen — e.g. "Investments—non-controlled/non-affiliated".
+# The character class must include the em/en-dash or the whole prefix leaks
+# into the issuer name. (– en-dash, — em-dash)
+_DASH = r"\-–—"
 _MSDL_AFFIL_PFX = re.compile(
-    r"^(?:Debt|Equity|Warrant)?\s*Investments[-\s]+(?:non[-\s]+)?"
+    r"^(?:Debt|Equity|Warrant)?\s*Investments[" + _DASH + r"\s]+(?:non[" + _DASH + r"\s]+)?"
     r"(?:controlled|affiliated)"
-    r"(?:[/-](?:non[-\s]+)?(?:controlled|affiliated))*\s+", re.I)
+    r"(?:[/" + _DASH + r"](?:non[" + _DASH + r"\s]+)?(?:controlled|affiliated))*\s+", re.I)
 _MSDL_SECTION_PFX = re.compile(
     r"^(Debt|Equity|Warrant) Investments\s+", re.I)
 
@@ -60,6 +65,11 @@ _MSDL_SECTORS = (
     "Textiles, Apparel & Luxury Goods", "Thrifts & Mortgage Finance",
     "Tobacco", "Trading Companies & Distributors", "Transportation Infrastructure",
     "Water Utilities", "Wireless Telecommunication Services",
+    # GICS-2023 industry renames + section labels seen in MSDL filings.
+    "Automobile Components", "Consumer Staples Distribution & Retail",
+    "Financial Services", "Ground Transportation",
+    "Passenger Airlines", "Health Care REITs",
+    "Investments in Joint Ventures",
 )
 
 

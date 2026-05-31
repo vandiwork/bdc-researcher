@@ -36,6 +36,15 @@ _SPREAD_RX = re.compile(r"(?:SOFR|Prime|Base)[^\d]*?([0-9]+\.[0-9]+)\s*%", re.I)
 
 
 _TOTAL_RX = re.compile(r"\b(?:and\s+)?Total\s+[A-Z]", re.I)
+# Tranche-type marker segment (a comma-field that names the debt type).
+_HTGC_TYPE_MARKER = re.compile(
+    r"^(Senior Secured|Unsecured|Subordinated|Senior Subordinated|"
+    r"Convertible|Second Lien|First Lien|Preferred|Common|Warrant)\b", re.I)
+# Bare corporate suffix segment (so "AlphaSense" + "Inc." rejoin).
+_HTGC_CORP_SUFFIX = re.compile(
+    r"^(Inc\.?|LLC\.?|L\.?L\.?C\.?|Corp\.?|Corporation|Ltd\.?|Limited|"
+    r"L\.?P\.?|N\.?V\.?|GmbH|AB|S\.?A\.?|Co\.?|Company|Holdings|plc|PLC)\.?$",
+    re.I)
 
 
 @register
@@ -59,31 +68,43 @@ class Htgc(Bdc):
         details.
         """
         out: dict = {}
-        s = ident
-        m = _SECTION_RX.match(s)
-        if m:
-            sect = m.group("section").lower()
-            if "warrant" in sect:
-                out["type"] = "Warrant"
-            elif "equity" in sect:
-                out["type"] = "Equity"
-            s = s[m.end():]
+        parts = [p.strip() for p in ident.split(",")]
+        section = parts[0].lower() if parts else ""
 
-        # Split on " and " — HTGC's field separator
-        parts = s.split(" and ")
-        if len(parts) >= 2:
-            # First part is the sector
-            out["sector"] = parts[0].strip()
-            # Second part is the issuer (strip trailing commas/footnotes)
-            issuer = parts[1].strip().rstrip(",")
-            out["entity"] = issuer
-            # If a 3rd part looks like a type marker, capture it
-            if len(parts) >= 3:
-                tranche = parts[2].strip()
-                if re.search(r"Senior Secured|Convertible|Subordinated|"
-                             r"Preferred|Common|Warrant",
-                             tranche, re.I):
-                    out.setdefault("type", _normalize_type(tranche))
+        # Anchor on the tranche-type marker segment.
+        type_idx = None
+        for i in range(2, len(parts)):
+            if _HTGC_TYPE_MARKER.match(parts[i]):
+                type_idx = i
+                break
+
+        if type_idx is not None:
+            if type_idx >= 3 and _HTGC_CORP_SUFFIX.match(parts[type_idx - 1]):
+                out["entity"] = f"{parts[type_idx - 2]}, {parts[type_idx - 1]}"
+            else:
+                out["entity"] = parts[type_idx - 1]
+            type_marker = parts[type_idx]
+        else:
+            # Equity/warrant rows: issuer is the segment before the first
+            # date/rate-looking field.
+            ent = None
+            for i in range(2, len(parts)):
+                if re.search(r"\b(?:19|20)\d{2}\b|SOFR|Prime|FIXED|%", parts[i]):
+                    if i - 1 >= 3 and _HTGC_CORP_SUFFIX.match(parts[i - 1]):
+                        ent = f"{parts[i - 2]}, {parts[i - 1]}"
+                    else:
+                        ent = parts[i - 1]
+                    break
+            out["entity"] = ent or (parts[2] if len(parts) > 2 else parts[-1])
+            type_marker = ""
+
+        if "warrant" in section:
+            out["type"] = "Warrant"
+        elif "equity" in section:
+            out["type"] = ("Preferred Equity" if "preferred" in ident.lower()
+                           else "Common Equity")
+        else:  # Debt Investments
+            out["type"] = _normalize_type(type_marker) if type_marker else "First Lien"
 
         m = _MATURITY_RX.search(ident)
         if m:
