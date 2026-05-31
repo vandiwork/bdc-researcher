@@ -28,3 +28,7 @@ Thumbs.db
 *.orig
 ~$*
 /tmp/
+
+# brand-name research scratch (worklist regenerated on demand)
+bot/.name_research/
+bot/name_worklist.json

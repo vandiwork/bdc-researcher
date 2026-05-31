@@ -837,6 +837,65 @@ def update_comps(bs_data: dict, market_data: dict, all_data: dict) -> bool:
 # ── MAIN ─────────────────────────────────────────────────────────────
 
 
+def build_borrower_index(all_data: dict) -> list[dict]:
+    """One entry per normalized borrower across ALL BDCs and ALL security
+    types — powers the Borrower Search page ("who holds X"). Borrowers that
+    several BDCs spell slightly differently collapse via _borrower_key."""
+    from collections import Counter
+    groups: dict[str, dict] = {}
+    for ticker, rows in all_data.items():
+        for r in rows:
+            name = (r.get("company") or r.get("entity") or "").strip()
+            key = _borrower_key(name)
+            if not key:
+                continue
+            g = groups.setdefault(key, {
+                "names": Counter(), "brands": Counter(), "sectors": Counter(),
+                "total_fv": 0, "bdcs": set(), "positions": [],
+            })
+            g["names"][name] += 1
+            cn = (r.get("common_name") or "").strip()
+            if cn:
+                g["brands"][cn] += 1
+            sec = (r.get("gics_sector") or "").strip()
+            if sec and sec != "Other":
+                g["sectors"][sec] += 1
+            fv = r.get("fv") or 0
+            g["total_fv"] += fv
+            g["bdcs"].add(ticker)
+            g["positions"].append({
+                "bdc": ticker, "type": r.get("type") or "Other", "fv": fv,
+                "mark": r.get("mark"), "maturity": r.get("maturity") or "",
+                "spread": r.get("spread"), "rate": r.get("rate"),
+            })
+    out = []
+    for key, g in groups.items():
+        # Display name: most frequent spelling, tie-broken by longest (most
+        # complete legal form).
+        name = sorted(g["names"].items(),
+                      key=lambda kv: (-kv[1], -len(kv[0])))[0][0]
+        brand = g["brands"].most_common(1)[0][0] if g["brands"] else ""
+        sector = g["sectors"].most_common(1)[0][0] if g["sectors"] else "Other"
+        positions = sorted(g["positions"], key=lambda p: -(p["fv"] or 0))
+        out.append({
+            "key": key, "name": name, "brand": brand, "sector": sector,
+            "total_fv": round(g["total_fv"]), "holders": len(g["bdcs"]),
+            "positions": positions,
+        })
+    out.sort(key=lambda b: -b["total_fv"])
+    return out
+
+
+def write_borrower_index(all_data: dict) -> int:
+    borrowers = build_borrower_index(all_data)
+    d = WEBSITE / "data"
+    d.mkdir(exist_ok=True)
+    (d / "borrowers.json").write_text(
+        json.dumps(borrowers, separators=(",", ":"), ensure_ascii=False),
+        encoding="utf-8")
+    return len(borrowers)
+
+
 def main() -> int:
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -891,6 +950,10 @@ def main() -> int:
     # 6. news.html — BDC headlines (Bloomberg / FT / WSJ via Google News)
     ok = inject_news()
     print(f"  news     → news.html            {'OK' if ok else 'SKIP (no news.json)'}")
+
+    # 7. borrower.html — cross-BDC borrower index ("who holds X")
+    nb = write_borrower_index(all_data)
+    print(f"  borrowers→ data/borrowers.json  OK ({nb} borrowers)")
 
     # 5. Date strings across all top-level pages
     print()

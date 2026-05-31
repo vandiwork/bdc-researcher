@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Borrower Search &mdash; BDC Researcher</title>
+<link rel="stylesheet" href="assets.css">
+<style>
+.search-wrap { position:relative; margin:8px 0 6px; }
+.search-box { width:100%; padding:14px 16px 14px 44px; border:1px solid var(--border); border-radius:10px; font-size:16px; outline:none; box-sizing:border-box; background:var(--surface); color:var(--text); }
+.search-box:focus { border-color:var(--head); }
+.search-wrap svg { position:absolute; left:14px; top:50%; transform:translateY(-50%); width:20px; height:20px; color:var(--muted); pointer-events:none; }
+.hint { font-size:12px; color:var(--muted); margin-bottom:18px; }
+.count { font-size:12px; color:var(--muted); margin:6px 0 14px; }
+.bcard { background:var(--surface); border:1px solid var(--border); border-radius:10px; margin-bottom:10px; overflow:hidden; }
+.bhead { display:flex; align-items:center; gap:14px; padding:14px 18px; cursor:pointer; transition:background .12s; }
+.bhead:hover { background:var(--surface2); }
+.bname { flex:1; min-width:0; }
+.bname .nm { font-size:15px; font-weight:600; color:var(--text); }
+.bname .brand { font-size:12px; color:var(--muted); margin-top:1px; }
+.bname .sec { font-size:11px; color:var(--dim); margin-top:2px; }
+.bstat { text-align:right; flex-shrink:0; }
+.bstat .fv { font-size:15px; font-weight:700; color:var(--head); }
+.bstat .hold { font-size:11px; color:var(--muted); margin-top:1px; }
+.chev { color:var(--muted); font-size:13px; width:14px; flex-shrink:0; transition:transform .2s; }
+.bcard.open .chev { transform:rotate(90deg); }
+.bdetail { display:none; border-top:1px solid var(--border); }
+.bcard.open .bdetail { display:block; }
+table.pos { width:100%; border-collapse:collapse; background:transparent; border:none; }
+table.pos th { background:var(--surface2); color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:.3px; font-weight:600; padding:7px 14px; text-align:right; border:none; cursor:default; }
+table.pos th:first-child { text-align:left; }
+table.pos td { padding:8px 14px; border-bottom:1px solid var(--border-soft); font-size:13px; text-align:right; color:var(--text); }
+table.pos td:first-child { text-align:left; }
+table.pos tr:last-child td { border-bottom:none; }
+table.pos a { color:var(--accent); text-decoration:none; font-weight:600; }
+table.pos a:hover { text-decoration:underline; }
+.tb { display:inline-block; padding:1px 7px; border-radius:4px; font-size:10px; font-family:monospace; background:var(--surface2); color:var(--muted); }
+.empty { color:var(--muted); text-align:center; padding:40px 20px; font-size:14px; }
+footer { text-align:center; color:var(--muted); font-size:12px; padding:30px 20px 20px; border-top:1px solid var(--border); margin-top:40px; }
+</style>
+</head>
+<body>
+<nav class="sitenav">
+<a href="index.html" class="brand">BDC Researcher</a>
+<a href="index.html">Home</a><a href="dashboards.html">Dashboards</a><a href="overlap.html">Cross-Holdings</a><a href="borrower.html" class="active">Borrowers</a><a href="compare.html">BDC Compare</a><a href="analytics.html">Analytics</a><a href="markdelta.html">Mark Delta</a><a href="comps.html">Comps</a><a href="news.html">News</a>
+</nav>
+<div class="page">
+<h1>Borrower Search</h1>
+<div class="sub">Search any borrower to see which BDCs hold it, how much, and at what mark &mdash; across all 19 funds.</div>
+
+<div class="search-wrap">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+  <input id="q" class="search-box" type="text" placeholder="Search by company or brand name (e.g. Citrix, GoHealth, Pluralsight)&hellip;" autocomplete="off">
+</div>
+<div class="hint">Tip: matches both the legal entity and the operating/brand name. Click a result to expand per-fund exposure.</div>
+<div class="count" id="count"></div>
+<div id="results"></div>
+</div>
+<footer>BDC Researcher &middot; borrower index built from the latest Schedule of Investments</footer>
+
+<script>
+var BORROWERS = [];
+var IDX = [];
+function fvFmt(k){ // k = $000s
+  if (k == null) return '—';
+  var m = k/1000;
+  if (Math.abs(m) >= 1000) return '$'+(m/1000).toFixed(2)+'B';
+  if (Math.abs(m) >= 1) return '$'+m.toFixed(1)+'M';
+  return '$'+Math.round(k)+'K';
+}
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+function render(list, q){
+  var el = document.getElementById('results');
+  var cnt = document.getElementById('count');
+  if (!q) { el.innerHTML=''; cnt.textContent=''; return; }
+  if (!list.length){ el.innerHTML='<div class="empty">No borrower matches &ldquo;'+esc(q)+'&rdquo;.</div>'; cnt.textContent=''; return; }
+  cnt.textContent = list.length + ' borrower' + (list.length===1?'':'s') + ' match';
+  var html = '';
+  for (var i=0;i<list.length;i++){
+    var b = list[i];
+    var brand = b.brand ? '<div class="brand">'+esc(b.brand)+'</div>' : '';
+    html += '<div class="bcard" data-key="'+esc(b.key)+'">';
+    html += '<div class="bhead" onclick="toggle(this)">';
+    html += '<span class="chev">&#9654;</span>';
+    html += '<div class="bname"><div class="nm">'+esc(b.name)+'</div>'+brand+'<div class="sec">'+esc(b.sector)+'</div></div>';
+    html += '<div class="bstat"><div class="fv">'+fvFmt(b.total_fv)+'</div><div class="hold">'+b.holders+' fund'+(b.holders===1?'':'s')+'</div></div>';
+    html += '</div>';
+    html += '<div class="bdetail"><table class="pos"><thead><tr><th>BDC</th><th>Type</th><th>Fair Value</th><th>Mark</th><th>Maturity</th></tr></thead><tbody>';
+    for (var j=0;j<b.positions.length;j++){
+      var p = b.positions[j];
+      var dburl = 'dashboards/'+String(p.bdc).toLowerCase()+'_dashboard.html';
+      var mark = (p.mark!=null) ? p.mark.toFixed(1)+'%' : '—';
+      html += '<tr><td><a href="'+dburl+'">'+esc(p.bdc)+'</a></td>'
+            + '<td style="text-align:left"><span class="tb">'+esc(p.type)+'</span></td>'
+            + '<td>'+fvFmt(p.fv)+'</td><td>'+mark+'</td><td>'+esc(p.maturity||'—')+'</td></tr>';
+    }
+    html += '</tbody></table></div></div>';
+  }
+  el.innerHTML = html;
+}
+function toggle(h){ h.parentNode.classList.toggle('open'); }
+
+function search(q){
+  q = (q||'').trim().toLowerCase();
+  if (!q) return [];
+  var terms = q.split(/\s+/);
+  var hits = [];
+  for (var i=0;i<IDX.length;i++){
+    var hay = IDX[i];
+    var ok = true;
+    for (var t=0;t<terms.length;t++){ if (hay.indexOf(terms[t])<0){ ok=false; break; } }
+    if (ok) hits.push(BORROWERS[i]);
+  }
+  return hits.slice(0, 60); // already FV-sorted
+}
+
+var debounce;
+function onInput(){
+  clearTimeout(debounce);
+  var q = document.getElementById('q').value;
+  debounce = setTimeout(function(){ render(search(q), q); setHash(q); }, 120);
+}
+function setHash(q){ try { history.replaceState(null,'', q ? ('?q='+encodeURIComponent(q)) : location.pathname); } catch(e){} }
+
+fetch('data/borrowers.json').then(function(r){return r.json();}).then(function(data){
+  BORROWERS = data;
+  IDX = data.map(function(b){ return (b.name+' '+(b.brand||'')+' '+b.key).toLowerCase(); });
+  var input = document.getElementById('q');
+  input.addEventListener('input', onInput);
+  // deep link ?q= or ?b=
+  var m = location.search.match(/[?&]q=([^&]*)/);
+  var bk = location.search.match(/[?&]b=([^&]*)/);
+  if (m){ input.value = decodeURIComponent(m[1].replace(/\+/g,' ')); onInput(); }
+  else if (bk){ var key = decodeURIComponent(bk[1]); var b = data.filter(function(x){return x.key===key;}); if(b.length){ input.value=b[0].name; render(b, b[0].name); setTimeout(function(){var c=document.querySelector('.bcard'); if(c)c.classList.add('open');},50);} }
+  input.focus();
+}).catch(function(e){
+  document.getElementById('results').innerHTML='<div class="empty">Could not load borrower index.</div>';
+});
+</script>
+</body>
+</html>
