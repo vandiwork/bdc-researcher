@@ -34,14 +34,24 @@ def _f(v):
 
 def _key(r: dict) -> tuple:
     """Two rows merge iff they match on all of these — i.e. only the amount
-    differs. Equity (blank maturity/rate) merges by issuer + type alone."""
+    differs. Equity (blank maturity/rate) merges by issuer + type alone.
+
+    Uses the CANONICAL / displayed fields (the same ones the dashboards show)
+    so tranches that look identical to a user actually merge. In particular
+    the raw `type` often carries a tranche index ("First Lien Term Loan 1",
+    "... Term Loan 2", "... Revolver") which all display as "First Lien" — we
+    key on type_canonical so they collapse into one position."""
+    def soi(a, b):
+        return (r.get(a) or r.get(b) or "").strip()
     return (
         (r.get("entity") or "").strip().lower(),
-        (r.get("type") or "").strip(),
-        (r.get("maturity") or "").strip(),
-        (r.get("rate") or "").strip(),
-        (r.get("spread") or "").strip(),
-        (r.get("base_rate") or "").strip(),
+        (r.get("type_canonical") or r.get("type") or "").strip(),
+        soi("maturity_soi", "maturity"),
+        # rate: XBRL all-in first, then SOI — must match the dashboard's
+        # displayed rate so rows that look identical actually merge.
+        (str(r.get("rate") or "").strip() or str(r.get("interest_rate_soi") or "").strip()),
+        soi("spread_soi", "spread"),
+        soi("base_rate_soi", "base_rate"),
         (r.get("ccy") or "").strip(),
     )
 

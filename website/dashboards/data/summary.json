@@ -1,24 +1,24 @@
 {
   "as_of": "2026-03-31",
-  "total_fv_k": 203503429,
-  "total_positions": 8703,
+  "total_fv_k": 203321332,
+  "total_positions": 8990,
   "bdcs": {
     "ARCC": {
       "ticker": "ARCC",
-      "positions": 1057,
+      "positions": 1097,
       "total_fv_k": 29506600,
       "sectors": {
-        "Information Technology": 4327700,
-        "Financials": 8630600,
-        "Health Care": 3887800,
-        "Consumer Discretionary": 4242700,
-        "Consumer Staples": 809300,
+        "Information Technology": 4418200,
+        "Financials": 8458800,
+        "Health Care": 3885900,
+        "Industrials": 2987100,
+        "Consumer Discretionary": 4289400,
+        "Consumer Staples": 824200,
         "Other": 0,
-        "Industrials": 2983900,
+        "Communication Services": 1115700,
         "Black Box": 1204800,
-        "Utilities": 1314800,
-        "Communication Services": 1102100,
-        "Materials": 671700,
+        "Materials": 692000,
+        "Utilities": 1299300,
         "Energy": 331200
       },
       "types": {
@@ -33,10 +33,10 @@
     },
     "BBDC": {
       "ticker": "BBDC",
-      "positions": 617,
+      "positions": 586,
       "total_fv_k": 2369908,
       "sectors": {
-        "Industrials": 831700,
+        "Industrials": 875445,
         "Consumer Discretionary": 193881,
         "Other": 0,
         "Financials": 440967,
@@ -46,14 +46,14 @@
         "Health Care": 193065,
         "Information Technology": 250319,
         "Communication Services": 141408,
-        "Black Box": 109124,
+        "Black Box": 65379,
         "Utilities": 15146
       },
       "types": {
-        "First Lien": 1681917,
+        "First Lien": 1695478,
         "Subordinated": 78189,
         "Second Lien": 89243,
-        "Other": 22024,
+        "Other": 8463,
         "Unsecured": 1714,
         "Structured Credit": 18556,
         "Common Equity": 417485,
@@ -63,13 +63,13 @@
     },
     "BCRED": {
       "ticker": "BCRED",
-      "positions": 1081,
-      "total_fv_k": 80469417,
+      "positions": 1096,
+      "total_fv_k": 80469415,
       "sectors": {
         "Industrials": 24988349,
         "Consumer Discretionary": 2840041,
-        "Health Care": 12926182,
-        "Financials": 6992878,
+        "Health Care": 12926181,
+        "Financials": 6992877,
         "Materials": 505179,
         "Consumer Staples": 91078,
         "Real Estate": 997381,
@@ -81,8 +81,8 @@
         "Black Box": 2343657
       },
       "types": {
-        "First Lien": 73021660,
-        "Other": 568521,
+        "First Lien": 73041967,
+        "Other": 548212,
         "Second Lien": 3045676,
         "Unsecured": 79944,
         "Subordinated": 212666,
@@ -93,11 +93,11 @@
     },
     "BCSF": {
       "ticker": "BCSF",
-      "positions": 449,
-      "total_fv_k": 2470789,
+      "positions": 450,
+      "total_fv_k": 2472319,
       "sectors": {
-        "Industrials": 822970,
-        "Consumer Discretionary": 249385,
+        "Industrials": 824499,
+        "Consumer Discretionary": 249386,
         "Consumer Staples": 198052,
         "Materials": 57119,
         "Financials": 168489,
@@ -109,7 +109,7 @@
         "Black Box": 394691
       },
       "types": {
-        "First Lien": 1631124,
+        "First Lien": 1632654,
         "Common Equity": 202532,
         "Second Lien": 30069,
         "Subordinated": 439360,
@@ -119,7 +119,7 @@
     },
     "BXSL": {
       "ticker": "BXSL",
-      "positions": 533,
+      "positions": 535,
       "total_fv_k": 13942142,
       "sectors": {
         "Industrials": 4522628,
@@ -147,7 +147,7 @@
     },
     "CGBD": {
       "ticker": "CGBD",
-      "positions": 229,
+      "positions": 231,
       "total_fv_k": 2277105,
       "sectors": {
         "Financials": 215848,
@@ -171,25 +171,25 @@
     },
     "FSK": {
       "ticker": "FSK",
-      "positions": 323,
-      "total_fv_k": 12269396,
+      "positions": 361,
+      "total_fv_k": 12269395,
       "sectors": {
-        "Information Technology": 2203749,
-        "Industrials": 3428322,
-        "Health Care": 1792283,
-        "Financials": 1331562,
-        "Consumer Discretionary": 632580,
+        "Information Technology": 2203750,
+        "Industrials": 3428323,
+        "Health Care": 1792282,
+        "Financials": 1331561,
+        "Consumer Discretionary": 632578,
         "Communication Services": 544262,
         "Materials": 310607,
-        "Consumer Staples": 257291,
+        "Consumer Staples": 257292,
         "Real Estate": 226347,
         "Black Box": 1540408,
         "Energy": 1985
       },
       "types": {
-        "First Lien": 8136865,
-        "Other": 1353,
-        "Subordinated": 2179573,
+        "First Lien": 8136864,
+        "Other": 0,
+        "Subordinated": 2180926,
         "Common Equity": 893663,
         "Mezzanine": 78396,
         "Preferred Equity": 979546
@@ -197,11 +197,11 @@
     },
     "GBDC": {
       "ticker": "GBDC",
-      "positions": 1024,
+      "positions": 1059,
       "total_fv_k": 8322048,
       "sectors": {
-        "Industrials": 858842,
-        "Consumer Discretionary": 1747500,
+        "Industrials": 855779,
+        "Consumer Discretionary": 1750563,
         "Financials": 639951,
         "Consumer Staples": 365699,
         "Materials": 279651,
@@ -224,14 +224,14 @@
     },
     "GSBD": {
       "ticker": "GSBD",
-      "positions": 370,
-      "total_fv_k": 3229994,
+      "positions": 373,
+      "total_fv_k": 3228901,
       "sectors": {
         "Materials": 76710,
         "Financials": 252567,
-        "Health Care": 665851,
+        "Health Care": 664757,
         "Energy": 42481,
-        "Industrials": 706514,
+        "Industrials": 706515,
         "Information Technology": 706434,
         "Consumer Discretionary": 294448,
         "Consumer Staples": 61210,
@@ -240,7 +240,7 @@
         "Real Estate": 172100
       },
       "types": {
-        "First Lien": 3133816,
+        "First Lien": 3132723,
         "Second Lien": 52850,
         "Unsecured": 8534,
         "Common Equity": 14176,
@@ -250,14 +250,14 @@
     },
     "HTGC": {
       "ticker": "HTGC",
-      "positions": 336,
+      "positions": 339,
       "total_fv_k": 4722015,
       "sectors": {
-        "Information Technology": 1812360,
+        "Information Technology": 1812359,
         "Health Care": 2083835,
         "Consumer Discretionary": 41869,
         "Industrials": 702606,
-        "Financials": 44237,
+        "Financials": 44238,
         "Utilities": 36097,
         "Other": 945,
         "Communication Services": 66
@@ -265,23 +265,23 @@
       "types": {
         "First Lien": 4475924,
         "Other": 29779,
-        "Unsecured": 41213,
+        "Unsecured": 41214,
         "Preferred Equity": 36014,
-        "Common Equity": 96649,
+        "Common Equity": 96648,
         "Warrant": 42436
       }
     },
     "MAIN": {
       "ticker": "MAIN",
-      "positions": 460,
+      "positions": 467,
       "total_fv_k": 5672621,
       "sectors": {
         "Consumer Staples": 187604,
         "Industrials": 2521508,
         "Financials": 380161,
-        "Cash & Equivalents": 1068939,
+        "Cash & Equivalents": 1111723,
         "Information Technology": 609328,
-        "Energy": 131981,
+        "Energy": 89197,
         "Communication Services": 19952,
         "Health Care": 107499,
         "Consumer Discretionary": 290711,
@@ -300,13 +300,13 @@
     },
     "MFIC": {
       "ticker": "MFIC",
-      "positions": 336,
-      "total_fv_k": 2971487,
+      "positions": 441,
+      "total_fv_k": 2971430,
       "sectors": {
         "Industrials": 652282,
         "Consumer Discretionary": 398354,
         "Consumer Staples": 251186,
-        "Health Care": 579512,
+        "Health Care": 579455,
         "Materials": 139561,
         "Information Technology": 538298,
         "Financials": 181300,
@@ -318,7 +318,7 @@
       "types": {
         "Preferred Equity": 18611,
         "Common Equity": 125454,
-        "First Lien": 2826036,
+        "First Lien": 2825979,
         "Warrant": 133,
         "Unsecured": 1202,
         "Second Lien": 51,
@@ -327,23 +327,23 @@
     },
     "MSDL": {
       "ticker": "MSDL",
-      "positions": 320,
-      "total_fv_k": 3669090,
+      "positions": 390,
+      "total_fv_k": 3668898,
       "sectors": {
-        "Industrials": 811818,
-        "Consumer Discretionary": 437570,
-        "Financials": 462043,
+        "Industrials": 811199,
+        "Consumer Discretionary": 437568,
+        "Financials": 462042,
         "Consumer Staples": 69291,
         "Materials": 56759,
-        "Information Technology": 1205279,
-        "Health Care": 307225,
+        "Information Technology": 1205707,
+        "Health Care": 307227,
         "Communication Services": 91059,
         "Utilities": 14169,
         "Real Estate": 127692,
         "Other": 86185
       },
       "types": {
-        "First Lien": 3472669,
+        "First Lien": 3472477,
         "Second Lien": 50859,
         "Unsecured": 7032,
         "Common Equity": 117906,
@@ -352,13 +352,13 @@
     },
     "NMFC": {
       "ticker": "NMFC",
-      "positions": 241,
-      "total_fv_k": 2313394,
+      "positions": 257,
+      "total_fv_k": 2313393,
       "sectors": {
-        "Health Care": 475257,
-        "Information Technology": 432354,
-        "Industrials": 443715,
-        "Consumer Discretionary": 346174,
+        "Health Care": 477088,
+        "Information Technology": 429748,
+        "Industrials": 450559,
+        "Consumer Discretionary": 340104,
         "Consumer Staples": 20363,
         "Other": 61660,
         "Black Box": 447039,
@@ -370,24 +370,24 @@
         "Second Lien": 65375,
         "Other": 3386,
         "Preferred Equity": 153252,
-        "Common Equity": 482623,
+        "Common Equity": 482622,
         "Warrant": 365
       }
     },
     "OBDC": {
       "ticker": "OBDC",
-      "positions": 393,
+      "positions": 418,
       "total_fv_k": 15344201,
       "sectors": {
         "Communication Services": 718294,
-        "Industrials": 2609515,
-        "Financials": 2584421,
+        "Industrials": 2609491,
+        "Financials": 2584420,
         "Consumer Discretionary": 1340696,
         "Real Estate": 747317,
         "Materials": 964190,
         "Energy": 74243,
         "Consumer Staples": 1068798,
-        "Health Care": 3266973,
+        "Health Care": 3266998,
         "Information Technology": 1582456,
         "Other": 387298
       },
@@ -404,43 +404,43 @@
     },
     "OCSL": {
       "ticker": "OCSL",
-      "positions": 322,
-      "total_fv_k": 2766396,
+      "positions": 286,
+      "total_fv_k": 2766399,
       "sectors": {
-        "Information Technology": 619348,
+        "Information Technology": 592488,
         "Energy": 33576,
-        "Health Care": 583704,
+        "Health Care": 583706,
         "Black Box": 191287,
         "Materials": 45578,
         "Communication Services": 171517,
-        "Financials": 168288,
-        "Real Estate": 73283,
-        "Consumer Discretionary": 263713,
-        "Industrials": 488993,
-        "Consumer Staples": 104624,
+        "Financials": 168289,
+        "Real Estate": 73282,
+        "Consumer Discretionary": 290572,
+        "Industrials": 488994,
+        "Consumer Staples": 104625,
         "Other": 22485
       },
       "types": {
         "Preferred Equity": 48499,
         "Common Equity": 52592,
-        "First Lien": 2274825,
+        "First Lien": 2274827,
         "Subordinated": 232526,
         "Unsecured": 67600,
         "Warrant": 3060,
         "Structured Credit": 38463,
-        "Second Lien": 48831
+        "Second Lien": 48832
       }
     },
     "PSEC": {
       "ticker": "PSEC",
-      "positions": 154,
+      "positions": 167,
       "total_fv_k": 6302465,
       "sectors": {
-        "Consumer Discretionary": 693567,
-        "Energy": 94980,
-        "Information Technology": 227204,
+        "Consumer Discretionary": 714367,
+        "Energy": 11808,
+        "Information Technology": 310376,
         "Other": 17300,
-        "Financials": 2276374,
+        "Financials": 2255574,
         "Industrials": 1218001,
         "Health Care": 1183166,
         "Communication Services": 348975,
@@ -458,24 +458,24 @@
     },
     "TCPC": {
       "ticker": "TCPC",
-      "positions": 253,
-      "total_fv_k": 1388670,
+      "positions": 232,
+      "total_fv_k": 1388669,
       "sectors": {
-        "Industrials": 314361,
+        "Industrials": 314362,
         "Consumer Discretionary": 160499,
         "Financials": 241124,
         "Materials": 30347,
         "Health Care": 107223,
-        "Information Technology": 465767,
+        "Information Technology": 465765,
         "Communication Services": 45368,
         "Energy": 2344,
         "Real Estate": 21376,
         "Utilities": 261
       },
       "types": {
-        "First Lien": 1171917,
+        "First Lien": 1171930,
         "Second Lien": 43214,
-        "Other": -553,
+        "Other": -567,
         "Unsecured": 59883,
         "Common Equity": 64784,
         "Warrant": 15849,
@@ -485,26 +485,26 @@
     "TSLX": {
       "ticker": "TSLX",
       "positions": 205,
-      "total_fv_k": 3495691,
+      "total_fv_k": 3313408,
       "sectors": {
-        "Industrials": 1005316,
-        "Materials": 39083,
-        "Information Technology": 854865,
-        "Consumer Discretionary": 839783,
-        "Financials": 116170,
-        "Health Care": 392462,
+        "Industrials": 1010081,
+        "Materials": 37977,
+        "Information Technology": 660559,
+        "Consumer Discretionary": 842102,
+        "Financials": 116400,
+        "Health Care": 398006,
         "Energy": 94607,
-        "Other": 46907,
-        "Real Estate": 685,
+        "Other": 47006,
+        "Real Estate": 857,
         "Black Box": 105813
       },
       "types": {
-        "First Lien": 3146149,
+        "First Lien": 2964965,
         "Unsecured": 7485,
         "Second Lien": 30986,
         "Subordinated": 59,
-        "Preferred Equity": 24976,
-        "Common Equity": 121134,
+        "Preferred Equity": 22723,
+        "Common Equity": 122288,
         "Warrant": 5450,
         "Other": 159452
       }
@@ -512,166 +512,166 @@
   },
   "aggregate_sectors": {
     "Industrials": {
-      "fv_k": 50394665,
-      "positions": 2128
+      "fv_k": 50451046,
+      "positions": 2191
     },
     "Information Technology": {
-      "fv_k": 49235746,
-      "positions": 1734
+      "fv_k": 49186072,
+      "positions": 1779
     },
     "Health Care": {
-      "fv_k": 33268596,
-      "positions": 1414
+      "fv_k": 33272947,
+      "positions": 1476
     },
     "Financials": {
-      "fv_k": 26489057,
-      "positions": 913
+      "fv_k": 26296685,
+      "positions": 946
     },
     "Consumer Discretionary": {
-      "fv_k": 16410859,
-      "positions": 1106
+      "fv_k": 16504527,
+      "positions": 1152
     },
     "Black Box": {
-      "fv_k": 6493513,
-      "positions": 242
+      "fv_k": 6449768,
+      "positions": 239
     },
     "Communication Services": {
-      "fv_k": 5786501,
-      "positions": 258
+      "fv_k": 5800101,
+      "positions": 267
     },
     "Consumer Staples": {
-      "fv_k": 3819230,
-      "positions": 272
+      "fv_k": 3834132,
+      "positions": 288
     },
     "Materials": {
-      "fv_k": 3603224,
-      "positions": 201
+      "fv_k": 3622418,
+      "positions": 213
     },
     "Real Estate": {
-      "fv_k": 2683205,
-      "positions": 88
+      "fv_k": 2683376,
+      "positions": 87
     },
     "Utilities": {
-      "fv_k": 2218487,
+      "fv_k": 2202987,
       "positions": 82
     },
     "Energy": {
-      "fv_k": 1347525,
+      "fv_k": 1221569,
       "positions": 63
     },
     "Cash & Equivalents": {
-      "fv_k": 1068939,
-      "positions": 92
+      "fv_k": 1111723,
+      "positions": 97
     },
     "Other": {
-      "fv_k": 683882,
+      "fv_k": 683981,
       "positions": 110
     }
   },
   "aggregate_industry_groups": {
     "Software & Services": {
-      "fv_k": 47332322,
-      "positions": 1649
+      "fv_k": 47281349,
+      "positions": 1682
     },
     "Commercial & Professional Services": {
-      "fv_k": 29517179,
-      "positions": 1193
+      "fv_k": 29525280,
+      "positions": 1225
     },
     "Health Care Equipment & Services": {
-      "fv_k": 27293599,
-      "positions": 987
+      "fv_k": 27292706,
+      "positions": 1041
     },
     "Capital Goods": {
-      "fv_k": 14774553,
-      "positions": 709
-    },
-    "Insurance": {
-      "fv_k": 13275312,
-      "positions": 425
+      "fv_k": 14821124,
+      "positions": 730
     },
     "Diversified Financials": {
-      "fv_k": 13196032,
-      "positions": 483
+      "fv_k": 13193461,
+      "positions": 490
+    },
+    "Insurance": {
+      "fv_k": 13085511,
+      "positions": 451
     },
     "Consumer Services": {
-      "fv_k": 8085169,
-      "positions": 590
+      "fv_k": 8115471,
+      "positions": 619
     },
     "Pharmaceuticals, Biotechnology & Life Sciences": {
-      "fv_k": 5974997,
-      "positions": 427
+      "fv_k": 5980241,
+      "positions": 435
     },
     "Transportation": {
-      "fv_k": 5829145,
-      "positions": 206
+      "fv_k": 5830854,
+      "positions": 216
     },
     "JV / Fund of Funds": {
       "fv_k": 5728282,
-      "positions": 42
+      "positions": 41
     },
     "Media & Entertainment": {
-      "fv_k": 4879627,
-      "positions": 209
+      "fv_k": 4893227,
+      "positions": 216
     },
     "Retailing": {
-      "fv_k": 4376318,
-      "positions": 218
+      "fv_k": 4430901,
+      "positions": 227
     },
     "Materials": {
-      "fv_k": 3603224,
-      "positions": 201
+      "fv_k": 3622418,
+      "positions": 213
     },
     "Real Estate": {
-      "fv_k": 2683205,
-      "positions": 88
+      "fv_k": 2683376,
+      "positions": 87
     },
     "Utilities": {
-      "fv_k": 2218487,
+      "fv_k": 2202987,
       "positions": 82
     },
     "Food, Beverage & Tobacco": {
-      "fv_k": 2071900,
-      "positions": 173
+      "fv_k": 2071901,
+      "positions": 180
     },
     "Consumer Durables & Apparel": {
-      "fv_k": 2043327,
+      "fv_k": 2030027,
       "positions": 145
     },
     "Automobiles & Components": {
-      "fv_k": 1906045,
-      "positions": 153
+      "fv_k": 1928128,
+      "positions": 161
     },
     "Technology Hardware & Equipment": {
-      "fv_k": 1887050,
-      "positions": 80
-    },
-    "Energy": {
-      "fv_k": 1347525,
-      "positions": 63
+      "fv_k": 1888349,
+      "positions": 92
     },
     "Household & Personal Products": {
-      "fv_k": 1328885,
-      "positions": 74
+      "fv_k": 1343786,
+      "positions": 81
+    },
+    "Energy": {
+      "fv_k": 1221569,
+      "positions": 63
     },
     "Cash & Equivalents": {
-      "fv_k": 1068939,
-      "positions": 92
+      "fv_k": 1111723,
+      "positions": 97
     },
     "Telecommunication Services": {
       "fv_k": 906874,
-      "positions": 49
+      "positions": 51
     },
     "CLO / Structured Credit": {
-      "fv_k": 765231,
-      "positions": 200
+      "fv_k": 721486,
+      "positions": 198
     },
     "Other": {
-      "fv_k": 683882,
+      "fv_k": 683981,
       "positions": 110
     },
     "Food & Staples Retailing": {
       "fv_k": 286209,
-      "positions": 23
+      "positions": 25
     },
     "Trading Companies & Distributors": {
       "fv_k": 273788,
@@ -692,36 +692,36 @@
   },
   "aggregate_types": {
     "First Lien": {
-      "fv_k": 166308360,
-      "positions": 6334
+      "fv_k": 166161246,
+      "positions": 6605
     },
     "Common Equity": {
-      "fv_k": 15548908,
-      "positions": 1128
+      "fv_k": 15550060,
+      "positions": 1129
     },
     "Subordinated": {
-      "fv_k": 6892752,
-      "positions": 164
+      "fv_k": 6894105,
+      "positions": 169
     },
     "Second Lien": {
-      "fv_k": 6628793,
-      "positions": 179
+      "fv_k": 6628794,
+      "positions": 181
     },
     "Preferred Equity": {
-      "fv_k": 6119777,
-      "positions": 424
+      "fv_k": 6117524,
+      "positions": 432
     },
     "Other": {
-      "fv_k": 971860,
+      "fv_k": 936623,
       "positions": 203
     },
     "Unsecured": {
-      "fv_k": 664199,
-      "positions": 58
+      "fv_k": 664200,
+      "positions": 59
     },
     "Warrant": {
       "fv_k": 233365,
-      "positions": 182
+      "positions": 184
     },
     "Mezzanine": {
       "fv_k": 78396,
@@ -729,7 +729,7 @@
     },
     "Structured Credit": {
       "fv_k": 57019,
-      "positions": 27
+      "positions": 24
     }
   }
 }

@@ -70,17 +70,49 @@ def fmt_maturity(raw: str) -> str | None:
     return s or None
 
 
+# USD conversion for foreign-currency positions (fv/cost/par are stored in
+# native currency). Mark = fv/par is currency-neutral, so it is unaffected.
+_FX_TO_USD = {
+    "USD": 1.0, "EUR": 1.04, "GBP": 1.25, "CAD": 0.71, "AUD": 0.62, "CHF": 1.10,
+    "SEK": 0.094, "NOK": 0.094, "DKK": 0.14, "SGD": 0.74, "NZD": 0.57,
+    "JPY": 0.0064, "ZAR": 0.054, "INR": 0.012, "MXN": 0.049, "BRL": 0.16,
+}
+
+
 def csv_row_to_dashboard(r: dict) -> dict:
     """Same shape as build_dashboards.csv_row_to_dashboard."""
     fv = fnum(r.get("fv"))
     cost = fnum(r.get("cost"))
     par = fnum(r.get("par"))
+    # Normalize foreign-currency FV/cost/par to USD so totals and per-position
+    # values are comparable (e.g. a SEK 218M position is ~$20M, not $218M).
+    _fx = _FX_TO_USD.get((r.get("ccy") or "USD").strip().upper(), 1.0)
+    if _fx != 1.0:
+        if fv is not None:
+            fv *= _fx
+        if cost is not None:
+            cost *= _fx
+        if par is not None:
+            par *= _fx
     fv_k = round(fv / 1000) if fv is not None else None
     cost_k = round(cost / 1000) if cost is not None else None
     par_k = round(par / 1000) if par is not None else None
     mark = fnum(r.get("mark"))
+    # Negative fair value = an unfunded commitment marked below par; the
+    # fv/cost ratio is a meaningless "mark" (e.g. -17/-9 = 189%). Don't show it.
+    if fv is not None and fv < 0:
+        mark = None
+    # Suppress implausible DEBT prices (par understated, par=0, or negative
+    # cost give meaningless ratios like 277% / -650%). Equity appreciation
+    # (e.g. common stock at 265%) is legitimate and kept.
+    if mark is not None and (mark > 130 or mark < 0) and (r.get("type_canonical") or "") in (
+            "First Lien", "Second Lien", "Subordinated", "Unsecured",
+            "Senior Subordinated", "Mezzanine"):
+        mark = None
     spread = fnum(r.get("spread_soi")) or fnum(r.get("spread"))
-    rate = fnum(r.get("interest_rate_soi")) or fnum(r.get("rate"))
+    # Prefer the XBRL all-in rate; some filers (BBDC) put the SPREAD in the
+    # SOI interest-rate column, so SOI is only a fallback when XBRL is missing.
+    rate = fnum(r.get("rate")) or fnum(r.get("interest_rate_soi"))
     base_rate = (r.get("base_rate_soi") or r.get("base_rate") or "").strip() or None
     maturity = fmt_maturity(r.get("maturity_soi") or r.get("maturity") or "")
     acq = fmt_maturity(r.get("acq_soi") or r.get("acq") or "")
