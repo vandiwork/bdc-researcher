@@ -46,10 +46,19 @@ def _key(r: dict) -> tuple:
     return (
         (r.get("entity") or "").strip().lower(),
         (r.get("type_canonical") or r.get("type") or "").strip(),
+        # Unfunded commitments (negative FV: the undrawn portion marked below
+        # par) carry the FULL commitment as par. Merging them into the funded
+        # tranche inflates par and deflates the blended mark (e.g. a 99%-marked
+        # GSBD term loan dropping to 85%). Key them apart so they stay distinct
+        # line items and the funded tranche keeps its true price.
+        (_f(r.get("fv")) or 0) < 0,
         soi("maturity_soi", "maturity"),
-        # rate: XBRL all-in first, then SOI — must match the dashboard's
-        # displayed rate so rows that look identical actually merge.
-        (str(r.get("rate") or "").strip() or str(r.get("interest_rate_soi") or "").strip()),
+        # rate: only part of the key for FIXED-rate loans. For floating loans
+        # the spread+base already pin the pricing, and the reported rate is
+        # inconsistently the all-in vs. the floor across line items — keying on
+        # it would wrongly split two draws of the same facility.
+        ("" if soi("spread_soi", "spread")
+         else (str(r.get("rate") or "").strip() or str(r.get("interest_rate_soi") or "").strip())),
         soi("spread_soi", "spread"),
         soi("base_rate_soi", "base_rate"),
         (r.get("ccy") or "").strip(),

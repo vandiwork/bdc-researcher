@@ -22,13 +22,15 @@ body { padding-bottom: 44px; }
 </style>
 </head><body><nav class="sitenav">
 <a href="index.html" class="brand">BDC Researcher</a>
-<a href="index.html">Home</a><a href="dashboards.html">Dashboards</a><a href="overlap.html">Cross-Holdings</a><a href="borrower.html">Borrowers</a><a href="compare.html">BDC Compare</a><a href="analytics.html">Analytics</a><a href="markdelta.html">Mark Delta</a><a href="comps.html" class="active">Comps</a><a href="news.html">News</a>
+<a href="index.html">Home</a><a href="dashboards.html">Dashboards</a><a href="overlap.html">Cross-Holdings</a><a href="borrower.html">Borrowers</a><a href="compare.html">BDC Compare</a><a href="analytics.html">Analytics</a><a href="markdelta.html">Mark Delta</a><a href="screener.html">Screener</a><a href="comps.html" class="active">Comps</a><a href="news.html">News</a>
 <a href="status.html">Status</a>
 <div class="spacer"></div>
 </nav>
 <div class="page">
 <h1>BDC Comps Tracker</h1>
-<div class="sub">Price, returns, and NAV multiples across 21 listed BDCs. Click any ticker to view that BDC's portfolio. Click column headers to sort.</div>
+<div class="sub">Price, returns, and NAV multiples across 18 listed BDCs. Click any ticker to view that BDC's portfolio. Click column headers to sort.</div>
+<a id="refresh-prices" href="https://github.com/vandiwork/bdc-researcher/actions/workflows/refresh-market.yml" target="_blank" rel="noopener" title="Opens GitHub Actions — click 'Run workflow' to pull the latest market prices (intraday). Filings are unchanged." style="display:inline-block;margin:0 0 18px;background:var(--accent);color:#fff;text-decoration:none;padding:7px 14px;border-radius:6px;font-size:13px;font-weight:600">&#8635; Refresh pricing data</a>
+<span style="font-size:11px;color:var(--muted);margin-left:10px">Prices only &mdash; intraday market data, separate from the full filings refresh.</span>
 <div class="comps-wrap">
 <table id="cmp" class="sticky-th">
 <thead><tr>
@@ -323,40 +325,6 @@ body { padding-bottom: 44px; }
 <td class="num pos">+26.7%</td>
 <td class="num pos">+39.3%</td>
 </tr><tr>
-<td><a href="dashboards/trin_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">TRIN</a></td>
-<td>Trinity Capital</td>
-<td class="num">$15.50</td>
-<td class="num pos">+1.8%</td>
-<td class="num pos">+4.8%</td>
-<td class="num pos">+5.8%</td>
-<td class="num pos">+9.5%</td>
-<td class="num">1.07x</td>
-<td class="num"><span class="pnav-hi">1.15x</span></td>
-<td class="num">2,485</td>
-<td class="num">1,391</td>
-<td class="num">1,094</td>
-<td class="num">56.0%</td>
-<td class="num pos">+12.6%</td>
-<td class="num neg">-13.0%</td>
-<td class="num neg">-0.4%</td>
-</tr><tr>
-<td><a href="dashboards/slrc_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">SLRC</a></td>
-<td>SLR Investment Corp</td>
-<td class="num">$15.79</td>
-<td class="num pos">+2.5%</td>
-<td class="num pos">+7.5%</td>
-<td class="num pos">+2.7%</td>
-<td class="num neg">-11.9%</td>
-<td class="num">0.93x</td>
-<td class="num"><span class="pnav-lo">0.96x</span></td>
-<td class="num">2,573</td>
-<td class="num">1,577</td>
-<td class="num">996</td>
-<td class="num">61.3%</td>
-<td class="num pos">+10.4%</td>
-<td class="num pos">+4.2%</td>
-<td class="num pos">+14.6%</td>
-</tr><tr>
 <td><a href="dashboards/tcpc_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">TCPC</a></td>
 <td>BlackRock TCP Capital</td>
 <td class="num">$3.85</td>
@@ -373,23 +341,6 @@ body { padding-bottom: 44px; }
 <td class="num pos">+21.8%</td>
 <td class="num pos">+74.6%</td>
 <td class="num pos">+96.4%</td>
-</tr><tr>
-<td><a href="dashboards/whf_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">WHF</a></td>
-<td>WhiteHorse Finance</td>
-<td class="num">$7.61</td>
-<td class="num neg">-0.9%</td>
-<td class="num pos">+2.5%</td>
-<td class="num neg">-9.5%</td>
-<td class="num neg">-17.5%</td>
-<td class="num">0.85x</td>
-<td class="num"><span class="pnav-lo">0.65x</span></td>
-<td class="num">615</td>
-<td class="num">355</td>
-<td class="num">260</td>
-<td class="num">57.7%</td>
-<td class="num pos">+16.0%</td>
-<td class="num pos">+53.8%</td>
-<td class="num pos">+69.9%</td>
 </tr><tr>
 <td><a href="dashboards/bxsl_dashboard.html" style="color:#1a6ef5;text-decoration:none;font-weight:600">BXSL</a></td>
 <td>Blackstone Secured Lending</td>

@@ -21,6 +21,8 @@ import re
 import sys
 from pathlib import Path
 
+from dashboard_row import fx_rate, compute_mark, fill_floating_rates
+
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
 ENRICHED_DIR = SCRIPT_DIR / "out_all_enriched"
@@ -68,41 +70,6 @@ def fmt_acq(raw: str) -> str | None:
     return fmt_maturity(raw)
 
 
-# USD conversion for foreign-currency positions (fv/cost/par are stored in
-# native currency). Mark = fv/par is currency-neutral, so it is unaffected.
-_FX_TO_USD = {
-    "USD": 1.0, "EUR": 1.04, "GBP": 1.25, "CAD": 0.71, "AUD": 0.62, "CHF": 1.10,
-    "SEK": 0.094, "NOK": 0.094, "DKK": 0.14, "SGD": 0.74, "NZD": 0.57,
-    "JPY": 0.0064, "ZAR": 0.054, "INR": 0.012, "MXN": 0.049, "BRL": 0.16,
-}
-
-
-def _fill_floating_rates(rows: list) -> dict:
-    """Show a coherent all-in Rate for floating-rate loans whose filing only
-    reported spread + floor (notably MFIC, where the floor leaked into the rate
-    column so Rate < Spread). Derive each index's reference rate empirically —
-    median of (reported all-in − spread) across loans that DO report an all-in —
-    then set rate = reference + spread where the reported rate is missing or
-    below the spread."""
-    import statistics
-    from collections import defaultdict
-    imp = defaultdict(list)
-    for r in rows:
-        b = (r.get("baseRate") or "").upper()
-        rt, sp = r.get("rate"), r.get("spread")
-        if b and rt and sp and sp <= rt < 30:
-            imp[b].append(rt - sp)
-    ref = {b: round(statistics.median(v), 2) for b, v in imp.items()
-           if len(v) >= 20 and statistics.median(v) >= 1.0}
-    for r in rows:
-        b = (r.get("baseRate") or "").upper()
-        sp = r.get("spread")
-        if b in ref and sp and (r.get("rate") is None or r.get("rate") < sp):
-            r["rate"] = round(ref[b] + sp, 2)
-            r["rate_est"] = True
-    return ref
-
-
 def csv_row_to_dashboard(r: dict) -> dict:
     """Transform one enriched-CSV row into the dashboard JSON shape."""
     # Money fields: dashboard uses $K. CSV stores raw dollars.
@@ -111,7 +78,7 @@ def csv_row_to_dashboard(r: dict) -> dict:
     par = fnum(r.get("par"))
     # Normalize foreign-currency FV/cost/par to USD (native -> USD); mark is
     # currency-neutral and untouched.
-    _fx = _FX_TO_USD.get((r.get("ccy") or "USD").strip().upper(), 1.0)
+    _fx = fx_rate(r.get("ccy"))
     if _fx != 1.0:
         if fv is not None:
             fv *= _fx
@@ -123,18 +90,9 @@ def csv_row_to_dashboard(r: dict) -> dict:
     cost_k = round(cost / 1000) if cost is not None else None
     par_k = round(par / 1000) if par is not None else None
 
-    mark = fnum(r.get("mark"))
-    # Negative fair value = an unfunded commitment marked below par; the
-    # fv/cost ratio is a meaningless "mark" (e.g. -17/-9 = 189%). Don't show it.
-    if fv is not None and fv < 0:
-        mark = None
-    # Suppress implausible DEBT prices (par understated, par=0, or negative
-    # cost give meaningless ratios like 277% / -650%). Equity appreciation
-    # (e.g. common stock at 265%) is legitimate and kept.
-    if mark is not None and (mark > 130 or mark < 0) and (r.get("type_canonical") or "") in (
-            "First Lien", "Second Lien", "Subordinated", "Unsecured",
-            "Senior Subordinated", "Mezzanine"):
-        mark = None
+    # Mark = price (fv/par), with par-overstatement, negative-FV and
+    # implausible-debt-price handling — see dashboard_row.compute_mark.
+    mark = compute_mark(fv, cost, par, r.get("type_canonical"), fnum(r.get("mark")))
     spread = fnum(r.get("spread_soi")) or fnum(r.get("spread"))
     # Prefer the XBRL all-in rate; some filers (BBDC) put the SPREAD in the
     # SOI interest-rate column, so SOI is only a fallback when XBRL is missing.
@@ -352,7 +310,7 @@ def write_summary(per_bdc: dict[str, list[dict]],
     all_rows = []
     for rows in per_bdc.values():
         all_rows.extend(rows)
-    _fill_floating_rates(all_rows)
+    fill_floating_rates(all_rows)
     (out_dir / "portfolio.json").write_text(
         json.dumps(all_rows, separators=(",", ":")), encoding="utf-8")
 
@@ -384,7 +342,7 @@ def main() -> int:
 
     # Derive floating-rate all-in (reference + spread) across the FULL dataset
     # BEFORE injecting, so the per-BDC embedded data shows a coherent Rate.
-    _fill_floating_rates([r for rs in per_bdc.values() for r in rs])
+    fill_floating_rates([r for rs in per_bdc.values() for r in rs])
 
     # Pass 2: inject the (rate-filled) data into each dashboard.
     print(f"{'BDC':5s} {'rows':>5s}  {'total FV ($M)':>13s}  {'period':>12s}  status")

@@ -21,6 +21,8 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+from dashboard_row import fx_rate, compute_mark, fill_floating_rates
+
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
 WEBSITE = PROJECT_ROOT / "website"
@@ -70,15 +72,6 @@ def fmt_maturity(raw: str) -> str | None:
     return s or None
 
 
-# USD conversion for foreign-currency positions (fv/cost/par are stored in
-# native currency). Mark = fv/par is currency-neutral, so it is unaffected.
-_FX_TO_USD = {
-    "USD": 1.0, "EUR": 1.04, "GBP": 1.25, "CAD": 0.71, "AUD": 0.62, "CHF": 1.10,
-    "SEK": 0.094, "NOK": 0.094, "DKK": 0.14, "SGD": 0.74, "NZD": 0.57,
-    "JPY": 0.0064, "ZAR": 0.054, "INR": 0.012, "MXN": 0.049, "BRL": 0.16,
-}
-
-
 def csv_row_to_dashboard(r: dict) -> dict:
     """Same shape as build_dashboards.csv_row_to_dashboard."""
     fv = fnum(r.get("fv"))
@@ -86,7 +79,7 @@ def csv_row_to_dashboard(r: dict) -> dict:
     par = fnum(r.get("par"))
     # Normalize foreign-currency FV/cost/par to USD so totals and per-position
     # values are comparable (e.g. a SEK 218M position is ~$20M, not $218M).
-    _fx = _FX_TO_USD.get((r.get("ccy") or "USD").strip().upper(), 1.0)
+    _fx = fx_rate(r.get("ccy"))
     if _fx != 1.0:
         if fv is not None:
             fv *= _fx
@@ -97,18 +90,9 @@ def csv_row_to_dashboard(r: dict) -> dict:
     fv_k = round(fv / 1000) if fv is not None else None
     cost_k = round(cost / 1000) if cost is not None else None
     par_k = round(par / 1000) if par is not None else None
-    mark = fnum(r.get("mark"))
-    # Negative fair value = an unfunded commitment marked below par; the
-    # fv/cost ratio is a meaningless "mark" (e.g. -17/-9 = 189%). Don't show it.
-    if fv is not None and fv < 0:
-        mark = None
-    # Suppress implausible DEBT prices (par understated, par=0, or negative
-    # cost give meaningless ratios like 277% / -650%). Equity appreciation
-    # (e.g. common stock at 265%) is legitimate and kept.
-    if mark is not None and (mark > 130 or mark < 0) and (r.get("type_canonical") or "") in (
-            "First Lien", "Second Lien", "Subordinated", "Unsecured",
-            "Senior Subordinated", "Mezzanine"):
-        mark = None
+    # Mark = price (fv/par), with par-overstatement, negative-FV and
+    # implausible-debt-price handling — see dashboard_row.compute_mark.
+    mark = compute_mark(fv, cost, par, r.get("type_canonical"), fnum(r.get("mark")))
     spread = fnum(r.get("spread_soi")) or fnum(r.get("spread"))
     # Prefer the XBRL all-in rate; some filers (BBDC) put the SPREAD in the
     # SOI interest-rate column, so SOI is only a fallback when XBRL is missing.
@@ -167,35 +151,6 @@ def load_all_data() -> dict[str, list[dict]]:
         all_data[ticker] = rows
     fill_floating_rates([r for rs in all_data.values() for r in rs])
     return all_data
-
-
-def fill_floating_rates(rows: list) -> dict:
-    """Show a coherent all-in Rate for floating-rate loans whose filing only
-    reported spread + floor (notably MFIC, where the floor was leaking into the
-    rate column so Rate < Spread). Derive each index's reference rate
-    empirically — median of (reported all-in − spread) across every loan that
-    DOES report an all-in — then set rate = reference + spread where the
-    reported rate is missing or implausibly below the spread. Data-driven, so
-    it tracks the prevailing reference each refresh."""
-    import statistics
-    from collections import defaultdict
-    imp = defaultdict(list)
-    for r in rows:
-        b = (r.get("baseRate") or "").upper()
-        rt, sp = r.get("rate"), r.get("spread")
-        if b and rt and sp and sp <= rt < 30:
-            imp[b].append(rt - sp)
-    ref = {b: round(statistics.median(v), 2) for b, v in imp.items()
-           if len(v) >= 20 and statistics.median(v) >= 1.0}
-    n = 0
-    for r in rows:
-        b = (r.get("baseRate") or "").upper()
-        sp = r.get("spread")
-        if b in ref and sp and (r.get("rate") is None or r.get("rate") < sp):
-            r["rate"] = round(ref[b] + sp, 2)
-            r["rate_est"] = True
-            n += 1
-    return ref
 
 
 def load_bs() -> dict[str, dict]:
@@ -1052,6 +1007,128 @@ def write_overlap(pairs_data: dict) -> int:
     return n
 
 
+def write_screener(all_data: dict, pairs_data: dict, md_data: list) -> int:
+    """Generate screener.html — ranks BDCs on four lenses:
+    (i) software exposure, (ii) marking conservatism, (iii) first-lien / PIK,
+    (iv) valuation (P/NAV). Lower composite rank = better fit for a
+    conservative, senior-secured, cheaply-valued lender."""
+    from collections import defaultdict
+    # Conservatism: avg (mark − loan consensus) across co-held loans.
+    dev = defaultdict(list)
+    for d in md_data:
+        h = [(x["bdc"], x["mark"]) for x in d["details"] if x.get("mark") is not None]
+        if len(h) < 2:
+            continue
+        mean = sum(m for _, m in h) / len(h)
+        for b, m in h:
+            dev[b].append(m - mean)
+    pnav = pairs_data["pnav"]
+    rows = []
+    for tk, positions in all_data.items():
+        tot = sum(r.get("fv") or 0 for r in positions) or 1
+        soft = sum(r.get("fv") or 0 for r in positions
+                   if (r.get("sector") or "") == "Software & Services") / tot * 100
+        fl = sum(r.get("fv") or 0 for r in positions
+                 if (r.get("type") or "") == "First Lien") / tot * 100
+        pik = sum(r.get("fv") or 0 for r in positions if r.get("pik")) / tot * 100
+        cons = (sum(dev[tk]) / len(dev[tk])) if dev.get(tk) else None
+        rows.append({
+            "bdc": tk, "soft": round(soft, 1), "fl": round(fl, 1),
+            "pik": round(pik, 1), "struct": round(fl - pik, 1),
+            "cons": round(cons, 2) if cons is not None else None,
+            "n": len(dev.get(tk, [])), "pnav": pnav.get(tk),
+        })
+
+    def rank(key, asc, miss):
+        vals = [r for r in rows if r[key] is not None]
+        order = sorted(vals, key=lambda r: r[key], reverse=not asc)
+        rk = {r["bdc"]: i + 1 for i, r in enumerate(order)}
+        for r in rows:
+            r[key + "_r"] = rk.get(r["bdc"], miss)
+    rank("soft", True, len(rows))            # low software = best
+    rank("cons", True, len(rows))            # most negative (conservative) = best
+    rank("struct", False, len(rows))         # high (first-lien − PIK) = best
+    rank("pnav", True, len(rows))            # cheap (low P/NAV) = best
+    for r in rows:
+        r["comp"] = round((r["soft_r"] + r["cons_r"] + r["struct_r"] + r["pnav_r"]) / 4, 2)
+    rows.sort(key=lambda r: r["comp"])
+
+    blob = json.dumps(rows, separators=(",", ":"), ensure_ascii=False)
+    html = (
+        '<!DOCTYPE html><html lang="en"><head>\n'
+        '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">\n'
+        '<title>BDC Screener &mdash; BDC Researcher</title>\n'
+        '<link rel="stylesheet" href="assets.css">\n'
+        '<style>\n'
+        'table.scr{width:100%;border-collapse:collapse;font-size:13px}\n'
+        'table.scr th{background:var(--surface2);color:var(--head);font-size:11px;'
+        'text-transform:uppercase;letter-spacing:.3px;padding:9px 10px;cursor:pointer;'
+        'white-space:nowrap;border-bottom:2px solid var(--border);text-align:right;position:sticky;top:40px}\n'
+        'table.scr th:first-child,table.scr th:nth-child(2){text-align:left}\n'
+        'table.scr th:hover{background:#27517f}\n'
+        'table.scr td{padding:8px 10px;border-bottom:1px solid var(--border-soft);text-align:right}\n'
+        'table.scr td:first-child,table.scr td:nth-child(2){text-align:left}\n'
+        'table.scr tbody tr:hover{background:var(--surface2)}\n'
+        'table.scr a{color:var(--accent);text-decoration:none;font-weight:600}\n'
+        '.rk{color:var(--dim);font-size:10px}\n'
+        '.good{color:var(--green)}.bad{color:var(--red)}\n'
+        '</style></head><body><nav class="sitenav">\n'
+        '<a href="index.html" class="brand">BDC Researcher</a>\n'
+        '<a href="index.html">Home</a><a href="dashboards.html">Dashboards</a>'
+        '<a href="overlap.html">Cross-Holdings</a><a href="borrower.html">Borrowers</a>'
+        '<a href="compare.html">BDC Compare</a><a href="analytics.html">Analytics</a>'
+        '<a href="markdelta.html">Mark Delta</a><a href="screener.html" class="active">Screener</a>'
+        '<a href="comps.html">Comps</a><a href="news.html">News</a>\n'
+        '<div class="spacer"></div></nav>\n'
+        '<div class="page"><h1>BDC Screener</h1>\n'
+        '<div class="sub">Ranks all tracked BDCs on four lenses &mdash; '
+        '<strong>software exposure</strong> (low = less tech-concentrated), '
+        '<strong>marking conservatism</strong> (mark vs the consensus of co-lenders on the same loans; '
+        'negative = marks below peers), <strong>first-lien / PIK</strong> '
+        '(senior-secured % minus PIK %), and <strong>valuation</strong> (P/NAV; low = cheaper). '
+        'The composite is the average of the four ranks (1 = best on that lens). '
+        'Click any column to sort.</div>\n'
+        '<div class="card" style="padding:0;overflow-x:auto">\n'
+        '<table class="scr" id="scr"><thead><tr>'
+        '<th data-k="comp" data-asc="1">Rank</th>'
+        '<th data-k="bdc">BDC</th>'
+        '<th data-k="soft">Software %</th>'
+        '<th data-k="cons">Mark vs peers</th>'
+        '<th data-k="fl">First Lien %</th>'
+        '<th data-k="pik">PIK %</th>'
+        '<th data-k="pnav">P/NAV</th>'
+        '<th data-k="comp" data-asc="1">Composite</th>'
+        '</tr></thead><tbody id="tb"></tbody></table></div>\n'
+        '<p class="sub" style="margin-top:10px">Marking conservatism uses only loans co-held by 2+ BDCs; '
+        'funds with few shared loans (shown as a small n) are less statistically reliable. '
+        'Non-traded BDCs have no P/NAV.</p>\n'
+        '</div>\n<script>\n'
+        f'var SCREEN={blob};\n'
+        'function fmtc(r){if(r.cons==null)return "<span class=rk>n/a</span>";'
+        'var c=r.cons<0?"good":(r.cons>0?"bad":"");'
+        'return "<span class="+c+">"+(r.cons>0?"+":"")+r.cons.toFixed(2)+"</span> <span class=rk>(n"+r.n+")</span>";}\n'
+        'function row(r,i){return "<tr><td><strong>"+(i+1)+"</strong></td>"'
+        '+"<td><a href=\\"dashboards/"+r.bdc.toLowerCase()+"_dashboard.html\\">"+r.bdc+"</a></td>"'
+        '+"<td>"+r.soft.toFixed(1)+"% <span class=rk>#"+r.soft_r+"</span></td>"'
+        '+"<td>"+fmtc(r)+" <span class=rk>#"+r.cons_r+"</span></td>"'
+        '+"<td>"+r.fl.toFixed(1)+"%</td>"'
+        '+"<td>"+r.pik.toFixed(1)+"%</td>"'
+        '+"<td>"+(r.pnav==null?"<span class=rk>\\u2014</span>":r.pnav.toFixed(2)+"x <span class=rk>#"+r.pnav_r+"</span>")+"</td>"'
+        '+"<td><strong>"+r.comp.toFixed(2)+"</strong></td></tr>";}\n'
+        'function draw(){document.getElementById("tb").innerHTML=SCREEN.map(row).join("");}\n'
+        'document.querySelectorAll("#scr th").forEach(function(th){th.onclick=function(){'
+        'var k=th.dataset.k,asc=th.dataset.asc=="1";'
+        'SCREEN.sort(function(a,b){var x=a[k],y=b[k];'
+        'if(x==null)return 1;if(y==null)return -1;'
+        'if(typeof x==="string")return asc?x.localeCompare(y):y.localeCompare(x);'
+        'return asc?x-y:y-x;});'
+        'th.dataset.asc=asc?"0":"1";draw();};});\n'
+        'draw();\n</script></body></html>\n'
+    )
+    (WEBSITE / "screener.html").write_text(html, encoding="utf-8")
+    return len(rows)
+
+
 def main() -> int:
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -1102,6 +1179,10 @@ def main() -> int:
     # 3b. overlap.html — N×N cross-holdings matrix (regenerated from data)
     n_ov = write_overlap(pairs)
     print(f"  overlap  → overlap.html         OK ({n_ov}×{n_ov} matrix)")
+
+    # 3c. screener.html — rank BDCs on software / conservatism / lien / value
+    n_sc = write_screener(all_data, pairs, md)
+    print(f"  screener → screener.html        OK ({n_sc} BDCs)")
 
     # 4. comps.html — refresh BS + market columns
     if bs_data:
