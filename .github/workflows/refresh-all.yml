@@ -69,6 +69,11 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
 
+      - name: Aggregate identical tranches per BDC
+        run: python bot/aggregate_positions.py
+        env:
+          PYTHONIOENCODING: utf-8
+
       - name: Extract Q1 balance sheets from XBRL
         run: python bot/extract_balance_sheet.py
         env:

@@ -40,16 +40,22 @@ class Gsbd(Bdc):
         # "interest") never has to run.
         idx_e = ident.find(" Industry ")
         tl = (ident[:idx_e] if idx_e > 0 else ident).lower()
-        if re.search(r"1st lien|first lien|senior secured|unitranche", tl):
-            out["type"] = "First Lien"
-        elif re.search(r"2nd lien|second lien", tl):
+        # Order matters: many GSBD section headers read "<N> Lien/Senior Secured
+        # Debt", so the lien qualifier MUST be checked before the bare "senior
+        # secured" fallback — otherwise a "2nd Lien/Senior Secured Debt" tranche
+        # (e.g. Chase Industries) is mislabeled First Lien.
+        if re.search(r"2nd lien|second lien", tl):
             out["type"] = "Second Lien"
+        elif re.search(r"1st lien|first lien|unitranche", tl):
+            out["type"] = "First Lien"
         elif "senior subordinated" in tl:
             out["type"] = "Senior Subordinated"
         elif re.search(r"mezzanine|subordinated", tl):
             out["type"] = "Subordinated"
         elif "unsecured" in tl:
             out["type"] = "Unsecured"
+        elif "senior secured" in tl:  # senior secured w/o a lien qualifier
+            out["type"] = "First Lien"
         elif "warrant" in tl:
             out["type"] = "Warrant"
         elif "preferred" in tl:

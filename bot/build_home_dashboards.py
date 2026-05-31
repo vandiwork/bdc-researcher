@@ -305,7 +305,9 @@ def update_dashboards_html(rows: list[dict]) -> bool:
     # — ticker + name + 4 metric rows (P/NAV, Portfolio FV, Div Yield,
     # Data as of).
     tile_html = []
-    for r in rows:
+    # Dashboard tiles are ordered alphabetically by ticker (the index.html
+    # universe table stays FV-sorted).
+    for r in sorted(rows, key=lambda x: x["ticker"]):
         period = bs.get(r["ticker"], {}).get("period_end", "—")
         div_str = (f'{r["div_yield_pct"]:.1f}%'
                    if r["div_yield_pct"] is not None else "—")
