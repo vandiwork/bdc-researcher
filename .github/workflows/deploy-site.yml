@@ -1,0 +1,43 @@
+name: Deploy site to GitHub Pages
+
+# Publishes the committed website/ directory to GitHub Pages on every push to
+# main that touches site files. Unlike refresh-all.yml (which regenerates ALL
+# data from EDGAR on a schedule and then deploys), this deploys the already-
+# built site exactly as committed — so local/manual edits to website/ go live
+# immediately without re-running the extraction pipeline.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'website/**'
+      - '.github/workflows/deploy-site.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Serialize Pages deployments (and let an in-flight data-refresh deploy finish).
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./website
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
