@@ -397,12 +397,15 @@ def build_markdelta_data(all_data: dict) -> list[dict]:
     # apples-to-apples across BDCs.
     DEBT_ONLY = set(type_class_map.keys())
 
-    # Bucket by (normalized issuer, canonical type). Maturity year is NOT
-    # part of the key — filers tag maturity inconsistently (blank on some
-    # tranches/BDCs), which would fragment the same loan into separate
-    # buckets and surface a small DDTL's mark in isolation. Instead we
-    # group all of a BDC's same-seniority debt for an issuer and FV-weight
-    # the mark; the display year is taken from the largest tranche.
+    # Bucket by the loan's IDENTITY, not just the borrower: normalized issuer
+    # + seniority + maturity year + credit spread (quantized to 0.25). We only
+    # quote a cross-BDC delta when we can CONFIRM the holders are in the same
+    # facility — same borrower alone isn't enough (a borrower can have a 2027
+    # TL at S+5 and a 2031 TL at S+6, and comparing their marks manufactures a
+    # false "disagreement"). A tranche missing a maturity year or a spread
+    # can't be confirmed, so it is excluded from the comparison entirely.
+    def _spread_q(s):
+        return None if s is None else round(s * 4) / 4   # nearest 0.25
     buckets: dict[tuple, list[dict]] = defaultdict(list)
     company_names: dict[tuple, str] = {}
     for ticker, rows in all_data.items():
@@ -412,9 +415,14 @@ def build_markdelta_data(all_data: dict) -> list[dict]:
                 continue
             cname = (r.get("company") or r.get("entity") or "").strip()
             fv = r.get("fv") or 0
-            if not cname or fv <= 0:
+            mat_yr = _maturity_year(r.get("maturity") or "")
+            sp_q = _spread_q(r.get("spread"))
+            # Require a confirmable identity: name, positive FV, maturity year
+            # AND credit spread. No maturity or no spread ⇒ can't be sure it's
+            # the same loan ⇒ don't compare it.
+            if not cname or fv <= 0 or not mat_yr or sp_q is None:
                 continue
-            k = (_borrower_key(cname), type_)
+            k = (_borrower_key(cname), type_, mat_yr, sp_q)
             buckets[k].append({
                 "bdc": ticker,
                 "fv": fv,
@@ -422,7 +430,7 @@ def build_markdelta_data(all_data: dict) -> list[dict]:
                 "par": r.get("par"),
                 "mark": r.get("mark"),
                 "spread": r.get("spread"),
-                "mat_yr": _maturity_year(r.get("maturity") or ""),
+                "mat_yr": mat_yr,
             })
             company_names.setdefault(k, cname)
 
@@ -431,23 +439,22 @@ def build_markdelta_data(all_data: dict) -> list[dict]:
     # >130% (fv >> cost) is a data artefact, not a valuation view; tiny
     # tranches (< $250K) — undrawn DDTLs, fee accruals — swing wildly and
     # would otherwise dominate a simple average.
-    def _eligible(mark, fv):
-        # mark is now a PRICE (fv/par). Real loan prices sit roughly in
-        # [40, 108]; anything above ~108 is a par-scale artefact from a single
-        # filer and must not pollute a cross-BDC price spread (e.g. one BDC's
-        # mis-scaled par showing 129 against everyone else's 98).
-        return mark is not None and 40 <= mark <= 108 and fv >= 250
+    def _eligible(mark, fv, par):
+        # mark is a PRICE. Real loan prices sit roughly in [40, 108]; anything
+        # above ~108 is a par-scale artefact from a single filer and must not
+        # pollute a cross-BDC price spread. Require a real par (par > 0) so the
+        # mark is a genuine fv/par price, not a fv/cost fallback — two BDCs
+        # that bought the same loan at different costs would otherwise show a
+        # manufactured delta.
+        return (mark is not None and 40 <= mark <= 108 and fv >= 250
+                and par is not None and par > 0)
 
     out = []
     for k, entries in buckets.items():
         bdcs = sorted(set(e["bdc"] for e in entries))
         if len(bdcs) < 2:
             continue
-        ckey, type_ = k
-        # Display maturity year = year of the largest-FV tranche that has one.
-        _withyr = sorted((e for e in entries if e.get("mat_yr")),
-                         key=lambda e: -e["fv"])
-        mat_yr = _withyr[0]["mat_yr"] if _withyr else None
+        ckey, type_, mat_yr, _sp_q = k
         # Aggregate by BDC (one issuer can have multiple tranches at the
         # same BDC with the same type+maturity-year — sum them). The per-BDC
         # mark is FV-WEIGHTED across eligible tranches so a small DDTL can't
@@ -461,7 +468,7 @@ def build_markdelta_data(all_data: dict) -> list[dict]:
             d["fv"] += e["fv"]
             d["cost"] += e["cost"]
             d["par"] += (e["par"] or 0)
-            if _eligible(e["mark"], e["fv"]):
+            if _eligible(e["mark"], e["fv"], e["par"]):
                 d["mnum"] += e["mark"] * e["fv"]
                 d["mden"] += e["fv"]
             if e["spread"] is not None:
@@ -843,7 +850,8 @@ def update_comps(bs_data: dict, market_data: dict, all_data: dict) -> bool:
         content = content[:m.start(1)] + new_tr + content[m.end(1):]
         n_updated += 1
 
-    # Update the price/data-as-of label in the header sub
+    # Update the "Pricing as of …" stamp so users can see how fresh the
+    # price / return / P-NAV columns are (the date the prices reflect).
     as_of = next((d.get("as_of") for d in market_data.values()
                   if d.get("as_of")), "")
     if as_of:
@@ -853,11 +861,13 @@ def update_comps(bs_data: dict, market_data: dict, all_data: dict) -> bool:
             ds = datetime.strptime(as_of, "%Y-%m-%d").strftime("%b %d, %Y")
         except Exception:
             ds = as_of
-        # Update any "Price as of …" / "Market data" caption
-        content = re.sub(
-            r'(P/NAV from )[^·\n<]+',
-            rf'\1pricing on {ds}',
+        new_content = re.sub(
+            r'(<div id="price-asof"[^>]*>)Pricing as of [^<]*(</div>)',
+            rf'\1Pricing as of {ds}\2',
             content)
+        if new_content != content:
+            content = new_content
+            n_updated += 1  # ensure the file is written even if no row changed
 
     if n_updated > 0:
         fp.write_text(content, encoding="utf-8")
@@ -1039,16 +1049,22 @@ def write_screener(all_data: dict, pairs_data: dict, md_data: list) -> int:
             "n": len(dev.get(tk, [])), "pnav": pnav.get(tk),
         })
 
-    def rank(key, asc, miss):
+    def rank(key, asc):
+        # Rank only the BDCs that HAVE this metric. A BDC missing it (e.g. TSLX
+        # has no extracted par so no verified mark-conservatism; BCRED is
+        # non-traded so no P/NAV) is placed at the NEUTRAL median rank rather
+        # than penalised as worst — absence of data isn't evidence of a bad
+        # score.
         vals = [r for r in rows if r[key] is not None]
         order = sorted(vals, key=lambda r: r[key], reverse=not asc)
         rk = {r["bdc"]: i + 1 for i, r in enumerate(order)}
+        neutral = (len(vals) + 1) / 2
         for r in rows:
-            r[key + "_r"] = rk.get(r["bdc"], miss)
-    rank("soft", True, len(rows))            # low software = best
-    rank("cons", True, len(rows))            # most negative (conservative) = best
-    rank("struct", False, len(rows))         # high (first-lien − PIK) = best
-    rank("pnav", True, len(rows))            # cheap (low P/NAV) = best
+            r[key + "_r"] = rk.get(r["bdc"], neutral)
+    rank("soft", True)            # low software = best
+    rank("cons", True)            # most negative (conservative) = best
+    rank("struct", False)         # high (first-lien − PIK) = best
+    rank("pnav", True)            # cheap (low P/NAV) = best
     for r in rows:
         r["comp"] = round((r["soft_r"] + r["cons_r"] + r["struct_r"] + r["pnav_r"]) / 4, 2)
     rows.sort(key=lambda r: r["comp"])

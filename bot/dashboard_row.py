@@ -36,8 +36,19 @@ def compute_mark(fv, cost, par, type_canonical=None, stored=None):
     """
     ppar = (fv / par * 100) if (par and par > 0 and fv is not None) else None
     pcost = (fv / cost * 100) if (cost and cost > 0 and fv is not None) else None
-    if ppar is not None and 0 < ppar <= 130:
-        mark = pcost if (pcost is not None and ppar < 80 and pcost > 90) else ppar
+    # Par reported as the TOTAL commitment (funded + undrawn) deflates fv/par on
+    # a funded loan. When par materially exceeds cost AND the cost-basis price is
+    # in a normal funded-loan band, cost tracks the funded face, so fv/cost is
+    # the true price (e.g. GSBD Smarsh: fv/par 84 but fv/cost 99 = the co-lender
+    # consensus). Outside that band — deep discount, big appreciation (Sorenson
+    # fv/cost 148), or a barely-funded DDTL (par many× cost) — fv/par stays the
+    # safer figure rather than letting fv/cost overstate.
+    par_inflated = (par and cost and cost > 0 and par > cost * 1.08
+                    and pcost is not None and 90 <= pcost <= 103)
+    if par_inflated:
+        mark = pcost
+    elif ppar is not None and 0 < ppar <= 130:
+        mark = ppar
     elif pcost is not None:
         mark = pcost
     else:
