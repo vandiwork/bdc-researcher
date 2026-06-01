@@ -1008,7 +1008,10 @@ def write_overlap(pairs_data: dict) -> int:
         f'Cell = row-BDC&rsquo;s FV ($M) in borrowers also held by the column BDC, '
         f'across all {n} tracked BDCs. Darker green = bigger overlap. Click a cell '
         f'for the shared-borrower detail.</div>\n'
-        '<div class="card" style="padding:0;overflow:auto">\n'
+        # overflow:visible (not auto) so the page is the scroll container and
+        # the sticky header engages below the fixed nav; an overflow container
+        # scopes sticky to the (non-scrolling) card and the header scrolls away.
+        '<div class="card" style="padding:0;overflow:visible">\n'
         '<table class="matrix sticky-th">\n<thead>\n'
         f'<tr><th></th><th>P/NAV</th><th>FV ($M)</th>{head_cells}</tr>\n'
         f'<tr><td class="rowlbl">P/NAV &darr;</td><td></td><td></td>{pnav_row}</tr>\n'

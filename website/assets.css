@@ -84,8 +84,11 @@ tr:last-child td{border-bottom:none}
 .matrix .rowlbl{background:var(--th-bg);color:var(--th-text);font-weight:600;text-align:center;position:sticky;left:0;z-index:3}
 .matrix .pnav{background:var(--surface2);color:var(--muted);font-weight:600;text-align:center}
 .matrix .diag{background:#0a0d12}
-.matrix th{top:0}
-.matrix thead tr:nth-child(2) td{position:sticky;top:27px;z-index:2}
+/* Both header rows stick BELOW the 40px fixed site nav (not at top:0, which
+   tucked them behind it and clipped the column labels). Row 1 (labels) at
+   40px; row 2 (P/NAV values, 27px-tall row 1 below it) at 67px. */
+.matrix th{top:40px}
+.matrix thead tr:nth-child(2) td{position:sticky;top:67px;z-index:2}
 .matrix thead tr:nth-child(2) td.rowlbl{z-index:4}
 /* Compact cells so all 19 BDC columns fit at common laptop widths (≤1366px)
    instead of overflowing the card and clipping the right side. */
