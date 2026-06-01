@@ -341,8 +341,8 @@ td{padding:8px 12px;vertical-align:middle;white-space:nowrap;}
         <th style="width:68px;text-align:right" onclick="setSortCol('mark')">Mark %<span class="si"></span></th>
         <th style="width:66px;text-align:right" onclick="setSortCol('nav')">% Port<span class="si"></span></th>
         <th style="width:72px;text-align:right" onclick="setSortCol('spread')">Spread<span class="si"></span></th>
-        <th style="width:72px;text-align:right" onclick="setSortCol('rate')">Rate<span class="si"></span></th>
         <th style="width:58px;text-align:right" onclick="setSortCol('pikRate')">PIK<span class="si"></span></th>
+        <th style="width:72px;text-align:right" onclick="setSortCol('rate')">Rate<span class="si"></span></th>
         <th style="width:72px" onclick="setSortCol('acq')">Acquired<span class="si"></span></th>
         <th style="width:82px" onclick="setSortCol('maturity')">Maturity<span class="si"></span></th>
         <th>Description</th>
@@ -549,8 +549,8 @@ function render(){
       <td class="mn">${markStr}</td>
       <td class="mn" style="color:var(--text-muted)">${navStr}</td>
       <td class="mn">${spreadStr}</td>
-      <td class="mn">${r.rate!=null ? (r.baseRate ? '<span style="color:var(--text-dim);font-size:10px">'+r.baseRate+' </span>' : '') + '<span style="color:var(--text-muted)">' + r.rate.toFixed(2) + '%</span>' : '—'}</td>
       <td class="mn" style="color:var(--text-muted)">${r.pikRate!=null ? r.pikRate.toFixed(2)+'%' : '—'}</td>
+      <td class="mn">${r.rate!=null ? (r.baseRate ? '<span style="color:var(--text-dim);font-size:10px">'+r.baseRate+' </span>' : '') + '<span style="color:var(--text-muted)">' + r.rate.toFixed(2) + '%</span>' : '—'}</td>
       <td style="font-size:11px;color:var(--text-muted)">${r.acq||'—'}</td>
       <td class="${matCls}">${r.maturity||'—'}</td>
       <td class="td-desc">${r.desc}</td>
