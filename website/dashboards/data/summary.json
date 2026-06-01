@@ -1,7 +1,7 @@
 {
   "as_of": "2026-03-31",
   "total_fv_k": 203321327,
-  "total_positions": 8569,
+  "total_positions": 8570,
   "bdcs": {
     "ARCC": {
       "ticker": "ARCC",
@@ -299,7 +299,7 @@
     },
     "MFIC": {
       "ticker": "MFIC",
-      "positions": 443,
+      "positions": 444,
       "total_fv_k": 2971430,
       "sectors": {
         "Industrials": 652282,
@@ -520,7 +520,7 @@
     },
     "Health Care": {
       "fv_k": 33266747,
-      "positions": 1409
+      "positions": 1410
     },
     "Financials": {
       "fv_k": 26267486,
@@ -578,7 +578,7 @@
     },
     "Health Care Equipment & Services": {
       "fv_k": 27287296,
-      "positions": 987
+      "positions": 988
     },
     "Capital Goods": {
       "fv_k": 14821119,
@@ -692,7 +692,7 @@
   "aggregate_types": {
     "First Lien": {
       "fv_k": 166161241,
-      "positions": 6182
+      "positions": 6183
     },
     "Common Equity": {
       "fv_k": 15550060,

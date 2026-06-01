@@ -25,6 +25,57 @@ _TYPE_PATTERNS = [
 _SPREAD_RX = re.compile(r"SOFR\s*\+\s*(\d+)\b", re.I)
 _RATE_RX = re.compile(r"Interest Rate\s+([0-9]+\.[0-9]+)%", re.I)
 
+# Unambiguous terminal corporate suffixes, used to find where MFIC's
+# "<portfolio company> <legal entity>" concatenation splits. Deliberately
+# excludes short/ambiguous ones (AG, AB, Oy, S.A) that match inside acronyms
+# such as "EVER.AG".
+_TERM_SUFFIX = (r"L\.?L\.?C\.?|Inc\.?|Incorporated|Corp\.?|Corporation|"
+                r"L\.?P\.?|LLP|Ltd\.?|Limited|PLC|GmbH")
+_MID_SUFFIX_RX = re.compile(
+    r"(?:^|\s)(?:" + _TERM_SUFFIX + r")\.?,?\s+(?=[A-Z0-9])")
+_END_SUFFIX_RX = re.compile(r"\b(?:" + _TERM_SUFFIX + r")\.?\)?\s*$", re.I)
+
+
+def _norm_tok(w: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", w.lower())
+
+
+def _split_brand_legal(head: str) -> tuple[str, str]:
+    """MFIC packs "<portfolio company> <legal investment entity>" into one
+    identifier string with no delimiter (e.g. "Primeflight PrimeFlight
+    Acquisition, LLC", "AVAD, LLC Surf Opco, LLC"). Return (brand, legal);
+    brand is "" when we can't confidently split (i.e. it's a single name)."""
+    # Drop former-name / alias parentheticals ("(f/k/a …)", "(fka …)",
+    # "(d/b/a …)") first — they sit MID-string in MFIC identifiers and would
+    # otherwise be split through, orphaning a ")" (e.g. "Renew Financial LLC
+    # (f/k/a Renewable Funding, LLC) AIC SPV Holdings II, LLC").
+    head = re.sub(r"\s*\((?:f/?k/?a|d/?b/?a|a/?k/?a|fka|dba|aka|formerly)\b[^)]*\)",
+                  "", head, flags=re.I)
+    head = re.sub(r"\s{2,}", " ", head).strip()
+    words = head.split()
+    # Rule 1: the legal name restarts with a token sharing the brand's first
+    # word ("Primeflight PrimeFlight…", "Pro Vigil Pro-Vigil…",
+    # "Sperry Acquisition, LLC Sperry Parent…").
+    if len(words) >= 2 and len(_norm_tok(words[0])) >= 3:
+        n0 = _norm_tok(words[0])
+        for i in range(1, len(words)):
+            ni = _norm_tok(words[i])
+            if len(ni) >= 3 and (ni.startswith(n0) or n0.startswith(ni)):
+                brand = " ".join(words[:i]).strip(" ,.")
+                legal = " ".join(words[i:]).strip(" ,.")
+                if re.search(r"[A-Za-z]", legal) and _norm_tok(brand) != _norm_tok(legal):
+                    return brand, legal
+                break
+    # Rule 2: the brand name ends in a whole-token terminal suffix and the tail
+    # is itself a suffixed company name ("AVAD, LLC Surf Opco, LLC",
+    # "Calero Holdings, Inc. Telesoft Holdings, LLC").
+    for m in _MID_SUFFIX_RX.finditer(head):
+        tail = head[m.end():].strip(" ,.")
+        if (tail and not tail.startswith("(") and len(tail) >= 4
+                and _END_SUFFIX_RX.search(tail)):
+            return head[:m.end()].strip(" ,."), tail
+    return "", head
+
 _MFIC_SECTORS = (
     "Aerospace & Defense", "Air Freight & Logistics",
     "Automobile Components", "Automobiles", "Banks",
@@ -116,22 +167,19 @@ class Mfic(Bdc):
         else:
             head = s.strip(" ,.")
 
-        # MFIC concatenates the portfolio-company name and the legal
-        # borrower(s) with no clean delimiter, sometimes repeating the legal
-        # name verbatim, e.g.:
-        #   "Sperry Acquisition, LLC Sperry Acquisition, LLC"  (doubled)
-        #   "Primeflight PrimeFlight Acquisition, LLC"         (brand + legal)
-        # Collapse an exact doubling to a single copy. Preserve the corporate
-        # suffix (the old code split on the first comma and dropped ", Inc.").
+        # MFIC concatenates the portfolio-company (brand) name and the legal
+        # investment entity with no delimiter, e.g.:
+        #   "Sperry Acquisition, LLC Sperry Parent Holdings, L.P"
+        #   "Primeflight PrimeFlight Acquisition, LLC"
+        #   "AVAD, LLC Surf Opco, LLC"
+        # Split them and file the brand as a (dba …) so apply_names surfaces
+        # the legal entity as the main name and the brand as the grey line.
         head = re.sub(r"\s{2,}", " ", head).strip()
-        # Collapse "<name> <name>[, suffix]" → keep the copy carrying the
-        # corporate suffix. \1 is case-sensitive so genuine brand+legal pairs
-        # that differ only in case ("Primeflight PrimeFlight ...") are left
-        # intact.
-        dbl = re.match(r"^(.+?)[, ]+\1\b(.*)$", head)
-        if dbl:
-            head = (dbl.group(1) + dbl.group(2)).strip()
-        out["entity"] = head.strip(" ,.")
+        brand, legal = _split_brand_legal(head)
+        if brand:
+            out["entity"] = f"{legal} (dba {brand})"
+        else:
+            out["entity"] = head.strip(" ,.")
 
         m = _SPREAD_RX.search(ident)
         if m:

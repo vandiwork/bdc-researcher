@@ -907,6 +907,9 @@ def build_borrower_index(all_data: dict) -> list[dict]:
                 "bdc": ticker, "type": r.get("type") or "Other", "fv": fv,
                 "mark": r.get("mark"), "maturity": r.get("maturity") or "",
                 "spread": r.get("spread"), "rate": r.get("rate"),
+                "base": (r.get("baseRate") or "").strip(),
+                "pik": bool(r.get("pik")),
+                "sector": (r.get("sector") or "").strip(),
             })
     out = []
     for key, g in groups.items():

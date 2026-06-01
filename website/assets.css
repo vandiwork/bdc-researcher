@@ -76,18 +76,23 @@ tr:last-child td{border-bottom:none}
 .bdccard .row .l{color:var(--muted)}
 .bdccard .row .v{font-weight:500}
 
-.matrix{font-size:11px}
-.matrix th{padding:6px 4px;font-size:10px;background:var(--th-bg)}
-.matrix td{padding:4px 6px;font-size:11px;text-align:right;border-right:1px solid var(--border-soft)}
+.matrix{font-size:10px}
+.matrix th{padding:6px 3px;font-size:9.5px;background:var(--th-bg)}
+.matrix td{padding:4px 4px;font-size:10px;text-align:right;border-right:1px solid var(--border-soft)}
+/* Freeze the ticker column so the right-hand BDC columns can scroll without
+   losing the row's identity on screens narrower than the full matrix. */
 .matrix .rowlbl{background:var(--th-bg);color:var(--th-text);font-weight:600;text-align:center;position:sticky;left:0;z-index:3}
 .matrix .pnav{background:var(--surface2);color:var(--muted);font-weight:600;text-align:center}
 .matrix .diag{background:#0a0d12}
 .matrix th{top:0}
 .matrix thead tr:nth-child(2) td{position:sticky;top:27px;z-index:2}
 .matrix thead tr:nth-child(2) td.rowlbl{z-index:4}
-.matrix th, .matrix td{white-space:nowrap;min-width:52px}
-.matrix th:nth-child(2), .matrix td.pnav{min-width:62px;padding-left:8px;padding-right:8px}
-.matrix th:first-child, .matrix td.rowlbl{min-width:70px;padding-left:10px;padding-right:10px}
+/* Compact cells so all 19 BDC columns fit at common laptop widths (≤1366px)
+   instead of overflowing the card and clipping the right side. */
+.matrix th, .matrix td{white-space:nowrap;min-width:43px}
+.matrix th:nth-child(2), .matrix td.pnav{min-width:52px;padding-left:6px;padding-right:6px}
+.matrix th:nth-child(3), .matrix td:nth-child(3){min-width:56px;padding-left:6px;padding-right:8px}
+.matrix th:first-child, .matrix td.rowlbl{min-width:58px;padding-left:8px;padding-right:8px}
 
 footer{padding:24px;color:var(--muted);font-size:12px;text-align:center;border-top:1px solid var(--border);margin-top:40px}
 

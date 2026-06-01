@@ -35,6 +35,7 @@ table.pos tr:last-child td { border-bottom:none; }
 table.pos a { color:var(--accent); text-decoration:none; font-weight:600; }
 table.pos a:hover { text-decoration:underline; }
 .tb { display:inline-block; padding:1px 7px; border-radius:4px; font-size:10px; font-family:monospace; background:var(--surface2); color:var(--muted); }
+.pik { display:inline-block; padding:1px 6px; border-radius:4px; font-size:10px; font-weight:600; background:rgba(212,160,23,.18); color:#d4a017; }
 .empty { color:var(--muted); text-align:center; padding:40px 20px; font-size:14px; }
 footer { text-align:center; color:var(--muted); font-size:12px; padding:30px 20px 20px; border-top:1px solid var(--border); margin-top:40px; }
 </style>
@@ -86,14 +87,21 @@ function render(list, q){
     html += '<div class="bname"><div class="nm">'+esc(b.name)+'</div>'+brand+'<div class="sec">'+esc(b.sector)+'</div></div>';
     html += '<div class="bstat"><div class="fv">'+fvFmt(b.total_fv)+'</div><div class="hold">'+b.holders+' fund'+(b.holders===1?'':'s')+'</div></div>';
     html += '</div>';
-    html += '<div class="bdetail"><table class="pos"><thead><tr><th>BDC</th><th>Type</th><th>Fair Value</th><th>Mark</th><th>Maturity</th></tr></thead><tbody>';
+    html += '<div class="bdetail"><table class="pos"><thead><tr><th>BDC</th><th>Type</th><th>Fair Value</th><th>Mark</th><th>Base</th><th>Spread</th><th>All-in Rate</th><th>PIK</th><th>Maturity</th></tr></thead><tbody>';
     for (var j=0;j<b.positions.length;j++){
       var p = b.positions[j];
       var dburl = 'dashboards/'+String(p.bdc).toLowerCase()+'_dashboard.html';
       var mark = (p.mark!=null) ? p.mark.toFixed(1)+'%' : '—';
+      var base = p.base ? esc(p.base) : '—';
+      var spread = (p.spread!=null) ? '+'+p.spread.toFixed(2)+'%' : '—';
+      var rate = (p.rate!=null) ? p.rate.toFixed(2)+'%' : '—';
+      var pik = p.pik ? '<span class="pik">PIK</span>' : '<span style="color:var(--dim)">&mdash;</span>';
       html += '<tr><td><a href="'+dburl+'">'+esc(p.bdc)+'</a></td>'
             + '<td style="text-align:left"><span class="tb">'+esc(p.type)+'</span></td>'
-            + '<td>'+fvFmt(p.fv)+'</td><td>'+mark+'</td><td>'+esc(p.maturity||'—')+'</td></tr>';
+            + '<td>'+fvFmt(p.fv)+'</td><td>'+mark+'</td>'
+            + '<td>'+base+'</td><td>'+spread+'</td><td>'+rate+'</td>'
+            + '<td style="text-align:center">'+pik+'</td>'
+            + '<td>'+esc(p.maturity||'—')+'</td></tr>';
     }
     html += '</tbody></table></div></div>';
   }
