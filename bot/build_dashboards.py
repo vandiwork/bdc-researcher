@@ -113,14 +113,19 @@ def csv_row_to_dashboard(r: dict) -> dict:
 
     pik = (r.get("pik") or "").strip().lower() in ("true", "1", "yes")
     # Portion of the coupon paid in kind. Prefer the explicit SOI rate, fall
-    # back to the XBRL PaymentInKind tag. Can't exceed the all-in coupon.
+    # back to the XBRL PaymentInKind tag. A few filers tag a sentinel like
+    # "100.0" (≈ "100% of interest is PIK") which is not a rate — reject any
+    # implausible value (>40%). Final clamp to the all-in coupon happens after
+    # the floating-rate fill in main().
     pik_rate = fnum(r.get("pik_rate_soi")) or fnum(r.get("pik_rate"))
     if pik_rate is not None:
-        if rate is not None and pik_rate > rate + 0.01:
-            pik_rate = rate
-        pik_rate = round(pik_rate, 2)
-        if pik_rate <= 0:
+        if pik_rate <= 0 or pik_rate > 40:
             pik_rate = None
+        else:
+            pik_rate = round(pik_rate, 2)
+    # If a PIK rate is disclosed, the position is by definition PIK.
+    if pik_rate is not None:
+        pik = True
 
     return {
         "bdc": (r.get("bdc") or "").strip(),
@@ -357,6 +362,12 @@ def main() -> int:
     _flat = [r for rs in per_bdc.values() for r in rs]
     fill_floating_rates(_flat)
     apply_sector_consensus(_flat)
+    # The PIK rate can't exceed the (now finalized) all-in coupon — clamp any
+    # residual where the rate fill landed below the disclosed PIK rate.
+    for r in _flat:
+        pr, rt = r.get("pikRate"), r.get("rate")
+        if pr is not None and rt is not None and pr > rt + 0.01:
+            r["pikRate"] = round(rt, 2)
 
     # Pass 2: inject the (rate-filled) data into each dashboard.
     print(f"{'BDC':5s} {'rows':>5s}  {'total FV ($M)':>13s}  {'period':>12s}  status")
