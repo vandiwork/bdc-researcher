@@ -21,7 +21,8 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-from dashboard_row import fx_rate, compute_mark, fill_floating_rates
+from dashboard_row import (fx_rate, compute_mark, fill_floating_rates,
+                           apply_sector_consensus)
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
@@ -149,7 +150,9 @@ def load_all_data() -> dict[str, list[dict]]:
                     continue
                 rows.append(csv_row_to_dashboard(r))
         all_data[ticker] = rows
-    fill_floating_rates([r for rs in all_data.values() for r in rs])
+    _flat = [r for rs in all_data.values() for r in rs]
+    fill_floating_rates(_flat)
+    apply_sector_consensus(_flat)   # one sector per borrower across all BDCs
     return all_data
 
 
@@ -851,19 +854,37 @@ def update_comps(bs_data: dict, market_data: dict, all_data: dict) -> bool:
         n_updated += 1
 
     # Update the "Pricing as of …" stamp so users can see how fresh the
-    # price / return / P-NAV columns are (the date the prices reflect).
+    # price / return / P-NAV columns are: the close date the prices reflect
+    # plus the exact time they were last pulled.
+    from datetime import datetime
     as_of = next((d.get("as_of") for d in market_data.values()
                   if d.get("as_of")), "")
-    if as_of:
-        # Parse YYYY-MM-DD → "Mon DD, YYYY"
+    fetched = next((d.get("fetched_utc") for d in market_data.values()
+                    if d.get("fetched_utc")), "")
+    if not fetched:
+        # Older market data has no per-pull time; fall back to the pipeline's
+        # last-refresh timestamp.
         try:
-            from datetime import datetime
+            bi = json.loads((WEBSITE / "dashboards" / "data" / "build_info.json")
+                            .read_text(encoding="utf-8"))
+            fetched = bi.get("last_full_refresh_utc", "")
+        except Exception:
+            fetched = ""
+    if as_of:
+        try:
             ds = datetime.strptime(as_of, "%Y-%m-%d").strftime("%b %d, %Y")
         except Exception:
             ds = as_of
+        label = f"Pricing as of {ds}"
+        if fetched:
+            try:
+                ft = datetime.fromisoformat(fetched.replace("Z", "+00:00"))
+                label += " &middot; pulled " + ft.strftime("%b %d, %Y %H:%M UTC")
+            except Exception:
+                pass
         new_content = re.sub(
-            r'(<div id="price-asof"[^>]*>)Pricing as of [^<]*(</div>)',
-            rf'\1Pricing as of {ds}\2',
+            r'(<div id="price-asof"[^>]*>).*?(</div>)',
+            rf'\1{label}\2',
             content)
         if new_content != content:
             content = new_content
@@ -1000,7 +1021,9 @@ def write_overlap(pairs_data: dict) -> int:
         '<a href="overlap.html" class="active">Cross-Holdings</a>'
         '<a href="borrower.html">Borrowers</a><a href="compare.html">BDC Compare</a>'
         '<a href="analytics.html">Analytics</a><a href="markdelta.html">Mark Delta</a>'
-        '<a href="comps.html">Comps</a><a href="news.html">News</a>\n'
+        '<a href="screener.html">Screener</a>'
+        '<a href="comps.html">Comps</a><a href="news.html">News</a>'
+        '<a href="status.html">Status</a>\n'
         '<div class="spacer"></div>\n</nav>\n'
         '<div class="page" style="max-width:1800px">\n'
         '<h1>Cross-Portfolio Overlap Matrix</h1>\n'
@@ -1100,7 +1123,8 @@ def write_screener(all_data: dict, pairs_data: dict, md_data: list) -> int:
         '<a href="overlap.html">Cross-Holdings</a><a href="borrower.html">Borrowers</a>'
         '<a href="compare.html">BDC Compare</a><a href="analytics.html">Analytics</a>'
         '<a href="markdelta.html">Mark Delta</a><a href="screener.html" class="active">Screener</a>'
-        '<a href="comps.html">Comps</a><a href="news.html">News</a>\n'
+        '<a href="comps.html">Comps</a><a href="news.html">News</a>'
+        '<a href="status.html">Status</a>\n'
         '<div class="spacer"></div></nav>\n'
         '<div class="page"><h1>BDC Screener</h1>\n'
         '<div class="sub">Ranks all tracked BDCs on four lenses &mdash; '

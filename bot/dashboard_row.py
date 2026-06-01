@@ -9,6 +9,8 @@ guarantees one source of truth.
 """
 from __future__ import annotations
 
+import re
+
 # Native -> USD. Foreign-currency FV/cost/par are stored native; converting
 # here keeps totals and per-position values comparable across the book.
 FX_TO_USD = {
@@ -104,3 +106,61 @@ def fill_floating_rates(rows: list) -> dict:
             r["rate"] = None
             r["rate_est"] = True
     return ref
+
+
+_BK_SUFFIX = re.compile(
+    r"\s+(?:inc|llc|l\s*l\s*c|lp|l\s*p|ltd|limited|corp|corporation|plc|gmbh|"
+    r"sarl|s\s*a\s*r\s*l|s\s*a|b\s*v|n\s*v|company|co|holdings?|holdco|topco|"
+    r"midco|bidco|parent|group)$", re.I)
+
+
+def borrower_key(name: str) -> str:
+    """Loose issuer key for grouping the SAME borrower across BDCs that spell
+    it slightly differently (used to force one sector per borrower)."""
+    if not name:
+        return ""
+    s = name.strip().lower()
+    s = re.sub(r"\s*\((?:dba|d/b/a|fka|f/k/a|aka|a/k/a)\b[^)]*\)", "", s)
+    s = re.sub(r"\s*\([^)]*\)\s*$", "", s)
+    s = re.sub(r"[.,'`]", "", s)
+    s = re.sub(r"\s+&\s+", " and ", s)
+    for _ in range(3):
+        new = _BK_SUFFIX.sub("", s).strip()
+        if new == s:
+            break
+        s = new
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def apply_sector_consensus(rows: list) -> int:
+    """Force ONE sector per borrower across every BDC. A borrower's sector is
+    the FV-weighted majority among its non-'Other' classifications, applied to
+    all of its positions. Removes cross-BDC disagreements where one filer tags
+    an issuer differently — e.g. GS Acquisitionco (insightsoftware) tagged
+    'Diversified Financials' by GSBD but 'Software & Services' by 12 co-lenders.
+    Mutates rows in place (sets sector / gics_sector / gics_industry); returns
+    the number of rows changed."""
+    from collections import defaultdict
+    votes: dict[str, dict[tuple, float]] = defaultdict(lambda: defaultdict(float))
+    for r in rows:
+        k = borrower_key(r.get("entity") or r.get("company") or "")
+        ind = (r.get("sector") or "Other").strip()
+        if not k or ind == "Other":
+            continue
+        sec = (r.get("gics_sector") or "").strip()
+        fv = abs(r.get("fv") or 0) or 1
+        votes[k][(sec, ind)] += fv
+    winner = {k: max(v.items(), key=lambda kv: kv[1])[0] for k, v in votes.items()}
+    n = 0
+    for r in rows:
+        w = winner.get(borrower_key(r.get("entity") or r.get("company") or ""))
+        if not w:
+            continue
+        sec, ind = w
+        if r.get("sector") != ind:
+            n += 1
+        r["sector"] = ind
+        r["gics_industry"] = ind
+        if sec:
+            r["gics_sector"] = sec
+    return n

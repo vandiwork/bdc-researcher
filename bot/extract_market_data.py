@@ -20,7 +20,7 @@ from __future__ import annotations
 import json
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import yfinance as yf
@@ -123,10 +123,16 @@ def main() -> int:
               f"{f(d.get('ltm_pct')):>7s}  {dy_str:>7s}  {mc_str:>10s}")
         time.sleep(0.1)
 
+    # Stamp the exact pull time (UTC) so the Comps page can show when prices
+    # were last fetched, not just the close date.
+    fetched = datetime.now(timezone.utc).isoformat(timespec="minutes")
+    for d in out.values():
+        d["fetched_utc"] = fetched
+
     out_path = SCRIPT_DIR / "market_q1.json"
     out_path.write_text(json.dumps(out, indent=2), encoding="utf-8")
     as_of = next((d.get("as_of") for d in out.values() if d.get("as_of")), "")
-    print(f"\nWrote {out_path}  (as_of: {as_of})")
+    print(f"\nWrote {out_path}  (as_of: {as_of}, fetched: {fetched})")
     return 0
 
 

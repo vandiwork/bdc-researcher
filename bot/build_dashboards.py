@@ -21,7 +21,8 @@ import re
 import sys
 from pathlib import Path
 
-from dashboard_row import fx_rate, compute_mark, fill_floating_rates
+from dashboard_row import (fx_rate, compute_mark, fill_floating_rates,
+                           apply_sector_consensus)
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
@@ -340,9 +341,12 @@ def main() -> int:
         if period_end:
             bdc_periods.append(period_end)
 
-    # Derive floating-rate all-in (reference + spread) across the FULL dataset
-    # BEFORE injecting, so the per-BDC embedded data shows a coherent Rate.
-    fill_floating_rates([r for rs in per_bdc.values() for r in rs])
+    # Derive floating-rate all-in (reference + spread) AND force one sector per
+    # borrower across the FULL dataset BEFORE injecting, so the per-BDC embedded
+    # data shows a coherent Rate and the same sector other pages show.
+    _flat = [r for rs in per_bdc.values() for r in rs]
+    fill_floating_rates(_flat)
+    apply_sector_consensus(_flat)
 
     # Pass 2: inject the (rate-filled) data into each dashboard.
     print(f"{'BDC':5s} {'rows':>5s}  {'total FV ($M)':>13s}  {'period':>12s}  status")
