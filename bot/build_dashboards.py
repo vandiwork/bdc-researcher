@@ -112,6 +112,15 @@ def csv_row_to_dashboard(r: dict) -> dict:
     desc = (r.get("business_description") or r.get("desc") or "").strip() or None
 
     pik = (r.get("pik") or "").strip().lower() in ("true", "1", "yes")
+    # Portion of the coupon paid in kind. Prefer the explicit SOI rate, fall
+    # back to the XBRL PaymentInKind tag. Can't exceed the all-in coupon.
+    pik_rate = fnum(r.get("pik_rate_soi")) or fnum(r.get("pik_rate"))
+    if pik_rate is not None:
+        if rate is not None and pik_rate > rate + 0.01:
+            pik_rate = rate
+        pik_rate = round(pik_rate, 2)
+        if pik_rate <= 0:
+            pik_rate = None
 
     return {
         "bdc": (r.get("bdc") or "").strip(),
@@ -134,6 +143,7 @@ def csv_row_to_dashboard(r: dict) -> dict:
         "acq": acq,
         "ccy": (r.get("ccy") or "USD").strip(),
         "pik": pik,
+        "pikRate": pik_rate,
         # New canonical fields for downstream UI work:
         "gics_sector": r.get("gics_sector") or "Other",
         "gics_industry": r.get("gics_industry_group") or "Other",
