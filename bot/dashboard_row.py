@@ -77,7 +77,11 @@ def fill_floating_rates(rows: list) -> dict:
     for r in rows:
         b = (r.get("baseRate") or "").upper()
         rt, sp = r.get("rate"), r.get("spread")
-        if b and rt and sp and sp <= rt < 30:
+        # Only learn the reference from loans whose reported all-in is at least
+        # 1pt ABOVE the spread — a real index (SOFR ~3.7, EURIBOR ~2.5) is never
+        # near zero. Loans that report rate == spread (the filer put the spread
+        # in the rate column) imply a 0 reference and would drag the median down.
+        if b and rt and sp and (rt - sp) >= 1.0 and rt < 30:
             imp[b].append(rt - sp)
     ref = {b: round(statistics.median(v), 2) for b, v in imp.items()
            if len(v) >= 20 and statistics.median(v) >= 1.0}
@@ -90,10 +94,13 @@ def fill_floating_rates(rows: list) -> dict:
         rr = ref.get(b)
         if rr is None and b in ("", "SOFR"):
             rr = default
-        if rr and (rt is None or rt < sp):
+        # rate <= spread means the reported figure can't be a real all-in
+        # (all-in = reference + spread > spread); the filer reported just the
+        # spread or a floor. Replace with reference + spread.
+        if rr and (rt is None or rt <= sp):
             r["rate"] = round(rr + sp, 2)
             r["rate_est"] = True
-        elif rt is not None and rt < sp:
+        elif rt is not None and rt <= sp:
             r["rate"] = None
             r["rate_est"] = True
     return ref
