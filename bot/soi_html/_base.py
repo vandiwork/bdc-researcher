@@ -314,6 +314,12 @@ def _parse_affiliation_header(text: str) -> Optional[str]:
     headers and return a normalized affiliation tag."""
     if not text:
         return None
+    # Fold Unicode hyphens/dashes to ASCII '-'. SEC filers (e.g. BBDC) use a
+    # non-breaking hyphen (U+2011) in "Non‑Control / Non‑Affiliate", which
+    # would otherwise miss the "non-affiliat" patterns and fall through to the
+    # generic "Affiliate Investments" rule — mislabelling the whole
+    # non-affiliated book as Affiliated.
+    text = re.sub(r"[­‐-―−]", "-", text)
     if "investments" not in text.lower() and "issuer" not in text.lower():
         return None
     for rx, label in _AFFIL_PATTERNS:
