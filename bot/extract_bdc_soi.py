@@ -123,6 +123,7 @@ class Position:
     acq: Optional[str] = None
     ccy: str = "USD"
     fv_raw: Optional[float] = None   # pre-reconciliation fv (for HTML matching)
+    ctx_order: Optional[int] = None  # numeric context id ~ document order
 
 
 @dataclass
@@ -603,6 +604,12 @@ def parse_facts(xml_bytes: bytes, contexts: dict[str, Context],
 
         pik_rate = data.get("pik_rate")
 
+        # Numeric context id ~ document order (iXBRL assigns context ids in
+        # the order facts appear). Lets per-BDC handlers separate follow-on
+        # sub-schedules (e.g. FSK's JV look-through) from the main SOI.
+        _co = re.search(r"(\d+)\s*$", cref)
+        ctx_order = int(_co.group(1)) if _co else None
+
         positions.append(Position(
             bdc=ticker,
             identifier=ident,
@@ -625,6 +632,7 @@ def parse_facts(xml_bytes: bytes, contexts: dict[str, Context],
             baseRate=parsed.get("base_rate"),
             maturity=parsed.get("maturity"),
             ccy=parsed.get("ccy") or ccy,
+            ctx_order=ctx_order,
         ))
     positions = dedupe_aliases(positions)
 

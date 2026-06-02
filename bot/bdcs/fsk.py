@@ -24,9 +24,37 @@ class Fsk(Bdc):
     ticker = "FSK"
     canonical_fv_m = 12269.4
     canonical_period = "2026-03-31"
-    reconcile_to_reported = True
+    # No post-hoc scaling. The dominant delta (~$1.0–1.3B) is the Credit
+    # Opportunities Partners JV look-through schedule, removed at the source
+    # in Pass 0 below. The small residual (~2–3%) is the filer's own
+    # per-line XBRL not footing to its stated total (no droppable cause).
+    reconcile_to_reported = False
 
     def post_filter(self, positions: list) -> list:
+        # Pass 0: drop the Credit Opportunities Partners JV (COPJV)
+        # look-through sub-schedule. FSK reports its equity stake in COPJV
+        # as a single ~$1.7B line in the main SOI, then discloses the JV's
+        # entire underlying portfolio (athenahealth, JW Aluminum, 48Forty,
+        # ...) in a follow-on "Portfolio Company ... Equity/Other" schedule.
+        # Those look-through rows carry a sector pipe and no distinguishing
+        # XBRL dimension, so they are otherwise indistinguishable from FSK's
+        # own holdings and inflate the portfolio total. They appear in
+        # document order strictly AFTER the COPJV stake line, so we use the
+        # context-id (≈ document order) of the stake as the cut: any
+        # pipe-bearing position ordered after it belongs to the JV schedule.
+        stake_order = None
+        for p in positions:
+            if ("Credit Opportunities Partners JV" in p.identifier
+                    and " | " in p.identifier and p.ctx_order is not None):
+                if stake_order is None or p.ctx_order < stake_order:
+                    stake_order = p.ctx_order
+        if stake_order is not None:
+            positions = [
+                p for p in positions
+                if not (p.ctx_order is not None and p.ctx_order > stake_order
+                        and " | " in p.identifier)
+            ]
+
         # Pass 1: drop sub-SOI rollups (no pipe, no comma, no cost).
         out = []
         for p in positions:
