@@ -708,6 +708,44 @@ def parse_facts(xml_bytes: bytes, contexts: dict[str, Context],
 
     if handler is not None:
         positions = handler.post_filter(positions)
+
+    # ── Unfunded-commitment netting (generic, gated) ──────────────────────
+    # A few filers (e.g. FSK) print SOI positions GROSS and net their
+    # unfunded commitments on separate NEGATIVE lines tagged
+    # InvestmentOwnedAtFairValue × InvestmentTypeAxis (members like
+    # "UnfundedSeniorSecuredLoansFirstLienMember"). Our per-position sum then
+    # OVER-states the portfolio. When the straight sum exceeds the filer's
+    # reported total, fold those negative lines back so the portfolio foots
+    # to what the filer reports — exactly as the SOI does. Filers whose
+    # positions already net to the reported total (the large majority) clear
+    # the gate untouched, so this never double-subtracts.
+    if handler is not None and getattr(handler, "canonical_fv_m", None):
+        pos_m = sum((fv_usd(p.fv, p.ccy) or 0) for p in positions) / 1e6
+        if pos_m > handler.canonical_fv_m * 1.01:
+            for cref, data in per_ctx.items():
+                ctx = contexts.get(cref)
+                if (ctx is None or ctx.identifier
+                        or (period_end and ctx.period_end != period_end)):
+                    continue
+                if [k.split(":")[-1] for k in ctx.dims] != ["InvestmentTypeAxis"]:
+                    continue
+                fvv = data.get("fv")
+                if fvv is None or fvv >= 0:
+                    continue
+                mem = re.sub(r"Member$", "", str(next(iter(ctx.dims.values()),
+                                                       "")).split(":")[-1])
+                label = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", mem) or "commitment"
+                positions.append(Position(
+                    bdc=ticker,
+                    identifier=f"Unfunded — {label}",
+                    entity=f"Unfunded — {label}",
+                    company=f"Unfunded — {label}",
+                    type="Unfunded Commitment",
+                    fv=fvv,
+                    cost=data.get("cost"),
+                    ccy="USD",
+                ))
+
     # Fair value is reported EXACTLY as the filer tagged it — no scaling or
     # reconciliation to the filer's stated total, ever. Any residual gap vs
     # the reported total is a real delta (surfaced on the Status page) and is
