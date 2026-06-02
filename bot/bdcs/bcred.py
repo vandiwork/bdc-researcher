@@ -36,7 +36,6 @@ _BCRED_JV_LOOKTHROUGH = _re.compile(r"\|\s*\w[\w\s]*\bJV LP\s*$", _re.I)
 class Bcred(Bdc):
     ticker = "BCRED"
     canonical_fv_m = 80469.4
-    reconcile_to_reported = True
     canonical_period = "2026-03-31"
 
     drop_identifier_patterns = (

@@ -28,7 +28,6 @@ class Fsk(Bdc):
     # Opportunities Partners JV look-through schedule, removed at the source
     # in Pass 0 below. The small residual (~2–3%) is the filer's own
     # per-line XBRL not footing to its stated total (no droppable cause).
-    reconcile_to_reported = False
 
     def post_filter(self, positions: list) -> list:
         # Pass 0: drop the Credit Opportunities Partners JV (COPJV)

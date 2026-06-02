@@ -122,7 +122,7 @@ class Position:
     maturity: Optional[str] = None
     acq: Optional[str] = None
     ccy: str = "USD"
-    fv_raw: Optional[float] = None   # pre-reconciliation fv (for HTML matching)
+    fv_raw: Optional[float] = None   # mirror of fv (column read by HTML matcher)
     ctx_order: Optional[int] = None  # numeric context id ~ document order
 
 
@@ -685,27 +685,14 @@ def parse_facts(xml_bytes: bytes, contexts: dict[str, Context],
 
     if handler is not None:
         positions = handler.post_filter(positions)
-        # Reconcile filers whose per-position XBRL over-tags their own
-        # reported total (FSK, MSDL). Scale fv/cost/par uniformly so the
-        # portfolio foots to the filer's authoritative total; marks and
-        # relative weights are preserved (same factor on fv and cost).
-        if getattr(handler, "reconcile_to_reported", False) and handler.canonical_fv_m:
-            cur_m = sum((fv_usd(p.fv, p.ccy) or 0) for p in positions) / 1e6
-            tgt_m = handler.canonical_fv_m
-            # Foot to the filer's authoritative reported total whenever the
-            # per-position XBRL is off by more than 0.1% (filers routinely
-            # over/under-tag the SOI relative to their reported total).
-            if cur_m > 0 and abs(cur_m - tgt_m) / tgt_m > 0.001:
-                factor = tgt_m / cur_m
-                for p in positions:
-                    p.fv_raw = p.fv   # preserve original for HTML matching
-                    if p.fv is not None:
-                        p.fv *= factor
-                    if p.cost is not None:
-                        p.cost *= factor
-                    if p.par is not None:
-                        p.par *= factor
-                    # mark = fv/par is unchanged by a uniform scale; leave as-is
+    # Fair value is reported EXACTLY as the filer tagged it — no scaling or
+    # reconciliation to the filer's stated total, ever. Any residual gap vs
+    # the reported total is a real delta (surfaced on the Status page) and is
+    # fixed at the source in the per-BDC handler, never smeared across
+    # positions by a uniform factor. `fv_raw` mirrors `fv` (retained only as
+    # the column the HTML-enrichment matcher reads).
+    for p in positions:
+        p.fv_raw = p.fv
     return positions
 
 

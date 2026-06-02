@@ -78,7 +78,6 @@ class Msdl(Bdc):
     ticker = "MSDL"
     canonical_fv_m = 3668.9
     canonical_period = "2026-03-31"
-    reconcile_to_reported = True
     column_aliases = {"Investments": "company"}
     value_scale_m = 0.001
 

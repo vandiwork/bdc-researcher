@@ -189,10 +189,8 @@ def enrich_one(ticker: str, xbrl_csv: Path, html_bytes: bytes,
     eligible = 0   # positions with non-zero FV (only these are joinable)
     for p in positions:
         try:
-            # Match against the UNSCALED fair value when present. FSK/MSDL
-            # have their fv reconciled (scaled) to the filer's reported
-            # total; fv_raw preserves the original SOI value the HTML rows
-            # carry, so enrichment matching is unaffected by the scale.
+            # fv_raw mirrors fv (no scaling is ever applied); fall back to fv
+            # if the column is absent.
             raw = p.get("fv_raw")
             fv_K = float(raw if raw not in (None, "") else p["fv"]) / 1000.0
         except (KeyError, ValueError, TypeError):
