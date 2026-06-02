@@ -432,7 +432,11 @@ function getFiltered(){
 }
 
 function getSorted(data){
-  return [...data].sort((a,b)=>{
+  // Unfunded-commitment / adjustment rows (negative fair value) are
+  // pinned to the end and never participate in sorting.
+  const _unf=data.filter(r=>r.fv<0);
+  const _real=data.filter(r=>!(r.fv<0));
+  const _sorted=[..._real].sort((a,b)=>{
     let av, bv;
     if(sortCol==='fv')      { av=a.fv; bv=b.fv; }
     else if(sortCol==='cost'){ av=a.cost; bv=b.cost; }
@@ -451,6 +455,7 @@ function getSorted(data){
     else { av=a.fv; bv=b.fv; }
     return (av-bv)*sortDir;
   });
+  return [..._sorted, ..._unf];
 }
 
 function render(){
