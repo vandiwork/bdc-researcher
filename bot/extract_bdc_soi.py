@@ -124,6 +124,7 @@ class Position:
     ccy: str = "USD"
     fv_raw: Optional[float] = None   # mirror of fv (column read by HTML matcher)
     ctx_order: Optional[int] = None  # numeric context id ~ document order
+    doc_pos: Optional[int] = None    # byte offset of the FV fact in primary doc
 
 
 @dataclass
@@ -437,9 +438,30 @@ ALLOWED_POSITION_DIMS = {
 }
 
 
+_FV_TAG_RE = re.compile(
+    rb'<ix:nonFraction[^>]*?name="[^"]*InvestmentOwnedAtFairValue"[^>]*?>')
+
+
+def compute_doc_positions(primary_bytes: bytes) -> dict[str, int]:
+    """Map each InvestmentOwnedAtFairValue inline-XBRL fact's contextRef to
+    its byte offset in the primary filing document. Lets per-BDC handlers
+    separate duplicate sub-schedules that are only distinguishable by
+    document position (e.g. MSDL's consolidated-subsidiary sub-schedule,
+    re-listed after the comparative-period schedule)."""
+    out: dict[str, int] = {}
+    for m in _FV_TAG_RE.finditer(primary_bytes):
+        cr = re.search(rb'contextRef="([^"]+)"', m.group(0))
+        if cr:
+            key = cr.group(1).decode("ascii", "replace")
+            if key not in out:
+                out[key] = m.start()
+    return out
+
+
 def parse_facts(xml_bytes: bytes, contexts: dict[str, Context],
                 period_end: str, ticker: str,
-                handler: "bdcs._base.Bdc | None" = None) -> list[Position]:
+                handler: "bdcs._base.Bdc | None" = None,
+                doc_positions: "dict[str, int] | None" = None) -> list[Position]:
     """Stream the instance, attaching facts to contexts. Emit one Position
     per identifier-axis context whose period matches the filing period."""
     per_ctx: dict[str, dict] = defaultdict(dict)
@@ -633,6 +655,7 @@ def parse_facts(xml_bytes: bytes, contexts: dict[str, Context],
             maturity=parsed.get("maturity"),
             ccy=parsed.get("ccy") or ccy,
             ctx_order=ctx_order,
+            doc_pos=(doc_positions.get(cref) if doc_positions else None),
         ))
     positions = dedupe_aliases(positions)
 
@@ -917,8 +940,21 @@ def extract_one(ticker: str, cik: str, *, accession: Optional[str],
 
         contexts = parse_contexts(xml_bytes)
         handler = bdcs.get(ticker)
+        doc_positions = None
+        if handler is not None and getattr(handler, "needs_doc_positions", False):
+            try:
+                primary_url = f"{filing.base_url}/{filing.primary_doc}"
+                primary_bytes = fetch(primary_url, sess)
+                doc_positions = compute_doc_positions(primary_bytes)
+                if verbose:
+                    print(f"  doc-pos     located {len(doc_positions):,} FV facts "
+                          f"in {filing.primary_doc} ({len(primary_bytes):,} bytes)")
+            except Exception as e:
+                if verbose:
+                    print(f"  doc-pos     WARN: {type(e).__name__}: {e}")
         positions = parse_facts(xml_bytes, contexts, filing.period_end,
-                                ticker, handler=handler)
+                                ticker, handler=handler,
+                                doc_positions=doc_positions)
         res.n_positions = len(positions)
         res.total_fv = sum((fv_usd(p.fv, p.ccy) or 0) for p in positions)
         res.total_cost = sum((fv_usd(p.cost, p.ccy) or 0) for p in positions)

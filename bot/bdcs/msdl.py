@@ -80,6 +80,12 @@ class Msdl(Bdc):
     canonical_period = "2026-03-31"
     column_aliases = {"Investments": "company"}
     value_scale_m = 0.001
+    # MSDL consolidates a wholly-owned financing subsidiary ("Capstone
+    # Lending") and ALSO prints that subsidiary's standalone "Consolidated
+    # Schedule of Investments" further down the 10-Q (after the prior-period
+    # comparative schedule). Those rows duplicate holdings already in the
+    # main consolidated SOI and need to be dropped by document position.
+    needs_doc_positions = True
 
     # MSDL tags JV / controlled equity stakes twice — once with the long-form
     # "Investments controlled/affiliated Equity Investments Investments in
@@ -99,7 +105,39 @@ class Msdl(Bdc):
             if is_bare and cost_missing and p.fv and round(p.fv) in all_cost_fvs:
                 continue
             kept.append(p)
-        return kept
+        return self._drop_subsidiary_subschedule(kept)
+
+    def _drop_subsidiary_subschedule(self, positions: list) -> list:
+        """Drop the consolidated-subsidiary standalone Schedule of Investments
+        that MSDL prints after the comparative-period schedule. Its rows
+        re-list holdings already counted in the main consolidated SOI
+        (~$0.28B), so the straight sum over-states the portfolio by that much.
+
+        The sub-schedule is a contiguous block at the end of the document, so
+        among current-period positions (sorted by byte offset in the primary
+        doc) it sits after the single largest doc-position gap — the gap left
+        by the comparative-period schedule, whose facts are a different period
+        and therefore absent here. We only drop it when doing so reconciles
+        the portfolio to the filer's reported total (a guard so a future
+        filing with a different structure is never silently truncated)."""
+        tgt = self.canonical_fv_m
+        withpos = [p for p in positions if p.doc_pos is not None and p.fv]
+        if not tgt or len(withpos) < 50:
+            return positions
+        ordered = sorted(withpos, key=lambda p: p.doc_pos)
+        gi, _gap = max(
+            ((i, ordered[i + 1].doc_pos - ordered[i].doc_pos)
+             for i in range(len(ordered) - 1)),
+            key=lambda t: t[1])
+        tail = ordered[gi + 1:]
+        if not tail:
+            return positions
+        full = sum((p.fv or 0) for p in positions) / 1e6
+        head = full - sum((p.fv or 0) for p in tail) / 1e6
+        if abs(head - tgt) / tgt < 0.015 and abs(full - tgt) / tgt > 0.03:
+            drop = {id(p) for p in tail}
+            return [p for p in positions if id(p) not in drop]
+        return positions
 
     def parse_identifier(self, ident: str) -> dict:
         out: dict = {}

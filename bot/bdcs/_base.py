@@ -54,6 +54,12 @@ class Bdc:
     # fixed at the source in the per-BDC handler below. Do not reintroduce
     # uniform fv/cost scaling.
 
+    # Set True when a handler needs each Position's byte offset in the primary
+    # filing document (Position.doc_pos) — e.g. to detect a duplicate
+    # sub-schedule that is only separable by document position. The extractor
+    # fetches the primary doc and populates doc_pos only for these handlers.
+    needs_doc_positions: bool = False
+
     # ── Hooks ─────────────────────────────────────────────────────────
 
     def should_drop_context(self, ctx) -> bool:
