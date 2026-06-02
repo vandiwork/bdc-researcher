@@ -81,7 +81,6 @@ table.status-tbl tbody tr:nth-child(even) { background:var(--surface2); }
   </tr></thead>
   <tbody id="accuracy-tbody"></tbody>
 </table>
-<p class="sub" style="margin-top:-12px"><strong>No scaling is applied anywhere</strong> &mdash; every position&rsquo;s fair value is the filer&rsquo;s own tagged value. <strong>All 19 BDCs foot to within &plusmn;1%</strong> of the filer&rsquo;s reported &ldquo;Total Investments at Fair Value.&rdquo; Two filers present their Schedule of Investments in a non-standard way, which we reconcile <em>at the source</em> (never by scaling):<br><br>&bull; <strong>FSK</strong> prints each position GROSS and nets ~$1.3B of unfunded commitments on separate lines, and re-lists every holding in supplemental fair-value-hierarchy tables. We keep each holding once (its full equity book &mdash; athenahealth, JW&nbsp;Aluminum, &hellip; &mdash; included) and fold in the unfunded-commitment lines, so FSK foots exactly. <em>(FSK does not disclose its Credit Opportunities Partners JV holdings individually &mdash; only a summary &mdash; so there is no JV look-through; it is carried as a single $1.7B equity stake.)</em><br>&bull; <strong>MSDL</strong> prints the standalone Schedule of Investments of its consolidated &ldquo;Capstone Lending&rdquo; subsidiary &mdash; already counted in the main SOI &mdash; which we drop. Both are handled generically (dedupe by identifier, reconcile to the filer&rsquo;s own total), not by per-filer rules.</p>
 
 <div class="section-title">Data sources</div>
 <table class="status-tbl" style="max-width:1000px">
