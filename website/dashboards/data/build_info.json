@@ -1,7 +1,5 @@
 {
-  "last_full_refresh_utc": "2026-06-11T13:05:36.085834+00:00",
+  "last_full_refresh_utc": "2026-06-12T12:06:13.713377+00:00",
   "trigger": "schedule",
-  "run_url": "https://github.com/vandiwork/bdc-researcher/actions/runs/27348756496",
-  "last_market_refresh_utc": "2026-06-11T21:32:06.535721+00:00",
-  "last_market_run_url": "https://github.com/vandiwork/bdc-researcher/actions/runs/27378733177"
+  "run_url": "https://github.com/vandiwork/bdc-researcher/actions/runs/27414485479"
 }
