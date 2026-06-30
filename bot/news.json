@@ -1,5 +1,5 @@
 {
-  "fetched_utc": "2026-06-27T09:18:39.338317+00:00",
+  "fetched_utc": "2026-06-30T10:46:53.429300+00:00",
   "sources": [
     "Bloomberg",
     "Financial Times",
@@ -7,13 +7,24 @@
   ],
   "items": [
     {
-      "title": "Sila Realty Trust, Inc. Stockholders Approve Acquisition by Affiliates of Blue Owl Capital Inc. – Company Announcement",
-      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxNUzVkOTA1dXNycTVwOWpERTVNcTNjNkNfXzJfelRaM2dMYnFxNHpydjRGb2ZlSFYwRkQ3bHM0amVTR3ZnNlVjQjZUaVBoNmR1WWRLQ3NTNnJCR1BoRmhQR0hnaWZDLWlKRVFINjhwQnJ5SjhyLTJoYXZubEd2TjZhOTE1ZmgxYlVaVTJ5cXNlaUwtXzBPaldIaVZuOUxXLWs5S0hKOTFB?oc=5",
+      "title": "FS KKR Capital Corp. Closes $150 Million Convertible Preferred Stock Issuance in Connection with Strategic Value Enhancement Actions – Company Announcement - FT.com",
+      "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQUU1oZUhJSHhjWWFmeVFpTDlnVkpaY05hNV9MTHVGSHptYjROMUFDYXBkTlBfTXNRQnhWdWFydnNWUEtGOThxc3JoRGkwNVlsSG5BNVI2dUtUXzlQckt2UlhOdzNrLUZENUV2WkZaWmdESFcwVnlmYWR0OXRoM0lEVmI4U096Sm5lNDEySGd3eWFzcm1aTW04YQ?oc=5",
       "source": "Financial Times",
-      "published": "Fri, 26 Jun 2026 13:18:00 GMT",
-      "published_iso": "2026-06-26T13:18:00+00:00",
+      "published": "Mon, 29 Jun 2026 20:20:00 GMT",
+      "published_iso": "2026-06-29T20:20:00+00:00",
       "tickers": [
-        "OBDC"
+        "FSK"
+      ],
+      "category": "company"
+    },
+    {
+      "title": "Morgan Stanley Direct Lending Fund Prices Public Offering of $350.0 Million 6.100% Notes Due 2031",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPeVozLVNtZ1pIOW0zb2JjUzJuUGx0RWdEQ3BQbHBWMzZpSFItd2dEeEJVRjFZQnVRMWtCNzM2Mmh4eVpEdHpLUkhuTjJRcTk0Q2hiQi1KajZhMElhZG1sbHBDMHpldkJIS2lxSUZ2REJjcHJIOTJhS1RVN3ZjTjdFeGxDbGZRcXRaVy1nQVgyRTZXdXFOcW41TmZmS1RMcl9VZFZVc2Vn?oc=5",
+      "source": "Financial Times",
+      "published": "Mon, 29 Jun 2026 19:46:00 GMT",
+      "published_iso": "2026-06-29T19:46:00+00:00",
+      "tickers": [
+        "MSDL"
       ],
       "category": "company"
     },
@@ -25,6 +36,17 @@
       "published_iso": "2026-06-25T15:09:07+00:00",
       "tickers": [
         "OBDC"
+      ],
+      "category": "company"
+    },
+    {
+      "title": "Main Street Announces Exit of Portfolio Investment",
+      "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxOSmNKbzBuMGNfOHN5N3gxN1FaaTdtdEdyYUJDUXBlRk53eHA2TDh6V3B3aTRIVW9Zb3VzZUNQN3d1MFhnUnZnQTlVQzM4c0hIMExpMWdmZmFRalJLeGc5ZEk5THRmOWcxSHlTSmhOWlVnVEJ5aVRmYTRlWkF1MTRiUmhRbHZoWlduS1NCLXFEYmZmSEx5S01lZA?oc=5",
+      "source": "Financial Times",
+      "published": "Wed, 24 Jun 2026 11:00:00 GMT",
+      "published_iso": "2026-06-24T11:00:00+00:00",
+      "tickers": [
+        "MAIN"
       ],
       "category": "company"
     },
@@ -43,8 +65,8 @@
       "title": "Even More Investors Want Out of Private Credit",
       "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxOWk5MV0pnVXFPOERhSFV4UzM2TzVONUp5QThZaWpzajNrUmJQSlU1NTB3a1drWElsUTdqNEpoSUx4YXZHZHNEQ2RXVl92LW9kOWg3ZXRSeC05Z3RCZ2VGREtWa0FUQlJacGNMWXkzTjFwdGhlMVJZNWg3MHRGM1pEeGJ6Zzh0TG8ySnI0WGp4NVY2enBZTzJmcg?oc=5",
       "source": "WSJ",
-      "published": "Thu, 18 Jun 2026 13:00:00 GMT",
-      "published_iso": "2026-06-18T13:00:00+00:00",
+      "published": "Thu, 18 Jun 2026 07:00:00 GMT",
+      "published_iso": "2026-06-18T07:00:00+00:00",
       "tickers": [],
       "category": "general"
     },
@@ -173,6 +195,15 @@
       "category": "general"
     },
     {
+      "title": "Citi, BlackRock’s HPS Sign €15 Billion Private Credit Agreement",
+      "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbDY5d1VjLXNsUmRDUGk2RGRLY1I1aEljWjN1cVhBVzllb05CeTJNUEtPVlZVZWgyb1BvZ3VobUg1ZkN6V3VvWHFTa05xRDF1MXotOVVieWhwRUNoVXZMOWx6VWxieS03QjB4R1dmSVhWbndQQjFVaHVSTDlFX3kycXRvdU1CLUNmQlpkcjRYZjVUR2hrT1dMT3dqNS03dE9vQUxMVDZMSHBwR2U3eXZhLUFB?oc=5",
+      "source": "Bloomberg",
+      "published": "Mon, 18 May 2026 07:00:00 GMT",
+      "published_iso": "2026-05-18T07:00:00+00:00",
+      "tickers": [],
+      "category": "general"
+    },
+    {
       "title": "Blue Owl Fund Returns to Market With $400 Million Bond Offering",
       "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxQWEU2dl95clVVV0FZREZocnFwRW9tWWNReEQzNXFFTjF3WGpqbkt0RWRYVDFBay0tbmYyT0RlWmZkS1VWc25HMy1JTXlWSnJVMS1nMG9PdlBvcVd5T1ZPY1hweUhfOWxpWXlRTEh0UjcyZUxMN1Bxb1BpSVJJZUJDS1FMTTdqV2FwV0tRb3hkV0VuclhjMVQ2eFFJQ1hEQlFTNG00SGFnWjNOd0RUS1JIY0gyQQ?oc=5",
       "source": "Bloomberg",
@@ -238,17 +269,6 @@
       "category": "general"
     },
     {
-      "title": "Blue Owl retail fundraising evaporates amid private credit concerns",
-      "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQZ3M4Z1lXQVI1SjltaUEwdHZaR2RCdGVDdFg0QWVjaDNPRjE2ZDItZExfd0VWZEllZWxoTUVtTDhxTzVCVm1wZGF2aGV0ajRLcGp4NXZtY043QUVMZ21oWHZSMG9UbUVocGQ5cktWUTZqam5kdVNiZjhsSEROdDFLNFZwcmM?oc=5",
-      "source": "Financial Times",
-      "published": "Tue, 12 May 2026 07:00:00 GMT",
-      "published_iso": "2026-05-12T07:00:00+00:00",
-      "tickers": [
-        "OBDC"
-      ],
-      "category": "company"
-    },
-    {
       "title": "Carlyle BDC Cuts Dividend Even As It Flags Better Credit Market",
       "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxPWDllSjlCX0lodVlYVUZWZGNNUy1meklNZGRlaG05Uk1PZHJ0al94dzJweXdUUXAtZE43Vnd2azN1bE02dkt1QUpkeWR6YzBqSE1DRllrY0NQOHRibmEtVnM3YmVKQkRzYi1TcDNOVVFQOThmckNvSGNkY2pjUHI0YUhIdlprbExIVmptVzFXeHZWLXRKTDlVRFQtVTJQaUtGTkc2SmNwenZRc3JDN3RocV9jUGU?oc=5",
       "source": "Bloomberg",
@@ -287,6 +307,15 @@
       "category": "company"
     },
     {
+      "title": "Apollo Private Credit Fund Reports Loss on Portfolio Weakness",
+      "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQYTVJaXZ4S0czUlEzblJpMHdCZTU0ejA2ZnRtMUVKYWdkYWhxaVA1QWFZd3p0b0lVVHpzLXpxQktuT0RDQU8xNzgyVWFCQUxnSXUwOTNQTlA3SlV5Qmo1VVdJMjBBSzVWa3lBYVU4RloxSE45WGw2SGI1Q2dhNEF6UWt1Y3ZMZlVreTNqQjlCR2NYcVczTnJZOWpDRFFPU0owWURJeVJLajBzcDgxOEkxcTVn?oc=5",
+      "source": "Bloomberg",
+      "published": "Wed, 06 May 2026 07:00:00 GMT",
+      "published_iso": "2026-05-06T07:00:00+00:00",
+      "tickers": [],
+      "category": "general"
+    },
+    {
       "title": "Sixth Street BDC Cuts Its Dividend After Posting Quarterly Loss",
       "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxPa2V3cVlZQ2lvRnJaU05RNHFFUVB4bEEwMXlDZjVVOTcxY2tpM0ZMVmpPRm5FS3cxaDEtdUJ0YWFOcEduVjBqOElwRmt3M0w0Z0RKUF9YZ3hUTlplcFNSUS1SY0FhUHZIcjJCUGRGMDBZd29mQjc2Mnd3QmZIbWRObFc3SGhBRHF4U19NVVFLeWdVZ2lyWmRTNS1YRGZ0cmI0NXFMLU9WMkRrVW1LWURiU0stRFQ?oc=5",
       "source": "Bloomberg",
@@ -295,15 +324,6 @@
       "tickers": [
         "TSLX"
       ],
-      "category": "general"
-    },
-    {
-      "title": "Apollo Private Credit Fund Reports Loss on Portfolio Weakness",
-      "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQYTVJaXZ4S0czUlEzblJpMHdCZTU0ejA2ZnRtMUVKYWdkYWhxaVA1QWFZd3p0b0lVVHpzLXpxQktuT0RDQU8xNzgyVWFCQUxnSXUwOTNQTlA3SlV5Qmo1VVdJMjBBSzVWa3lBYVU4RloxSE45WGw2SGI1Q2dhNEF6UWt1Y3ZMZlVreTNqQjlCR2NYcVczTnJZOWpDRFFPU0owWURJeVJLajBzcDgxOEkxcTVn?oc=5",
-      "source": "Bloomberg",
-      "published": "Wed, 06 May 2026 07:00:00 GMT",
-      "published_iso": "2026-05-06T07:00:00+00:00",
-      "tickers": [],
       "category": "general"
     },
     {
@@ -356,6 +376,17 @@
       "category": "company"
     },
     {
+      "title": "Blue Owl Distributable Earnings Rise, Revenue Climbs",
+      "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxPWjF1T3dZWVpjaEhTQVpka0lVcUZHdmV1YTJOZGwwdFJRd2dEUk9iY29xdVE3U1dMcWJBTXNTOTR4OFd6Q2U0MV84ck15enAtMll6SjBheTVLYnVRQVZrNGZSQ1p1QnhaTXZIN1NuZHRYNWhRZXo1eHVJUHMwS3dISUIyYjdfM2tPMDJZOUktR081bTB0Q2ZVcWJ1YnJtc2JGZnI0LVdoVi1pNHdoYV9wV3o4WFNjYTNFb25jLUdDX25mbmIxR1NTMA?oc=5",
+      "source": "WSJ",
+      "published": "Thu, 30 Apr 2026 07:00:00 GMT",
+      "published_iso": "2026-04-30T07:00:00+00:00",
+      "tickers": [
+        "OBDC"
+      ],
+      "category": "company"
+    },
+    {
       "title": "Watch Blue Owl Scrutiny to Ramp Up as Shares Near ‘Doomsday’ Level",
       "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxPOHUxejZuMk9fczR6ZUFNYTNpT3FqZ0lFRHFpc3JSSmoyWlhuLUE2ekpRaHZUSjdqWmVvMVVxQkZKRU1UdFRwYVpIVG1BUUx5WGV5a3hyZ1ZKcE9wNWZ3dVM5Z1o1b0FNbncwLVl0a0JJZV9nOXZ3S0dacjdhVVBOaEw3THg1RDU0NTFR?oc=5",
       "source": "Bloomberg",
@@ -386,7 +417,7 @@
       "tickers": [
         "OBDC"
       ],
-      "category": "company"
+      "category": "general"
     },
     {
       "title": "Ares Sees $1 Billion of BDC’s Software Bets at ‘Medium’ AI Risk",
@@ -622,6 +653,17 @@
       "category": "company"
     },
     {
+      "title": "Blue Owl Investors Seek to Pull $5.4 Billion From Two Private-Credit Funds",
+      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxONXNJMHRPZk5rZkpaWC1KVmMxeVprT09fTlFjd3hkMjRLNzJwMVVZc01HcERHU1lMd2U1cWdxT2w0c2JVZExJU3pFVWZyd09DUTNfS0l5T2llcTBwQ0o1ZERKQWI2SU54bU9hTXJRS3NUYmdzeGdJSFhlb1F5bVBFeVVOeG5MdUJUQnJmc2RDOTNSelk3cEt2NVZQZDdTZ1pzOEhDcGpkd0l1ZWFoTWxlUjhVbnRCQ0U?oc=5",
+      "source": "WSJ",
+      "published": "Thu, 02 Apr 2026 07:00:00 GMT",
+      "published_iso": "2026-04-02T07:00:00+00:00",
+      "tickers": [
+        "OBDC"
+      ],
+      "category": "company"
+    },
+    {
       "title": "KKR Curbs Redemptions in Non-Traded Private Credit Retail Fund",
       "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxNSUVtM1Z5YVRzd29fYUw2bUhwUjV0ZXMydms5d0ZRU3JUd3gxVGJTZGxyUG5jSkxxOWxZbmhIRHZMdUZNSnZPX1pOS2tid3NQcThXWkpDV3VSYVZES3NBZ1otRnhUSHVGMWtoenlyeWotZExQQ21vUHhUV1Azc2pGNjZrUHJlTnFHQXhmWWFLSE5YVHdnQXBBZ2ZFbTU0WkJwWjRWQV9DZ1puZnJzaHdBaWlPYw?oc=5",
       "source": "Bloomberg",
@@ -629,17 +671,6 @@
       "published_iso": "2026-04-01T07:00:00+00:00",
       "tickers": [],
       "category": "general"
-    },
-    {
-      "title": "Main Street Announces Follow-On Investment",
-      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPMXgtRGdzVmRtZi1RQVZRRVE4dW9uVGZ6WTNGeGNqZ1RMVS1scFZfOWFMdF9RZ3dOTTVndFBXTU5zSUF0clA3NDhlbkFaZ2lWUjZJRmxxTHk4TGx4SjZpQXduUWpTc1BOTjBzRk5yako1TXlhdTdNRDlBVGRLRGFibkZhYWthT1JkM3EzSnYxT2RfMXlJM0E?oc=5",
-      "source": "Financial Times",
-      "published": "Wed, 01 Apr 2026 07:00:00 GMT",
-      "published_iso": "2026-04-01T07:00:00+00:00",
-      "tickers": [
-        "MAIN"
-      ],
-      "category": "company"
     },
     {
       "title": "Oaktree’s path puts private credit choices into relief",
@@ -662,6 +693,17 @@
       "category": "company"
     },
     {
+      "title": "Blue Owl Capital Closes New Asset-Backed Fund With $2.9 Billion in Total Commitments",
+      "url": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxQVUF2cDA4cUh2Rkk0LVN3dU9Yb3JxMFBOdUdKMHN3ZDdSTGpDNjRzRUR2MkNSN0JLczZXNm5NSFg5ZGliTWlfM1dMLVNKOWRLMXd4NU9VT1NNOU9hUGs2M29BcXlGbFVXQTlpckI0ZXZIYlczbXBJR3Vac3gwTUpQMzlhb1U0NFhkT09fM0E1c1ZWend3U3I4TUNxN2pYR2NQUVhwbVI4RHRVdDVjdEs4dUNrOUxRV2tNWVg3UnNLcHVodExJc29fTXV4MFJLN2FCYXVYcW53NHBSbHV6VTl0OGs4cDd4T0szSDRILWRsVmZEMHdV?oc=5",
+      "source": "WSJ",
+      "published": "Tue, 31 Mar 2026 07:00:00 GMT",
+      "published_iso": "2026-03-31T07:00:00+00:00",
+      "tickers": [
+        "OBDC"
+      ],
+      "category": "company"
+    },
+    {
       "title": "Private Credit’s Exposure to Ailing Software Industry Is Bigger Than Advertised",
       "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxNM1FMa0Ria2VxWVNTRWdwWExydVZLVDJabjJWeXNNaWhyRGVXNVhxUmhNNkdRRnowT2NxN09mVU55Q1gtUUhJWEs4ZFNTbjdKa2FscnRIcTUwT2FoZUl6MmppU2dVZlQtZEFsOFhLYUJOWjB6bWhXcEppYUdBSnFlU3RYZEV3ZnhyendCNUpQVjh5MHIxSjVZREVUaDl3TDgxS0pIQW83OG5sREtCeWM3UWcxYmlpMEdKR3NMWTN2dEtrdjg?oc=5",
       "source": "WSJ",
@@ -669,17 +711,6 @@
       "published_iso": "2026-03-29T07:00:00+00:00",
       "tickers": [],
       "category": "general"
-    },
-    {
-      "title": "Why Investors Were Right to Be Wary of Blue Owl’s $1.4 Billion Deal",
-      "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxOOEVYWjhlOUdsQUp2NHlqbUs2LWNSeXpoLW9HNTBtVGdGbEJsWlFyeDRxS0hHbHhIQ1NvVXlDdU1HOGFZa2VJc21HNmxBVU1MMWdQUkJLLUJDZWR5YW5rRXprcXdSZkZpZHlwZ01hX0xzakxKaXFQRFhjandfcUlIR0Z3QnpwNlkxamRHalZuVmtrY21fRGlTTFdNem1tM0dXaUg5RHhCWUpta2tBTjg3bnRB?oc=5",
-      "source": "WSJ",
-      "published": "Fri, 27 Mar 2026 07:00:00 GMT",
-      "published_iso": "2026-03-27T07:00:00+00:00",
-      "tickers": [
-        "OBDC"
-      ],
-      "category": "company"
     },
     {
       "title": "JPMorgan Plans Private Credit Fund That Allows 7.5% Redemptions",
@@ -825,6 +856,15 @@
       "category": "general"
     },
     {
+      "title": "Private Credit Gets Marked Down",
+      "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQR2RPMTdlamN5OHN6WmFTY19uelRrWDRXb2xPbW1VSzN6QUhxYWJZazV0bkFSV1RoWlU0SjYwQ0N2SjFMMXBtbzl2LTZBVF9mTUkycDRnbFBzU1hMRTM5RTBXNzdBLTByODd1QVUtRG5Wb2NNRG1jd1dOX2dubjloTUVabVc0N09fR3FrSmNaXzlGdw?oc=5",
+      "source": "Bloomberg",
+      "published": "Wed, 11 Mar 2026 07:00:00 GMT",
+      "published_iso": "2026-03-11T07:00:00+00:00",
+      "tickers": [],
+      "category": "general"
+    },
+    {
       "title": "Does private credit have a credit quality problem?",
       "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQV0FiY0Y3ZkhzdTdEaGtScF9abFl4SC16cWNxWV92RnNqNjc4R3o4U2VZem1ZM1R0NERPRzFpM2x5SlhvSGF1OF9QYWxiTjlhUXk5cWlVcVFBWDVjOEVkWDZ5RG9UVFFlRXQyTFVzbGlMR2otX2IzQ3ZxZFlZc3R5eERhVEQ?oc=5",
       "source": "Financial Times",
@@ -910,17 +950,6 @@
       "published_iso": "2026-03-03T08:00:00+00:00",
       "tickers": [],
       "category": "general"
-    },
-    {
-      "title": "Blue Owl slides below listing price as private credit worries mount",
-      "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxOTHVWWWRnaXhkN1pLTHd5UFZNVUNrbFBmVW44d1ZxVE9ocEdteWZpQkF4WmgzVTJiU1ZMS0FPTE5JUGFWZVBNMDlvM1BsQldUSjdONm1SMzlYUHVPSVBqUmZ0dFNkS0lqTEVNYlJzS3JFRlJmSmFmdGxYYkNWR3JKdkJCOWI?oc=5",
-      "source": "Financial Times",
-      "published": "Tue, 03 Mar 2026 08:00:00 GMT",
-      "published_iso": "2026-03-03T08:00:00+00:00",
-      "tickers": [
-        "OBDC"
-      ],
-      "category": "company"
     },
     {
       "title": "Retail investors shun private credit funds after Blue Owl gating",
@@ -1127,17 +1156,6 @@
       "category": "company"
     },
     {
-      "title": "Blue Owl Loan Sale Raises $1.4 Billion for Investor Payouts",
-      "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxQU2w0UHFpSDh1dmpjYmtWRWV5YVJjcHdFTGpBV0h0aWJXMHlfQnN5bGJaZTl5UHlKSzBPUVI5RHQwQzBlODZJSnVKeGR3ZWdWOC1mVTZZeEk2NG1wMU1GMkVRSjZvQWZoY1VTM09hZGVsN0x6LTN4Tlp4TUNJYWNaSmNTeGthNk9LcVdkMF83SjJIVGgyYzg1el9CQm42akpUYjhPOS1reG9obnY5MkE?oc=5",
-      "source": "Bloomberg",
-      "published": "Thu, 19 Feb 2026 08:00:00 GMT",
-      "published_iso": "2026-02-19T08:00:00+00:00",
-      "tickers": [
-        "OBDC"
-      ],
-      "category": "company"
-    },
-    {
       "title": "Private credit stocks slide after Blue Owl halts redemptions at fund",
       "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNdHVNVG1WMDBWTjZNeUlwWjZmT0t0NmwwNWlCTU9PRkMyMWRKOEZQQkNKb1hIZlV2Q1RoTWpsUjRBZDhDbkRUQTBydkVLMFRuN1gwd1RIVUZVMDNoVWZfbk9tRTBZT1QySEQ4OFBhc1NvNE8xc2M3dVRVSjhnY1ZqeWNRbVU?oc=5",
       "source": "Financial Times",
@@ -1200,20 +1218,11 @@
       "category": "general"
     },
     {
-      "title": "A-Team | New Bloomberg US BDC Index Offers Insight into Private Credit",
+      "title": "A-Team | New Bloomberg US BDC Index Offers Insight into Private Credit | Press | Bloomberg LP",
       "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxPMW83dWhISmhVTzdlSm5qS0NVWk1paEVLT0ROVW9seHdDYnMyZndTbklHVU13UjhudXptVU1QV2haV0NEbU1WVGVpZ2lkUnhBbW93M3RuTXRhQW45bHNZcGhDWnVtTXBaNWIwZV9wdEtUZ0w1ZDc1dEdlWE5fWjNDQzVNYVBsMTJkcHFIaTdhZDQ3NDN2cWtFcHplODNsYlloM0c0MEYxTkZjZ0Z3Ync?oc=5",
       "source": "Bloomberg",
       "published": "Fri, 06 Feb 2026 08:00:00 GMT",
       "published_iso": "2026-02-06T08:00:00+00:00",
-      "tickers": [],
-      "category": "general"
-    },
-    {
-      "title": "Private Credit Is Headed for a Software Shock",
-      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPaU93a0k2LW0zcG5Bdm1wVVNWbkRRNnN1TUFUT0FYSUgzdmt5VTRPeVlfOGNLbEd0Vy04ZjJqQmJUYmc3NFI2T290X0tRMVNYNkhkRGRpYmZmQmpDNk9GdGgzYlQ4LWFuU2pRMmE0aWt0OUJQcFFPY0htM1dLV3Y3N0NwVzlVcWVtRXpUVjZKUnRoUmlSUVdwTnhaaXNCekot?oc=5",
-      "source": "Bloomberg",
-      "published": "Sun, 01 Feb 2026 08:00:00 GMT",
-      "published_iso": "2026-02-01T08:00:00+00:00",
       "tickers": [],
       "category": "general"
     },
@@ -1340,6 +1349,15 @@
       "category": "company"
     },
     {
+      "title": "Watch Centerbridge's Aronson Defends Private Credit: 'Take a Breath'",
+      "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxPZERHdjQ2MHd0OXRPLWtYSE1VSUlGU2ZzcUprT2lrQzl5X1ZxNmpiZ2pzeFk5MkFPMk5lWmN2QjNCbzBQZ2pFdXlEbFpTTlphNUlHeFAyRERRRTJ5Q2RTRnFUaGNSMmg5Wl8wc0x6cDF0bVdzQV8taVI1cXBBYzRpQmRVXzRjUlhNNHV1MmRwVVIwV3NLNTdFc2N1VEJxd3plUDRod0paQkF1a00?oc=5",
+      "source": "Bloomberg",
+      "published": "Fri, 21 Nov 2025 08:00:00 GMT",
+      "published_iso": "2025-11-21T08:00:00+00:00",
+      "tickers": [],
+      "category": "general"
+    },
+    {
       "title": "BDC-issued debt: A public window into private credit issuers",
       "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxPaUhtUXpQaVdTalZUbm96RllQXy1YdXpvdkVzM2tValZnVFRaak1yQU5hRTRZemZOZFlMclZsRmVVZ2gxT1dvRU1lMzg2ZHdUQ3RnVlRIUGxIQXRnYkktWGkyYXU3NThlLWJxZENaSGpxeE5IN2U1WElxWTNDT0lEdHJmRzdMSzZ3TmUteFZsRktmY2htcFU2cUwyS0tnY1RKMk5iR0JDTld4OU42djRQaENnaVJ0YUE?oc=5",
       "source": "Bloomberg",
@@ -1401,8 +1419,8 @@
       "title": "Blue Owl Leader Dismisses First Brands, Tricolor Bankruptcies as ‘Idiosyncratic’",
       "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNN2tGeHJoR1ROT1pfQVAzUUVVN2hadG9kRUNYNUxvWk1RbWZzSzhEV3YwZWxTX0xHME54RVNyZVBaYWltMU9MMkxpd3JLcHFsQXRIM1piaGRWRHFyaXFMeDJuNFJ0eXVuTm90VXdZV2lIaEsyNTlMSDYwb3lBUXlWbjJyNkFvQzNEOHNPM0dwSF9aUzNjaHVSa3NLQWNLRENybkxqc1ZTb0JBa1FUckVBODlvcUtXUQ?oc=5",
       "source": "WSJ",
-      "published": "Thu, 30 Oct 2025 20:17:04 GMT",
-      "published_iso": "2025-10-30T20:17:04+00:00",
+      "published": "Thu, 30 Oct 2025 07:00:00 GMT",
+      "published_iso": "2025-10-30T07:00:00+00:00",
       "tickers": [
         "OBDC"
       ],
@@ -1549,24 +1567,22 @@
       "category": "general"
     },
     {
-      "title": "Jefferies Private Credit Bdc Inc",
-      "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE85NmtfaUlHak8wZlFZcFJQRXd0dXcxX3dBNW8xUndvd1gyQjU2ZHl4N3J0MDhaQk1LUHZhSGhGZ0M5dU5ad3FTcl9XVTlfOGlKNjN0ZVBFTjFId3dsTERlNFBhbw?oc=5",
+      "title": "Onex Direct Lending BDC Fund",
+      "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE9zeGlBNjk1bzJ4TEVpcEJOemZWUm5OZlI0OTJLcmVHNWV6RHBtWjVmUDh3dHpzZ21kX1lodU96dEVwRmt0dkVKdEo2c19rZVFZOWp0ZHhuTUI0cmZsQUV6dUpCOA?oc=5",
       "source": "Bloomberg",
-      "published": "Wed, 23 Jul 2025 20:47:48 GMT",
-      "published_iso": "2025-07-23T20:47:48+00:00",
+      "published": "Wed, 23 Jul 2025 18:19:55 GMT",
+      "published_iso": "2025-07-23T18:19:55+00:00",
       "tickers": [],
       "category": "general"
     },
     {
-      "title": "GOLUB CAPITAL BDC HOLDINGS LLC",
-      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE9ybGxzNXlHVnVsYzIyNk1iT0pabjVYSmlhUkZLd2ZIczh5dG1fcnFobUw0UmdFQU1od3praXVuZlhMV2h4UGh1UGlNNTlFNDhtRzhnYl85elJMMnItNlRXOThzZUpBenc?oc=5",
+      "title": "Jefferies Credit Partners BDC Inc",
+      "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE1FQk5TRWdnZ1VHN0dwTXRxNS15WVJ0dWRTZmswVlBOSEtBRTZ6RGhkQS05MElRc3N2U3NJTEFQWmFnMW5UREdXaklWdmVFOUYxU1R6ZHhsMnlHdFJMVzd3WTRXbw?oc=5",
       "source": "Bloomberg",
-      "published": "Mon, 07 Jul 2025 16:05:31 GMT",
-      "published_iso": "2025-07-07T16:05:31+00:00",
-      "tickers": [
-        "GBDC"
-      ],
-      "category": "company"
+      "published": "Tue, 22 Jul 2025 05:54:26 GMT",
+      "published_iso": "2025-07-22T05:54:26+00:00",
+      "tickers": [],
+      "category": "general"
     },
     {
       "title": "A Pioneer in Private Credit Warns the Industry Is Ruining Its Golden Era",
@@ -1578,13 +1594,24 @@
       "category": "general"
     },
     {
-      "title": "Sixth Street Specialty Lending Europe II Advisors, Ltd",
-      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE5sNmduS3VSNzBMcDZ2NWdFbG9PLTN4S3A5aVhNdUg0YlQybWhrbjMyTzlRNmdPWVl3WTVHQ1FXakk3YWFoY1ktckVTSGVGVzdPSHNkZkJFR241dUs2RDBLdG5raDY2MU0?oc=5",
+      "title": "SIXTH STREET SPECIALTY LENDING EUROPE III (B) (USD FEEDER), L.P.",
+      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE55WUJ6UFZmTFJmb2g4X20yeEQ4Nm9XTVJWQzVsRWZLWk5JX0M5ZEp5SEdmckZ4ZjlVSDRid3FhLTZnLWY1M2lFaThtSnBzb3FhZFlPTTQta3hOLTQtMzktNTBMR2JOcUE?oc=5",
       "source": "Bloomberg",
-      "published": "Sun, 15 Jun 2025 02:05:26 GMT",
-      "published_iso": "2025-06-15T02:05:26+00:00",
+      "published": "Fri, 06 Jun 2025 16:18:22 GMT",
+      "published_iso": "2025-06-06T16:18:22+00:00",
       "tickers": [
         "TSLX"
+      ],
+      "category": "company"
+    },
+    {
+      "title": "Golub Capital BDC 4 CLO 1 LLC - LEI: 254900WMHKX8IBP1H968",
+      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE1lWTRGQjJCbHp3di14bndlZVRMUklwZlk5UVVUTjJEbk9RYlVCSXA1VzVDei1mNmJESVUydVJ5NnJ4THQzOVM5SGl4WHVlVUU0NFRTbk4zbVdTelFrLXJZbDdGbXB1Rlk?oc=5",
+      "source": "Bloomberg",
+      "published": "Fri, 30 May 2025 18:54:33 GMT",
+      "published_iso": "2025-05-30T18:54:33+00:00",
+      "tickers": [
+        "GBDC"
       ],
       "category": "company"
     },
@@ -1636,17 +1663,6 @@
       "published_iso": "2025-05-03T07:00:00+00:00",
       "tickers": [],
       "category": "general"
-    },
-    {
-      "title": "Watch Lipschultz: Blue Owl Built for Current Environment",
-      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQNm1CYmtaYzdKcDFRclE3MFJIaFNSU1ZjM3BYZ1RJaUNFSlhqU3JmLTgtUDJtalBXem9GRElXYkRKZ2tIZVJjdUxVR01nOTk3LUhGemo0aWttOFdMTlVFOXlNZHZ3X1VsX2p2VUtBcWpkV0dnV0ZNM3NTQV94RkJEZHJSdENfcmh5ZzYyQ25SQkJxQ0hldmZEdzhPVXd1Zy1oSnRuUlNR?oc=5",
-      "source": "Bloomberg",
-      "published": "Thu, 01 May 2025 07:00:00 GMT",
-      "published_iso": "2025-05-01T07:00:00+00:00",
-      "tickers": [
-        "OBDC"
-      ],
-      "category": "company"
     },
     {
       "title": "Blue Owl-Owned Stack Seeks $833 Million Loan for Asia Growth",
@@ -1733,7 +1749,7 @@
       "category": "company"
     },
     {
-      "title": "Blue Owl Gathers $1 Billion After Pitching an Unusual Sweetener",
+      "title": "Blue Owl (OWL) Gathers $1 Billion After Pitching an Unusual Sweetener",
       "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxOTTltZUhKMEhiU2dMUXhteGpGVjBhUkRXNnhqX3o4bXV1TFdZaVFRaExWV3I0SkUyUWk5WFpLSjk5RUJ5LVlVVDJ4eWdEWUhzcG9JWlVYdG9oX242WmVDNHgtNlg5UC1jTkVWWHdNSE5CQ2NXb243V0RmaDFNOFhaYjd1WUc5dHZMMHJmY1FCQWZoNTVxSmhicVYtS3VhalVTcmdPOGhBdDdYZUpRMF83UzFJUQ?oc=5",
       "source": "Bloomberg",
       "published": "Mon, 03 Mar 2025 08:00:00 GMT",
@@ -1775,11 +1791,11 @@
       "category": "company"
     },
     {
-      "title": "Ares Capital Europe VI (E) II Assets SARL",
-      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE1PWmFLc0owWmlmWkxyVmw1VVRTM2YwYnR5aU10NVUta0IzYzRQS0tMSmIwajd0dlY1REJNeHVzejdFUEhkZEwwTEJmVmNzXzdIbXl2R002VUo5eXZlcHc3MGFpSlprc2c?oc=5",
+      "title": "Ares Capital Europe VI (E) Assets SARL",
+      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE8takhpaE9SQ2lGN3EzUjRKdnlEM0pVMnpjNmFrSjIzdWNCMFduLXJmREl5b0RoZDR0VWtSdEFCcGM5WTdKRjJwd3pMcFNaQ0VsOTFtQmUzVHN1N2N3ZGtSU1FRdElFX0U?oc=5",
       "source": "Bloomberg",
-      "published": "Sun, 23 Feb 2025 23:40:18 GMT",
-      "published_iso": "2025-02-23T23:40:18+00:00",
+      "published": "Sun, 23 Feb 2025 23:32:45 GMT",
+      "published_iso": "2025-02-23T23:32:45+00:00",
       "tickers": [
         "ARCC"
       ],
@@ -1802,6 +1818,17 @@
       "source": "Bloomberg",
       "published": "Fri, 14 Feb 2025 10:13:05 GMT",
       "published_iso": "2025-02-14T10:13:05+00:00",
+      "tickers": [
+        "ARCC"
+      ],
+      "category": "company"
+    },
+    {
+      "title": "ARES CAPITAL MANAGEMENT III LLC",
+      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFB3YVRaSFMxNHgxWDVhcG5BYzlrRkFyb2xkY1pfM0NhdkZvRzIzVWw5SmUtRGRNUXJvak9EVFZiRDFDc0NPTy0yckp1TEtMT21TeVFZNDhaZmNGNTlnUkluelpYNk5xbHM?oc=5",
+      "source": "Bloomberg",
+      "published": "Wed, 12 Feb 2025 00:27:11 GMT",
+      "published_iso": "2025-02-12T00:27:11+00:00",
       "tickers": [
         "ARCC"
       ],
@@ -1890,17 +1917,6 @@
       "source": "Bloomberg",
       "published": "Tue, 17 Dec 2024 08:00:00 GMT",
       "published_iso": "2024-12-17T08:00:00+00:00",
-      "tickers": [
-        "PSEC"
-      ],
-      "category": "company"
-    },
-    {
-      "title": "S&P Downgrades Private Credit Fund Prospect Capital to Junk",
-      "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxNNThCVjJqZW16dFNMenY5WjNUZWRBaTBYbEdnU1R0dU1hSjZINDVETndzRmgycmpjSzhQd3dlTnZ5N3paYkhONU5CRVY2cXFfT2hGazdyVDZObGVkZERGWEo5TWdXMVg5ZXhtSWd1Q1A0ZVdBT1FfdEc4dDJvM0VRVkVKOG9UVktwM3NLWk1Kc1RDZFJKMnI1S0pPdDVINTBDd2ROSTNXQ0JwNzJNVnFz?oc=5",
-      "source": "Bloomberg",
-      "published": "Fri, 06 Dec 2024 08:00:00 GMT",
-      "published_iso": "2024-12-06T08:00:00+00:00",
       "tickers": [
         "PSEC"
       ],
@@ -2096,17 +2112,6 @@
       "category": "general"
     },
     {
-      "title": "Morgan Stanley Direct Lending Fund, MSDL:NYQ summary",
-      "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE12eTdfX29QOXhmQ2Y3cGlndVFtUTRVek5MUlB0Sml2LWRGSzlPQjlPc1lCekF4RE1GYXBxYVZRTXQtWFdqZkF4bkNBbGd3WGNJNm9QYkxMbmJvLWhSRmI5MjhNZ19pYUtGcFoxcmhqT0d0cDQ?oc=5",
-      "source": "Financial Times",
-      "published": "Wed, 14 Feb 2024 23:17:14 GMT",
-      "published_iso": "2024-02-14T23:17:14+00:00",
-      "tickers": [
-        "MSDL"
-      ],
-      "category": "company"
-    },
-    {
       "title": "Bloomberg for Credit: Navigating Private Credit Markets Webinars | Bloomberg Professional Services",
       "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxPY0dESzBwSkZFYTRYVmE5WUF2VXNqOVN5TS1OZG5GeG5YVmZTOXI1dkU0MGQzdlRTVEI3YjJUdC1iYU5wLUs2b1hHUFVpYTFTakVsVm1yMW1yejNtSWNaVThxeW9ucEdxZ0ZmS081SFJBenFoN3g2V1kzWjdZNlNmZm5sdnNaNV8xOTlaU0hWSmF3R01GalpIQWlkeXhqaHVBcFY1ZG9rUFRfemw1dkZXcQ?oc=5",
       "source": "Bloomberg",
@@ -2167,6 +2172,17 @@
       "published_iso": "2024-01-31T08:00:00+00:00",
       "tickers": [],
       "category": "general"
+    },
+    {
+      "title": "Morgan Stanley Direct Lending Fund",
+      "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTFBmdWF5TmxPODZ5dkotejVrMGVDR3Z5SkJRaG1TOVZrTFl2eG9aTzZPMGw2ZXAwaFhrUGlreThQQ2otNjlZeFJMR3V5SzA5cTlP?oc=5",
+      "source": "Bloomberg",
+      "published": "Tue, 23 Jan 2024 03:18:39 GMT",
+      "published_iso": "2024-01-23T03:18:39+00:00",
+      "tickers": [
+        "MSDL"
+      ],
+      "category": "company"
     },
     {
       "title": "A window into private credit marks",
@@ -2289,6 +2305,17 @@
       "category": "company"
     },
     {
+      "title": "Oaktree Specialty Lending Corp, FFC0:DUS summary",
+      "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBKZEV6U3lXUmV5V3NTWGkxTjJDNFRkaFZzdExEaUVTbWFYRnRoM2Q2Um1mNGZYanowQ3duSS1kNFluaDV1VDNLaV83YVlHR1dyRFdCc2pZLVBnUWRqb19BeU94T0FuSFlRRkhnRlktQjFHWDg?oc=5",
+      "source": "Financial Times",
+      "published": "Sat, 18 Mar 2023 18:44:04 GMT",
+      "published_iso": "2023-03-18T18:44:04+00:00",
+      "tickers": [
+        "OCSL"
+      ],
+      "category": "company"
+    },
+    {
       "title": "Apollo Debt Solutions BDC",
       "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE9iYnlSTWVQcGFOSlNTZlQySDdESHVBTTNqaXR5NDYwUFVPZXJIWGFqU29vZEtiNXY4OXFJZkJJTlpNaTA0eVN4NlE0QXNPNzdidFUwLXVjZDQ1TVlPakloZUQ1VQ?oc=5",
       "source": "Bloomberg",
@@ -2329,22 +2356,22 @@
       "category": "company"
     },
     {
-      "title": "Blackstone Secured Lending Fund, BXSL:NYQ summary",
-      "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1rTkpTUVpzU1VTdktUekhOTV9mWDFCSmt2TWhFR29pNC1fZy1NU1VIdWU4X3JZdFpBNVZYZjMtbXllNDdrS1N4WHJudFhGSU85c1VkQ1c3eldkVEIteDlwS1VGNzNRYi1Cc2w5NXdnMmJYb0U?oc=5",
-      "source": "Financial Times",
-      "published": "Sun, 31 Oct 2021 19:21:14 GMT",
-      "published_iso": "2021-10-31T19:21:14+00:00",
+      "title": "Blackstone Secured Lending Fund",
+      "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9ZbnJPQUhTR2JjUVV1WlJhUGg4T1AtQ1BaU2V0WUlHNkRPM2pvY0NQUGowdE0zN3A2Q2lHNWhGSmxrWjB4M0c5NVl1ZmxWN3c?oc=5",
+      "source": "Bloomberg",
+      "published": "Tue, 05 Apr 2022 12:26:43 GMT",
+      "published_iso": "2022-04-05T12:26:43+00:00",
       "tickers": [
         "BXSL"
       ],
       "category": "company"
     },
     {
-      "title": "Blackstone Secured Lending Fund",
-      "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE9lQ2hpcmk0bHhiOVk4SHpxMEpJWU1iMkpxMDh0alRENllRS2RkNHRyN2dveXlQRnljYkx2WHZJU1d4VHNDdnJaay04S0xuWnYy?oc=5",
-      "source": "Bloomberg",
-      "published": "Fri, 22 Oct 2021 08:18:01 GMT",
-      "published_iso": "2021-10-22T08:18:01+00:00",
+      "title": "Blackstone Secured Lending Fund, BXSL:NYQ summary",
+      "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1rTkpTUVpzU1VTdktUekhOTV9mWDFCSmt2TWhFR29pNC1fZy1NU1VIdWU4X3JZdFpBNVZYZjMtbXllNDdrS1N4WHJudFhGSU85c1VkQ1c3eldkVEIteDlwS1VGNzNRYi1Cc2w5NXdnMmJYb0U?oc=5",
+      "source": "Financial Times",
+      "published": "Sun, 31 Oct 2021 19:21:14 GMT",
+      "published_iso": "2021-10-31T19:21:14+00:00",
       "tickers": [
         "BXSL"
       ],
@@ -2413,6 +2440,17 @@
       "published_iso": "2019-12-22T10:25:12+00:00",
       "tickers": [
         "MAIN"
+      ],
+      "category": "company"
+    },
+    {
+      "title": "TCPC | BlackRock TCP Capital Corp. Analyst Estimates & Ratings",
+      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1lVGF2NGZBc0RRVUIzYmFMNmdoSmtkNWJkdjd2UlNPa2Y3azdUUE9mdERJUzdxNDl4TkUtVVZWSkp3VDRuaDd0bGpDWUNZSThxaUhQQmlrbWc4bkJ2T2pwX3h2VEU2c1d5ZDBVaQ?oc=5",
+      "source": "WSJ",
+      "published": "Sun, 22 Dec 2019 09:23:40 GMT",
+      "published_iso": "2019-12-22T09:23:40+00:00",
+      "tickers": [
+        "TCPC"
       ],
       "category": "company"
     },
@@ -2525,17 +2563,6 @@
       "category": "general"
     },
     {
-      "title": "FS KKR Capital Corp",
-      "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5aakNWVFlqeEdnZVZteTlNUy13b09mM0hMNDROaGp2eFB1Ym1ScE9GeTVQQjgzUENhazJqVFBuQzBPODFUT2Y4S3hqeG45czA?oc=5",
-      "source": "Bloomberg",
-      "published": "Fri, 21 Dec 2018 22:52:20 GMT",
-      "published_iso": "2018-12-21T22:52:20+00:00",
-      "tickers": [
-        "FSK"
-      ],
-      "category": "company"
-    },
-    {
       "title": "FS KKR Capital Corp, FSK:NYQ summary",
       "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE91MkhzZ011N0RHUWRGblNnUm1zUDR1TUd2b01uSWF6ZHhOUEhqaWMxVE5SRjV4X2ZIVEhmRTBfcU1mUlRRaTZ2aFVIRXNWMFBEY1RZYS1zQTJiVnQ0TjJSWmw4VV9Kb3owR09vRG5BWGswQQ?oc=5",
       "source": "Financial Times",
@@ -2624,6 +2651,17 @@
       "category": "company"
     },
     {
+      "title": "Carlyle Secured Lending Inc",
+      "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE53dUlKeU9ZVDhidDJqZnZEb3g1Zm1jQ1RMRVg0UlZnQXVNckh1WE1Xd0Zqa19waWNPMFdveDF6aWVMWE9keGw5bFl1bmFiYzhf?oc=5",
+      "source": "Bloomberg",
+      "published": "Sat, 03 Jun 2017 08:28:50 GMT",
+      "published_iso": "2017-06-03T08:28:50+00:00",
+      "tickers": [
+        "CGBD"
+      ],
+      "category": "company"
+    },
+    {
       "title": "Ask The Experts : Ares Management’s Tony Ressler: ‘You Can’t Hide Performance’",
       "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxPdzJ3R295ZFloUTh1UHpTNk42OVdySjh2NTgwS2Z0NUlJT0RfVGR5QlFESmNzYTRtUkhEdndXNnFqNlFPeGdQU1VxV2p0eW5hTVdkT3U2RUVzXzIyTExfeU1BTVNYU2cxOWZnR2Nxb09YRkR3M1hVYl9CT3JKT0Y0U1c1Rnd5X3Znck9HdTlhaXNzcWN2eUc0am1fRHc4dHpBUE8xTlJQOHFjWmoxLThYeQ?oc=5",
       "source": "WSJ",
@@ -2642,6 +2680,17 @@
       "published_iso": "2017-01-25T19:04:49+00:00",
       "tickers": [
         "GSBD"
+      ],
+      "category": "company"
+    },
+    {
+      "title": "Prospect Capital Corp, RK8:STU summary",
+      "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE0tbndIRDVfcHhwOFRmT0x4UnFKbDBmOEl5QXZCVTZtcWRCdFBOWDQ1ZTltOW1ubHpwRncwaUlCZFdLX1YySm1TNGctMW9ZMXJGS2tyOTZrRlNTZ2g1UGlBZ3dIb1RpSWpQQ1NCUDFlVy0xZw?oc=5",
+      "source": "Financial Times",
+      "published": "Sun, 18 Dec 2016 10:06:58 GMT",
+      "published_iso": "2016-12-18T10:06:58+00:00",
+      "tickers": [
+        "PSEC"
       ],
       "category": "company"
     },
@@ -2708,6 +2757,17 @@
       "published_iso": "2016-10-31T06:32:39+00:00",
       "tickers": [
         "GBDC"
+      ],
+      "category": "company"
+    },
+    {
+      "title": "BlackRock TCP Capital Corp, TCPC:NSQ summary",
+      "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9OWEVlckFTbUtuUFBwc1B3ejhDbjRLTmRiNUN4U1JubVJYRGtMTjdyNGZhRHZMQmhEMWdvVi1LcnBNMWctazQwNGp3eTBQVlZKa1VFcXhGdXZIUkV2Vk9HRmlFWlNuRXRvcFY0VWx0a09EcVE?oc=5",
+      "source": "Financial Times",
+      "published": "Fri, 21 Oct 2016 13:19:32 GMT",
+      "published_iso": "2016-10-21T13:19:32+00:00",
+      "tickers": [
+        "TCPC"
       ],
       "category": "company"
     },
@@ -2787,28 +2847,6 @@
       "category": "company"
     },
     {
-      "title": "Golub Capital BDC Inc",
-      "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE9OdUxMMWIxZnZpMkNlTnI3aGNiNDNSOWs5RXV4LVAyaEdacWhQN3hySUl1NjZlaXQ0d1hLekYzSDV6VGNENFpIbnM2eFJRQi1j?oc=5",
-      "source": "Bloomberg",
-      "published": "Thu, 12 Mar 2015 20:06:47 GMT",
-      "published_iso": "2015-03-12T20:06:47+00:00",
-      "tickers": [
-        "GBDC"
-      ],
-      "category": "company"
-    },
-    {
-      "title": "Main Street Capital Corp",
-      "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE9iNUU0cXpUOXM5NXN3a2htVk9XMElabEN1TW9LbU9yMnowbEF0eEhPSmlrdWhSRk9VcGx6ZEZ0Q0djTFhHQWZ5TVh6SHlUWFpl?oc=5",
-      "source": "Bloomberg",
-      "published": "Tue, 03 Mar 2015 11:15:05 GMT",
-      "published_iso": "2015-03-03T11:15:05+00:00",
-      "tickers": [
-        "MAIN"
-      ],
-      "category": "company"
-    },
-    {
       "title": "BlackRock TCP Capital Corp",
       "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTFBVMjBVSk5FNE96VmFaZDRNNG4yTjdDNFh5Sk1adGFLM0VScHlVa2NMTzdKc2VMcDJRaTRhckh5eDBpc1k5Z2s4cDJTYll6QUtN?oc=5",
       "source": "Bloomberg",
@@ -2820,13 +2858,13 @@
       "category": "company"
     },
     {
-      "title": "Golub Capital BDC Prices $400M Securitization",
-      "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE10WXYxazl4N051bWwyNlRCeDlsNWRoSFVGeTU0Ql9Qekt5ek56U0xIQnhHSWtTX0VodDNqYV9ZZWF5aHJJNGFNRklHSnVzd3dtWVFaUDE3NGh1SVA5ZFN6OWRHWm4?oc=5",
+      "title": "Ares Management Launches Commercial Finance Unit",
+      "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFA4dTROb0RsQzlOTENuNlRhRWVlb2YtdUUwM0tIM0xpY1NwN0pZSEFyNDRMRXRRWmw3anVhcy1ZQnVSNVBlRlg1QWFHbVFYVGIwcU5XQVY4MmJONTd6RDR5R21Rdnc?oc=5",
       "source": "WSJ",
-      "published": "Thu, 15 May 2014 07:00:00 GMT",
-      "published_iso": "2014-05-15T07:00:00+00:00",
+      "published": "Thu, 05 Jun 2014 07:00:00 GMT",
+      "published_iso": "2014-06-05T07:00:00+00:00",
       "tickers": [
-        "GBDC"
+        "ARCC"
       ],
       "category": "company"
     },
@@ -2876,12 +2914,23 @@
     },
     {
       "title": "MidCap Financial Investment Corp",
-      "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE1lMlFOeEpTcV9VTlpXZ19xeTNKWXJTT0dybHh6Wjl5NDRRT3RqUWpqblVSZ2lnS2tYWUFVTnRyM3RmVjBEZTUwLW5WYmlHYUdB?oc=5",
+      "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE40RDZkaVBYUGp3Z1pnMTdSb2RESFpRcEpUVC1oblp0ZG5VOVF0VjE4dVV1WVl5WWUwSXRtYTd4QWpnYWgzd2Y3eHNHQ0Nwc1E?oc=5",
       "source": "Bloomberg",
-      "published": "Mon, 24 Mar 2014 05:27:23 GMT",
-      "published_iso": "2014-03-24T05:27:23+00:00",
+      "published": "Mon, 24 Mar 2014 05:26:25 GMT",
+      "published_iso": "2014-03-24T05:26:25+00:00",
       "tickers": [
         "MFIC"
+      ],
+      "category": "company"
+    },
+    {
+      "title": "Tolt Solutions Gets Debt From Prospect Capital",
+      "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFB0SGJ5Ukx6cXllaktubkNsM0RGbXVVM0JNc0FDMkxCQmVqcEh6dGlhWDhnUXd6Z1FiTFZNSHFjSnBLSU5Wa1FGTzhySTlKWFJFbXN4OVl3Z3NUUDljWjgzLVYxNXg?oc=5",
+      "source": "WSJ",
+      "published": "Tue, 11 Mar 2014 07:00:00 GMT",
+      "published_iso": "2014-03-11T07:00:00+00:00",
+      "tickers": [
+        "PSEC"
       ],
       "category": "company"
     },
@@ -2893,17 +2942,6 @@
       "published_iso": "2013-12-11T08:00:00+00:00",
       "tickers": [
         "MAIN"
-      ],
-      "category": "company"
-    },
-    {
-      "title": "Prospect Capital Provides $38.2M in Financing for Total Fleet-Miner Corp. Merger",
-      "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE9XdDdrNnlSVnQyMjlkaWJaMmdQZHpibGdCYkFINDdkUlBqc1dJNXM1V1QwTW1ROGY0WmdTNWxqY0tpSi1WT0VjTFM0SDRVeXZfVVJ0elRKTWw5T3RTZkJNUE1hdkk?oc=5",
-      "source": "WSJ",
-      "published": "Wed, 19 Dec 2012 08:00:00 GMT",
-      "published_iso": "2012-12-19T08:00:00+00:00",
-      "tickers": [
-        "PSEC"
       ],
       "category": "company"
     },
