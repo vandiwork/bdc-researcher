@@ -255,14 +255,14 @@
       "positions": 339,
       "total_fv_k": 4730867,
       "sectors": {
-        "Information Technology": 1816528,
-        "Health Care": 2087746,
-        "Consumer Discretionary": 41947,
-        "Industrials": 704444,
-        "Financials": 44362,
-        "Utilities": 35809,
-        "Other": 0,
-        "Communication Services": 31
+        "Information Technology": 1142683,
+        "Other": 1129598,
+        "Industrials": 524895,
+        "Communication Services": 33218,
+        "Health Care": 1655731,
+        "Financials": 103357,
+        "Consumer Discretionary": 74018,
+        "Utilities": 67367
       },
       "types": {
         "First Lien": 4484326,
@@ -515,32 +515,32 @@
   },
   "aggregate_sectors": {
     "Information Technology": {
-      "fv_k": 51254153,
-      "positions": 1811
+      "fv_k": 50580308,
+      "positions": 1782
     },
     "Industrials": {
-      "fv_k": 50590804,
-      "positions": 2016
+      "fv_k": 50411255,
+      "positions": 2010
     },
     "Health Care": {
-      "fv_k": 33345609,
-      "positions": 1428
+      "fv_k": 32913594,
+      "positions": 1392
     },
     "Financials": {
-      "fv_k": 26558087,
-      "positions": 882
+      "fv_k": 26617082,
+      "positions": 884
     },
     "Consumer Discretionary": {
-      "fv_k": 16594827,
-      "positions": 1088
+      "fv_k": 16626898,
+      "positions": 1093
     },
     "Black Box": {
       "fv_k": 6641205,
       "positions": 244
     },
     "Communication Services": {
-      "fv_k": 5686853,
-      "positions": 228
+      "fv_k": 5720040,
+      "positions": 231
     },
     "Materials": {
       "fv_k": 3690897,
@@ -555,8 +555,8 @@
       "positions": 70
     },
     "Utilities": {
-      "fv_k": 1488003,
-      "positions": 58
+      "fv_k": 1519561,
+      "positions": 59
     },
     "Energy": {
       "fv_k": 1163714,
@@ -567,30 +567,30 @@
       "positions": 93
     },
     "Other": {
-      "fv_k": -613589,
-      "positions": 75
+      "fv_k": 516009,
+      "positions": 135
     }
   },
   "aggregate_industry_groups": {
     "Software & Services": {
-      "fv_k": 49331339,
-      "positions": 1721
+      "fv_k": 48657569,
+      "positions": 1690
     },
     "Commercial & Professional Services": {
-      "fv_k": 29273141,
-      "positions": 1121
+      "fv_k": 29269448,
+      "positions": 1131
     },
     "Health Care Equipment & Services": {
-      "fv_k": 27050212,
-      "positions": 987
+      "fv_k": 26979423,
+      "positions": 977
     },
     "Capital Goods": {
-      "fv_k": 15121762,
-      "positions": 687
+      "fv_k": 14945906,
+      "positions": 671
     },
     "Diversified Financials": {
-      "fv_k": 13365734,
-      "positions": 461
+      "fv_k": 13424729,
+      "positions": 463
     },
     "Insurance": {
       "fv_k": 13183574,
@@ -601,8 +601,8 @@
       "positions": 574
     },
     "Pharmaceuticals, Biotechnology & Life Sciences": {
-      "fv_k": 6295397,
-      "positions": 441
+      "fv_k": 5934171,
+      "positions": 415
     },
     "JV / Fund of Funds": {
       "fv_k": 5920642,
@@ -613,8 +613,8 @@
       "positions": 187
     },
     "Media & Entertainment": {
-      "fv_k": 4731279,
-      "positions": 177
+      "fv_k": 4764466,
+      "positions": 180
     },
     "Retailing": {
       "fv_k": 4255375,
@@ -633,20 +633,20 @@
       "positions": 167
     },
     "Consumer Durables & Apparel": {
-      "fv_k": 2032342,
-      "positions": 151
+      "fv_k": 2064413,
+      "positions": 156
     },
     "Technology Hardware & Equipment": {
-      "fv_k": 1906417,
-      "positions": 85
+      "fv_k": 1905805,
+      "positions": 84
     },
     "Automobiles & Components": {
       "fv_k": 1774734,
       "positions": 143
     },
     "Utilities": {
-      "fv_k": 1488003,
-      "positions": 58
+      "fv_k": 1519561,
+      "positions": 59
     },
     "Energy": {
       "fv_k": 1163714,
@@ -668,6 +668,10 @@
       "fv_k": 720563,
       "positions": 197
     },
+    "Other": {
+      "fv_k": 516009,
+      "positions": 135
+    },
     "Trading Companies & Distributors": {
       "fv_k": 304676,
       "positions": 21
@@ -681,16 +685,12 @@
       "positions": 2
     },
     "Semiconductors & Semiconductor Equipment": {
-      "fv_k": 16397,
-      "positions": 5
+      "fv_k": 16934,
+      "positions": 8
     },
     "Banks": {
       "fv_k": 8779,
       "positions": 2
-    },
-    "Other": {
-      "fv_k": -613589,
-      "positions": 75
     }
   },
   "aggregate_types": {
