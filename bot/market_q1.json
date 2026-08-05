@@ -13,28 +13,28 @@
     "week52_high": 22.76,
     "week52_low": 17.4,
     "beta": 0.62,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "BBDC": {
     "ticker": "BBDC",
     "as_of": "2026-08-05",
-    "price": 8.39,
+    "price": 8.42,
     "prev_close": 8.57,
-    "today_pct": -2.1,
-    "mtd_pct": 1.7,
-    "ytd_pct": -8.61,
-    "ltm_pct": -9.78,
-    "div_yield_pct": 12.61,
-    "market_cap": 878490752,
+    "today_pct": -1.75,
+    "mtd_pct": 2.06,
+    "ytd_pct": -8.28,
+    "ltm_pct": -9.46,
+    "div_yield_pct": 12.37,
+    "market_cap": 881631936,
     "week52_high": 9.92,
     "week52_low": 7.96,
     "beta": 0.655,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "BCRED": {
     "ticker": "BCRED",
     "error": "empty history",
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "BCSF": {
     "ticker": "BCSF",
@@ -45,28 +45,28 @@
     "mtd_pct": 2.09,
     "ytd_pct": -8.84,
     "ltm_pct": -16.3,
-    "div_yield_pct": 13.53,
+    "div_yield_pct": 13.23,
     "market_cap": 822532672,
     "week52_high": 15.84,
     "week52_low": 11.82,
     "beta": 0.637,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "BXSL": {
     "ticker": "BXSL",
     "as_of": "2026-08-05",
-    "price": 23.3202,
+    "price": 23.34,
     "prev_close": 23.78,
-    "today_pct": -1.93,
-    "mtd_pct": 0.95,
-    "ytd_pct": -11.43,
-    "ltm_pct": -22.76,
+    "today_pct": -1.85,
+    "mtd_pct": 1.04,
+    "ytd_pct": -11.36,
+    "ltm_pct": -22.69,
     "div_yield_pct": 13.08,
-    "market_cap": 5425490944,
+    "market_cap": 5430097920,
     "week52_high": 30.94,
     "week52_low": 22.47,
     "beta": 0.422,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "CGBD": {
     "ticker": "CGBD",
@@ -77,28 +77,28 @@
     "mtd_pct": 2.9,
     "ytd_pct": -17.69,
     "ltm_pct": -24.41,
-    "div_yield_pct": 15.52,
+    "div_yield_pct": 15.1,
     "market_cap": 714430464,
     "week52_high": 14.035,
     "week52_low": 9.945,
     "beta": 0.683,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "FSK": {
     "ticker": "FSK",
     "as_of": "2026-08-05",
-    "price": 11.03,
+    "price": 11.04,
     "prev_close": 11.47,
-    "today_pct": -3.84,
-    "mtd_pct": 4.35,
-    "ytd_pct": -25.52,
-    "ltm_pct": -45.5,
-    "div_yield_pct": 21.76,
-    "market_cap": 3089132544,
+    "today_pct": -3.75,
+    "mtd_pct": 4.45,
+    "ytd_pct": -25.46,
+    "ltm_pct": -45.45,
+    "div_yield_pct": 20.74,
+    "market_cap": 3091933440,
     "week52_high": 20.41,
     "week52_low": 9.72,
     "beta": 0.884,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "GBDC": {
     "ticker": "GBDC",
@@ -110,11 +110,11 @@
     "ytd_pct": -5.6,
     "ltm_pct": -13.33,
     "div_yield_pct": 10.09,
-    "market_cap": 3326136832,
+    "market_cap": 3336943360,
     "week52_high": 14.93,
     "week52_low": 11.77,
     "beta": null,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "GSBD": {
     "ticker": "GSBD",
@@ -125,12 +125,12 @@
     "mtd_pct": 2.56,
     "ytd_pct": -4.85,
     "ltm_pct": -21.37,
-    "div_yield_pct": 11.06,
+    "div_yield_pct": 11.22,
     "market_cap": 993984832,
     "week52_high": 11.62,
     "week52_low": 8.355,
     "beta": 0.635,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "HTGC": {
     "ticker": "HTGC",
@@ -141,12 +141,12 @@
     "mtd_pct": 1.64,
     "ytd_pct": -11.32,
     "ltm_pct": -14.5,
-    "div_yield_pct": 11.45,
+    "div_yield_pct": 11.18,
     "market_cap": 3123767296,
     "week52_high": 19.67,
     "week52_low": 13.7,
     "beta": 0.739,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "MAIN": {
     "ticker": "MAIN",
@@ -162,7 +162,7 @@
     "week52_high": 67.77,
     "week52_low": 48.95,
     "beta": 0.723,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "MFIC": {
     "ticker": "MFIC",
@@ -178,23 +178,23 @@
     "week52_high": 13.34,
     "week52_low": 9.34,
     "beta": 0.671,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "MSDL": {
     "ticker": "MSDL",
     "as_of": "2026-08-05",
-    "price": 15.097,
+    "price": 15.08,
     "prev_close": 15.2,
-    "today_pct": -0.68,
-    "mtd_pct": 3.33,
-    "ytd_pct": -8.39,
-    "ltm_pct": -18.13,
-    "div_yield_pct": 12.32,
-    "market_cap": 1279692928,
+    "today_pct": -0.79,
+    "mtd_pct": 3.22,
+    "ytd_pct": -8.5,
+    "ltm_pct": -18.22,
+    "div_yield_pct": 11.99,
+    "market_cap": 1278251904,
     "week52_high": 18.53,
     "week52_low": 13.66,
     "beta": 0.62,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "NMFC": {
     "ticker": "NMFC",
@@ -205,28 +205,28 @@
     "mtd_pct": 6.68,
     "ytd_pct": -20.2,
     "ltm_pct": -26.87,
-    "div_yield_pct": 15.27,
+    "div_yield_pct": 16.68,
     "market_cap": 694225088,
     "week52_high": 10.71,
     "week52_low": 6.73,
     "beta": null,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "OBDC": {
     "ticker": "OBDC",
     "as_of": "2026-08-05",
-    "price": 10.95,
+    "price": 10.97,
     "prev_close": 11.2,
-    "today_pct": -2.23,
-    "mtd_pct": 1.86,
-    "ytd_pct": -11.91,
-    "ltm_pct": -22.4,
+    "today_pct": -2.05,
+    "mtd_pct": 2.05,
+    "ytd_pct": -11.75,
+    "ltm_pct": -22.25,
     "div_yield_pct": 12.91,
-    "market_cap": 5434544128,
+    "market_cap": 5444470272,
     "week52_high": 14.53,
     "week52_low": 10.52,
     "beta": 0.669,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "OCSL": {
     "ticker": "OCSL",
@@ -237,12 +237,12 @@
     "mtd_pct": 3.88,
     "ytd_pct": -5.34,
     "ltm_pct": -9.73,
-    "div_yield_pct": 13.25,
+    "div_yield_pct": 12.89,
     "market_cap": 1062311424,
     "week52_high": 14.31,
     "week52_low": 10.63,
     "beta": 0.554,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "PSEC": {
     "ticker": "PSEC",
@@ -258,7 +258,7 @@
     "week52_high": 3.13,
     "week52_low": 2.11,
     "beta": 0.777,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "SLRC": {
     "ticker": "SLRC",
@@ -274,7 +274,7 @@
     "week52_high": 16.83,
     "week52_low": 12.13,
     "beta": 0.662,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "TCPC": {
     "ticker": "TCPC",
@@ -290,23 +290,23 @@
     "week52_high": 7.28,
     "week52_low": 3.08,
     "beta": 1.005,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "TRIN": {
     "ticker": "TRIN",
     "as_of": "2026-08-05",
-    "price": 17.25,
+    "price": 17.24,
     "prev_close": 18.16,
-    "today_pct": -5.01,
-    "mtd_pct": -1.71,
-    "ytd_pct": 17.75,
-    "ltm_pct": 12.52,
+    "today_pct": -5.07,
+    "mtd_pct": -1.77,
+    "ytd_pct": 17.68,
+    "ltm_pct": 12.46,
     "div_yield_pct": 14.3,
-    "market_cap": 1550561920,
+    "market_cap": 1549662976,
     "week52_high": 18.119,
     "week52_low": 14.13,
     "beta": 0.664,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "TSLX": {
     "ticker": "TSLX",
@@ -317,12 +317,12 @@
     "mtd_pct": 5.36,
     "ytd_pct": -16.76,
     "ltm_pct": -24.67,
-    "div_yield_pct": 9.33,
+    "div_yield_pct": 9.48,
     "market_cap": 1717954304,
     "week52_high": 24.79,
     "week52_low": 16.04,
     "beta": 0.634,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   },
   "WHF": {
     "ticker": "WHF",
@@ -338,6 +338,6 @@
     "week52_high": 8.97,
     "week52_low": 6.07,
     "beta": 0.408,
-    "fetched_utc": "2026-08-05T20:07+00:00"
+    "fetched_utc": "2026-08-05T21:31+00:00"
   }
 }
